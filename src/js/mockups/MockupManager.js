@@ -85,52 +85,77 @@ const MockupManager = {
     }
   },
 
+  _bundledTagFilter: 'all',
+  _bundledSearch: '',
+
   async _renderBundledLibrary() {
     const container = DOM.el('bundledLibrary');
     if (!container) return;
-
     const existing = await ModuleRegistry.getAll();
     const loadedIds = new Set(existing.map(item => item.bundleId).filter(Boolean));
-    const items = BundledModules.getAll();
-    const starterCount = BundledModules.getStarterSet().length;
-    const domainCount = items.filter(item => item.jsPath.includes('feature-modules-17')).length;
-
+    const allItems = BundledModules.getAll();
+    const allTags = BundledModules.getAllTags();
+    let items = this._bundledTagFilter === 'all' ? allItems : allItems.filter(item => (item.tags || []).includes(this._bundledTagFilter));
+    if (this._bundledSearch) { const q = this._bundledSearch.toLowerCase(); items = items.filter(item => item.name.toLowerCase().includes(q) || item.description.toLowerCase().includes(q) || (item.tags || []).some(t => t.includes(q))); }
+    const tagCounts = {}; allItems.forEach(item => (item.tags || []).forEach(t => { tagCounts[t] = (tagCounts[t] || 0) + 1; }));
+    const primaryTags = ['project-manager', 'team-project-manager', 'universal'];
+    const topicTags = allTags.filter(t => !primaryTags.includes(t));
+    const remaining = items.filter(i => !loadedIds.has(i.id)).length;
     container.innerHTML = `
     <div class="card" style="margin-bottom:var(--sp-4)">
       <div class="card-body">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:var(--sp-3);flex-wrap:wrap">
           <div>
             <div class="field-label pink"><span class="dot"></span> Built-In Functional Mockups</div>
-            <div style="font-size:var(--font-size-sm);color:var(--text-muted)">
-              Library: ${starterCount} universal mockups, ${domainCount} planner mockups, and a reusable kanban example.
-            </div>
+            <div style="font-size:var(--font-size-sm);color:var(--text-muted)">${allItems.length} modules across ${allTags.length} tags. Filter, search, or load all.</div>
           </div>
-          <span class="badge badge-green">${loadedIds.size} loaded</span>
+          <div style="display:flex;gap:6px;align-items:center">
+            <span class="badge badge-green">${loadedIds.size}/${allItems.length} loaded</span>
+            <span class="badge badge-p5">${items.length} shown</span>
+          </div>
+        </div>
+        <div style="margin-bottom:10px"><input class="input" type="text" placeholder="Search modules..." value="${DOM.esc(this._bundledSearch)}" oninput="MockupManager._bundledSearch=this.value;MockupManager._renderBundledLibrary()" style="width:100%;padding:8px 12px"></div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px">
+          <button class="tag-filter-btn ${this._bundledTagFilter==='all'?'active':''}" onclick="MockupManager.filterByTag('all')">All (${allItems.length})</button>
+          ${primaryTags.map(tag=>'<button class="tag-filter-btn tag-filter-primary '+(this._bundledTagFilter===tag?'active':'')+'" onclick="MockupManager.filterByTag(\''+tag+'\')">'+tag+' ('+(tagCounts[tag]||0)+')</button>').join('')}
+        </div>
+        <div style="display:flex;gap:3px;flex-wrap:wrap;margin-bottom:12px">
+          ${topicTags.map(tag=>'<button class="tag-filter-chip '+(this._bundledTagFilter===tag?'active':'')+'" onclick="MockupManager.filterByTag(\''+tag+'\')">'+tag+' <span style="opacity:0.5">'+(tagCounts[tag]||0)+'</span></button>').join('')}
         </div>
         <div class="bundled-grid">
-          ${items.map(item => `
-            <div class="bundled-card">
+          ${items.length?items.map(item=>`
+            <div class="bundled-card ${loadedIds.has(item.id)?'bundled-loaded':''}">
               <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
                 <div style="font-weight:800;color:var(--text-primary)">${DOM.esc(item.name)}</div>
-                ${loadedIds.has(item.id) ? '<span class="badge badge-green">Loaded</span>' : ''}
+                ${loadedIds.has(item.id)?'<span class="badge badge-green">Loaded</span>':''}
               </div>
               <div style="font-size:var(--font-size-sm);color:var(--text-muted);line-height:1.5">${DOM.esc(item.description)}</div>
               <div class="bundled-tags">
-                ${item.tags.map(tag => `<span class="bundled-tag">${DOM.esc(tag)}</span>`).join('')}
+                ${(item.tags||[]).map(tag=>'<span class="bundled-tag '+(this._bundledTagFilter===tag?'bundled-tag-active':'')+'" onclick="event.stopPropagation();MockupManager.filterByTag(\''+tag+'\')" style="cursor:pointer">'+DOM.esc(tag)+'</span>').join('')}
               </div>
               <div class="btn-row" style="margin-top:10px">
-                <button class="btn btn-sm ${loadedIds.has(item.id) ? 'btn-outline' : 'btn-green'}"
-                        onclick="MockupManager.importBundled('${item.id}')"
-                        ${loadedIds.has(item.id) ? 'disabled' : ''}>
-                  ${loadedIds.has(item.id) ? 'Loaded' : 'Load'}
-                </button>
+                <button class="btn btn-sm ${loadedIds.has(item.id)?'btn-outline':'btn-green'}" onclick="MockupManager.importBundled('${item.id}')" ${loadedIds.has(item.id)?'disabled':''}>${loadedIds.has(item.id)?'Loaded':'Load'}</button>
               </div>
-            </div>
-          `).join('')}
+            </div>`).join(''):'<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text-muted)">No modules match filter</div>'}
+        </div>
+        <div class="btn-row" style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border-soft)">
+          <button class="btn btn-sm btn-pink" onclick="MockupManager.loadFilteredBundled()">Load ${this._bundledTagFilter==='all'?'All':'"'+this._bundledTagFilter+'"'} (${remaining} remaining)</button>
+          <button class="btn btn-sm btn-outline" onclick="MockupManager.loadAllBundled()">Load Full Catalog</button>
         </div>
       </div>
     </div>`;
   },
+
+  filterByTag(tag) { this._bundledTagFilter = tag; this._renderBundledLibrary(); },
+
+  async loadFilteredBundled() {
+    let items = this._bundledTagFilter === 'all' ? BundledModules.getAll() : BundledModules.getByTag(this._bundledTagFilter);
+    if (this._bundledSearch) { const q = this._bundledSearch.toLowerCase(); items = items.filter(i => i.name.toLowerCase().includes(q) || i.description.toLowerCase().includes(q)); }
+    for (const item of items) { await this.importBundled(item.id, { silent: true }); }
+    await this._renderBundledLibrary(); await this._renderModuleTabs();
+    Toast.show('Loaded ' + items.length + ' modules.');
+  },
+
 
   async handleFileInput(fileList) {
     await this.importFiles(fileList);

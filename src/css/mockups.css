@@ -138,3 +138,50 @@
   max-width: 100%;
   height: auto;
 }
+
+/* ═══ Tag Filter System ═══ */
+.tag-filter-btn {
+  padding: 5px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .2s;
+}
+.tag-filter-btn:hover { border-color: var(--accent-pink); }
+.tag-filter-btn.active {
+  background: var(--accent-pink-bg);
+  border-color: var(--accent-pink);
+  color: var(--accent-pink);
+}
+.tag-filter-primary { font-weight: 800; }
+
+.tag-filter-chip {
+  padding: 3px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.tag-filter-chip:hover { border-color: var(--accent-green); color: var(--text-primary); }
+.tag-filter-chip.active {
+  background: var(--accent-green-bg);
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+.bundled-tag-active {
+  background: var(--accent-pink-bg) !important;
+  border-color: var(--accent-pink) !important;
+  color: var(--accent-pink) !important;
+}
+
+.bundled-loaded { opacity: 0.6; }
+.bundled-loaded:hover { opacity: 1; }
