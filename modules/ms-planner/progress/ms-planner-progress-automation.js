@@ -1,209 +1,178 @@
 const MsPlannerProgressAutomation = {
   container: null,
-  rules: [],
-  nextId: 1,
-  editingId: null,
-  editForm: { trigger: '', action: '' },
-  triggers: ['Task created', 'Task completed', 'Due date passed', 'Checklist complete', 'Task assigned'],
-  actions: ['Change status', 'Set priority', 'Add label', 'Notify member', 'Move to bucket'],
-  executionLog: [],
-  nextLogId: 1,
+  triggers: ['Task Created', 'Task Completed', 'Due Date Passed', 'Checklist Complete', 'Task Assigned'],
+  actions: ['Change Status', 'Set Priority', 'Add Label', 'Notify Member', 'Move to Bucket'],
+  rules: [
+    { id: 1, trigger: 'Task Completed', action: 'Change Status', value: 'Completed', active: true },
+    { id: 2, trigger: 'Checklist Complete', action: 'Change Status', value: 'In Progress', active: true },
+    { id: 3, trigger: 'Due Date Passed', action: 'Set Priority', value: 'Urgent', active: false }
+  ],
+  log: [
+    { ts: '2026-04-09 09:12:04', rule: 'Task Completed -> Change Status', desc: 'Changed "Build API" status to Completed' },
+    { ts: '2026-04-09 08:45:21', rule: 'Checklist Complete -> Change Status', desc: 'Changed "Write specs" status to In Progress' }
+  ],
+  _nextId: 4,
+  _showForm: false,
+  _editId: null,
 
-  _esc(str) {
-    const d = document.createElement('div');
-    d.textContent = String(str);
-    return d.innerHTML;
-  },
-
-  _formatTime(iso) {
-    const d = new Date(iso);
-    return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-  },
+  _esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; },
 
   init(containerId) {
     this.container = document.getElementById(containerId);
     if (!this.container) return;
-    this.rules = [
-      { id: this.nextId++, trigger: 'Task completed', action: 'Change status', active: true },
-      { id: this.nextId++, trigger: 'Due date passed', action: 'Set priority', active: true },
-      { id: this.nextId++, trigger: 'Checklist complete', action: 'Add label', active: false }
-    ];
-    this.executionLog = [
-      { id: this.nextLogId++, ruleId: 1, trigger: 'Task completed', action: 'Change status', timestamp: '2026-04-09T10:15:00Z', taskName: 'API docs' },
-      { id: this.nextLogId++, ruleId: 2, trigger: 'Due date passed', action: 'Set priority', timestamp: '2026-04-09T08:00:00Z', taskName: 'QA review' },
-      { id: this.nextLogId++, ruleId: 1, trigger: 'Task completed', action: 'Change status', timestamp: '2026-04-08T16:30:00Z', taskName: 'User guide' },
-      { id: this.nextLogId++, ruleId: 2, trigger: 'Due date passed', action: 'Set priority', timestamp: '2026-04-08T08:00:00Z', taskName: 'Perf testing' },
-      { id: this.nextLogId++, ruleId: 3, trigger: 'Checklist complete', action: 'Add label', timestamp: '2026-04-07T14:20:00Z', taskName: 'Design mockups' }
-    ];
-    this.editingId = null;
     this.render();
   },
 
-  addRule() {
-    this.editingId = 'new';
-    this.editForm = { trigger: this.triggers[0], action: this.actions[0] };
+  _saveRule() {
+    const trigger = this.container.querySelector('.ppa-sel-trigger');
+    const action = this.container.querySelector('.ppa-sel-action');
+    const value = this.container.querySelector('.ppa-input-value');
+    if (!trigger || !action || !value.value.trim()) return;
+    if (this._editId) {
+      const rule = this.rules.find(r => r.id === this._editId);
+      if (rule) {
+        rule.trigger = trigger.value;
+        rule.action = action.value;
+        rule.value = value.value.trim();
+      }
+      this._editId = null;
+    } else {
+      this.rules.push({
+        id: this._nextId++, trigger: trigger.value, action: action.value,
+        value: value.value.trim(), active: true
+      });
+    }
+    this._showForm = false;
     this.render();
   },
 
-  saveNewRule() {
-    this.rules.push({ id: this.nextId++, trigger: this.editForm.trigger, action: this.editForm.action, active: true });
-    this.editingId = null;
+  _editRule(id) {
+    this._editId = id;
+    this._showForm = true;
     this.render();
   },
 
-  startEdit(id) {
-    const r = this.rules.find(r => r.id === id);
-    if (!r) return;
-    this.editingId = id;
-    this.editForm = { trigger: r.trigger, action: r.action };
-    this.render();
-  },
-
-  saveEdit() {
-    const r = this.rules.find(r => r.id === this.editingId);
-    if (r) { r.trigger = this.editForm.trigger; r.action = this.editForm.action; }
-    this.editingId = null;
-    this.render();
-  },
-
-  deleteRule(id) {
+  _deleteRule(id) {
     this.rules = this.rules.filter(r => r.id !== id);
     this.render();
   },
 
-  toggleRule(id) {
-    const r = this.rules.find(r => r.id === id);
-    if (r) r.active = !r.active;
+  _toggleRule(id) {
+    const rule = this.rules.find(r => r.id === id);
+    if (rule) rule.active = !rule.active;
     this.render();
+  },
+
+  _runRule(id) {
+    const rule = this.rules.find(r => r.id === id);
+    if (!rule) return;
+    const now = new Date();
+    const pad = n => String(n).padStart(2, '0');
+    const ts = [now.getFullYear(), pad(now.getMonth() + 1), pad(now.getDate())].join('-') +
+      ' ' + [pad(now.getHours()), pad(now.getMinutes()), pad(now.getSeconds())].join(':');
+    const targets = ['Design mockups', 'Build API', 'Write specs', 'Auth module', 'Setup CI'];
+    const target = targets[Math.floor(Math.random() * targets.length)];
+    const desc = rule.action + ': set "' + target + '" to "' + rule.value + '"';
+    this.log.unshift({ ts: ts, rule: rule.trigger + ' -> ' + rule.action, desc: desc });
+    if (this.log.length > 5) this.log = this.log.slice(0, 5);
+    this.render();
+  },
+
+  _buildFormHtml(editRule) {
+    const tr = editRule ? editRule.trigger : this.triggers[0];
+    const ac = editRule ? editRule.action : this.actions[0];
+    const val = editRule ? editRule.value : '';
+    const triggerOpts = this.triggers.map(t =>
+      '<option ' + (t === tr ? 'selected' : '') + '>' + this._esc(t) + '</option>'
+    ).join('');
+    const actionOpts = this.actions.map(a =>
+      '<option ' + (a === ac ? 'selected' : '') + '>' + this._esc(a) + '</option>'
+    ).join('');
+    const btnLabel = this._editId ? 'Update' : 'Create';
+    return '<div class="ppa-form">' +
+      '<div class="ppa-form-row"><label class="ppa-form-label">WHEN</label>' +
+        '<select class="ppa-sel-trigger ppa-input">' + triggerOpts + '</select></div>' +
+      '<div class="ppa-form-row"><label class="ppa-form-label">THEN</label>' +
+        '<select class="ppa-sel-action ppa-input">' + actionOpts + '</select></div>' +
+      '<div class="ppa-form-row"><label class="ppa-form-label">VALUE</label>' +
+        '<input class="ppa-input-value ppa-input" placeholder="e.g. Completed, Urgent, Bug..." value="' + this._esc(val) + '" /></div>' +
+      '<div class="ppa-form-actions">' +
+        '<button class="ppa-btn ppa-btn-save" data-action="saveRule">' + btnLabel + ' Rule</button>' +
+        '<button class="ppa-btn ppa-btn-cancel" data-action="cancelForm">Cancel</button></div></div>';
+  },
+
+  _buildRuleCard(r) {
+    const cls = r.active ? '' : ' ppa-rule-inactive';
+    const chk = r.active ? 'checked' : '';
+    return '<div class="ppa-rule-card' + cls + '">' +
+      '<div class="ppa-rule-top">' +
+        '<label class="ppa-toggle"><input type="checkbox" ' + chk + ' data-action="toggle" data-id="' + r.id + '" />' +
+          '<span class="ppa-toggle-slider"></span></label>' +
+        '<div class="ppa-rule-text">' +
+          '<span class="ppa-rule-when">WHEN</span> ' + this._esc(r.trigger) +
+          ' <span class="ppa-rule-then">THEN</span> ' + this._esc(r.action) +
+          ' <span class="ppa-rule-value">&rarr; ' + this._esc(r.value) + '</span></div></div>' +
+      '<div class="ppa-rule-actions">' +
+        '<button class="ppa-btn ppa-btn-run" data-action="runRule" data-id="' + r.id + '">Run Now</button>' +
+        '<button class="ppa-btn ppa-btn-edit" data-action="editRule" data-id="' + r.id + '">Edit</button>' +
+        '<button class="ppa-btn-del" data-action="deleteRule" data-id="' + r.id + '">&times;</button></div></div>';
+  },
+
+  _buildLogEntry(l) {
+    return '<div class="ppa-log-entry">' +
+      '<span class="ppa-log-ts">' + this._esc(l.ts) + '</span>' +
+      '<span class="ppa-log-rule">' + this._esc(l.rule) + '</span>' +
+      '<span class="ppa-log-desc">' + this._esc(l.desc) + '</span></div>';
   },
 
   render() {
     if (!this.container) return;
+    const editRule = this._editId ? this.rules.find(r => r.id === this._editId) : null;
+    const formHtml = this._showForm ? this._buildFormHtml(editRule) : '';
+    const addBtn = !this._showForm ? '<button class="ppa-btn ppa-btn-add" data-action="showForm">+ New Rule</button>' : '';
+    const rulesHtml = this.rules.map(r => this._buildRuleCard(r)).join('');
+    const emptyRules = this.rules.length === 0 ? '<div class="ppa-empty">No rules configured. Create one above.</div>' : '';
+    const logHtml = this.log.length === 0
+      ? '<div class="ppa-empty">No executions yet.</div>'
+      : this.log.map(l => this._buildLogEntry(l)).join('');
 
-    let html = `<div class="ppa-panel">
-      <div class="ppa-header">
-        <h3>Automation Rules</h3>
-        <button class="ppa-add-rule-btn" data-action="add-rule">+ New Rule</button>
-      </div>`;
-
-    if (this.editingId === 'new') {
-      html += `<div class="ppa-edit-form">
-        <div class="ppa-rule-builder">
-          <span class="ppa-when-label">WHEN</span>
-          <select class="ppa-trigger-select" data-ref="trigger">
-            ${this.triggers.map(t => `<option value="${this._esc(t)}" ${t === this.editForm.trigger ? 'selected' : ''}>${this._esc(t)}</option>`).join('')}
-          </select>
-          <span class="ppa-then-label">THEN</span>
-          <select class="ppa-action-select" data-ref="action">
-            ${this.actions.map(a => `<option value="${this._esc(a)}" ${a === this.editForm.action ? 'selected' : ''}>${this._esc(a)}</option>`).join('')}
-          </select>
-        </div>
-        <div class="ppa-edit-actions">
-          <button class="ppa-save-btn" data-action="save-new">Save</button>
-          <button class="ppa-cancel-btn" data-action="cancel">Cancel</button>
-        </div>
-      </div>`;
-    }
-
-    html += `<div class="ppa-rules-list">`;
-
-    if (this.rules.length === 0) {
-      html += `<div class="ppa-empty">No automation rules yet. Create one to get started.</div>`;
-    }
-
-    this.rules.forEach(r => {
-      if (this.editingId === r.id) {
-        html += `<div class="ppa-rule-item ppa-rule-editing">
-          <div class="ppa-rule-builder">
-            <span class="ppa-when-label">WHEN</span>
-            <select class="ppa-trigger-select" data-ref="trigger">
-              ${this.triggers.map(t => `<option value="${this._esc(t)}" ${t === this.editForm.trigger ? 'selected' : ''}>${this._esc(t)}</option>`).join('')}
-            </select>
-            <span class="ppa-then-label">THEN</span>
-            <select class="ppa-action-select" data-ref="action">
-              ${this.actions.map(a => `<option value="${this._esc(a)}" ${a === this.editForm.action ? 'selected' : ''}>${this._esc(a)}</option>`).join('')}
-            </select>
-          </div>
-          <div class="ppa-edit-actions">
-            <button class="ppa-save-btn" data-action="save-edit">Save</button>
-            <button class="ppa-cancel-btn" data-action="cancel">Cancel</button>
-          </div>
-        </div>`;
-      } else {
-        html += `<div class="ppa-rule-item ${r.active ? '' : 'ppa-rule-inactive'}">
-          <div class="ppa-rule-toggle">
-            <label class="ppa-switch">
-              <input type="checkbox" ${r.active ? 'checked' : ''} data-action="toggle" data-id="${r.id}" />
-              <span class="ppa-slider"></span>
-            </label>
-          </div>
-          <div class="ppa-rule-desc">
-            <span class="ppa-when-tag">WHEN</span> ${this._esc(r.trigger)}
-            <span class="ppa-then-tag">THEN</span> ${this._esc(r.action)}
-          </div>
-          <div class="ppa-rule-actions">
-            <button class="ppa-edit-btn" data-action="edit" data-id="${r.id}" title="Edit">&#9998;</button>
-            <button class="ppa-delete-btn" data-action="delete" data-id="${r.id}" title="Delete">&times;</button>
-          </div>
-        </div>`;
-      }
-    });
-
-    html += `</div>
-      <div class="ppa-log-section">
-        <div class="ppa-section-label">Execution Log (Last 5)</div>
-        <div class="ppa-log-list">`;
-
-    this.executionLog.slice(0, 5).forEach(log => {
-      html += `<div class="ppa-log-item">
-        <span class="ppa-log-time">${this._esc(this._formatTime(log.timestamp))}</span>
-        <span class="ppa-log-desc">${this._esc(log.trigger)} &rarr; ${this._esc(log.action)}</span>
-        <span class="ppa-log-task">${this._esc(log.taskName)}</span>
-      </div>`;
-    });
-
-    if (this.executionLog.length === 0) {
-      html += `<div class="ppa-log-empty">No executions yet</div>`;
-    }
-
-    html += `</div></div></div>`;
-
-    this.container.innerHTML = html;
+    this.container.innerHTML = '<div class="ppa-panel">' +
+      '<div class="ppa-header"><h3>Automation Rules</h3>' + addBtn + '</div>' +
+      formHtml +
+      '<div class="ppa-rules-list">' + rulesHtml + emptyRules + '</div>' +
+      '<div class="ppa-log-section"><div class="ppa-log-title">Execution Log</div>' + logHtml + '</div></div>';
 
     this.container.onclick = (e) => {
-      const el = e.target.closest('[data-action]');
-      if (!el) return;
-      const action = el.dataset.action;
-      const id = Number(el.dataset.id);
-      if (action === 'add-rule') this.addRule();
-      else if (action === 'save-new') this.saveNewRule();
-      else if (action === 'edit') this.startEdit(id);
-      else if (action === 'save-edit') this.saveEdit();
-      else if (action === 'cancel') { this.editingId = null; this.render(); }
-      else if (action === 'delete') this.deleteRule(id);
-      else if (action === 'toggle') this.toggleRule(id);
+      const btn = e.target.closest('[data-action]');
+      if (!btn) return;
+      const action = btn.dataset.action;
+      const id = Number(btn.dataset.id);
+      if (action === 'showForm') { this._showForm = true; this._editId = null; this.render(); }
+      else if (action === 'cancelForm') { this._showForm = false; this._editId = null; this.render(); }
+      else if (action === 'saveRule') { this._saveRule(); }
+      else if (action === 'editRule') { this._editRule(id); }
+      else if (action === 'deleteRule') { this._deleteRule(id); }
+      else if (action === 'runRule') { this._runRule(id); }
     };
-
     this.container.onchange = (e) => {
-      if (e.target.dataset.ref === 'trigger') this.editForm.trigger = e.target.value;
-      else if (e.target.dataset.ref === 'action') this.editForm.action = e.target.value;
+      const chk = e.target.closest('[data-action="toggle"]');
+      if (chk) { this._toggleRule(Number(chk.dataset.id)); }
     };
   },
 
   exportState() {
     return {
       rules: JSON.parse(JSON.stringify(this.rules)),
-      executionLog: JSON.parse(JSON.stringify(this.executionLog)),
-      nextId: this.nextId, nextLogId: this.nextLogId
+      log: JSON.parse(JSON.stringify(this.log)),
+      _nextId: this._nextId
     };
   },
 
   importState(state) {
     if (!state) return;
     this.rules = state.rules || [];
-    this.executionLog = state.executionLog || [];
-    this.nextId = state.nextId || 1;
-    this.nextLogId = state.nextLogId || 1;
+    this.log = state.log || [];
+    this._nextId = state._nextId || this.rules.length + 1;
     this.render();
   }
 };
