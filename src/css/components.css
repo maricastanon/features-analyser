@@ -49,6 +49,10 @@
   border-color: var(--accent-pink);
   color: var(--accent-pink);
 }
+
+html.light .btn-outline {
+  background: rgba(255, 255, 255, .74);
+}
 .btn-sm {
   padding: 4px 9px;
   font-size: var(--font-size-xs);
@@ -110,6 +114,12 @@
   cursor: pointer;
 }
 
+html.light .input,
+html.light .textarea,
+html.light .select {
+  background: rgba(255, 255, 255, .94);
+}
+
 /* ── Cards ── */
 .card {
   background: var(--bg-card);
@@ -123,6 +133,14 @@
   border-color: var(--accent-pink);
   box-shadow: var(--shadow-pink);
   transform: translateY(-2px);
+}
+
+html.light .card {
+  box-shadow: 0 10px 24px rgba(18, 49, 29, .04);
+}
+
+html.light .card-header {
+  background: linear-gradient(180deg, rgba(255, 255, 255, .94), rgba(238, 245, 239, .92));
 }
 .card-header {
   padding: 12px 14px;
