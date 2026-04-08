@@ -1,0 +1,8 @@
+const Rolesystem={
+  init(cid){this.el=document.getElementById(cid);this.render()},
+  render(){if(!this.el)return;this.el.innerHTML=`<div style="padding:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:1.3rem">👥</span><span style="font-weight:800;font-size:1rem">Role-Based Access</span></div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px"><div style="background:#163224;border:2px solid #e91e90;border-radius:8px;padding:10px;text-align:center"><div style="font-size:1.2rem">👑</div><div style="font-weight:800;font-size:.82rem;color:#e91e90">Admin</div><div style="font-size:.6rem;color:#5a8a60">Full access + user mgmt</div></div>
+      <div style="background:#163224;border:2px solid #f97316;border-radius:8px;padding:10px;text-align:center"><div style="font-size:1.2rem">📋</div><div style="font-weight:800;font-size:.82rem;color:#f97316">Manager</div><div style="font-size:.6rem;color:#5a8a60">Projects + team</div></div>
+      <div style="background:#163224;border:2px solid #4caf50;border-radius:8px;padding:10px;text-align:center"><div style="font-size:1.2rem">👤</div><div style="font-weight:800;font-size:.82rem;color:#4caf50">Member</div><div style="font-size:.6rem;color:#5a8a60">Tasks + own work</div></div>
+      <div style="background:#163224;border:2px solid #3b82f6;border-radius:8px;padding:10px;text-align:center"><div style="font-size:1.2rem">👁</div><div style="font-weight:800;font-size:.82rem;color:#3b82f6">Viewer</div><div style="font-size:.6rem;color:#5a8a60">Read-only access</div></div></div></div>`;}
+};

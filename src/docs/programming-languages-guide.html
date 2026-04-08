@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌸 Programming Languages Guide — Mari's Dev Brain</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --pk:#e91e90;--pk-dk:#be185d;--pk-lt:#fce4ec;--pk-bg:rgba(233,30,144,.06);
+  --gn:#4caf50;--gn-dk:#2e7d32;--gn-lt:#e8f5e9;--gn-bg:rgba(76,175,80,.06);
+  --gd:#f59e0b;--gd-bg:rgba(245,158,11,.06);--gd-lt:#fef9c3;
+  --warn:#ef4444;--warn-bg:rgba(239,68,68,.06);
+  --bg:#0d1f17;--card:#122b1e;--srf:#163224;--brd:#1a3d28;
+  --tx:#e8f5e9;--txm:#5a8a60;--tx2:#a5d6a7;
+  --font:'Nunito',system-ui,sans-serif;--mono:'Consolas',monospace;
+  --rad:14px;--sh:0 4px 16px rgba(0,0,0,.3);
+}
+body{font-family:var(--font);background:var(--bg);color:var(--tx);min-height:100vh;line-height:1.5}
+::-webkit-scrollbar{width:7px}::-webkit-scrollbar-thumb{background:linear-gradient(var(--pk),var(--gn));border-radius:4px}::-webkit-scrollbar-track{background:var(--bg)}
+a{color:var(--pk);text-decoration:none}a:hover{text-decoration:underline}
+
+/* Header */
+.hdr{background:linear-gradient(135deg,var(--card),var(--bg),var(--card));border-bottom:2px solid var(--brd);padding:16px 24px;position:sticky;top:0;z-index:100}
+.hdr-in{max-width:1400px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.hdr h1{font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,var(--gn),var(--pk));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-sub{font-size:.72rem;color:var(--txm)}
+
+/* Tabs */
+.tabs{display:flex;background:var(--card);border-bottom:2px solid var(--brd);padding:0 14px;overflow-x:auto;scrollbar-width:none;position:sticky;top:62px;z-index:99}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 16px;background:none;border:none;color:var(--txm);font-family:var(--font);font-size:.82rem;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;white-space:nowrap;transition:all .2s}
+.tab:hover{color:var(--gn);background:var(--gn-bg)}
+.tab.on{color:var(--pk);border-bottom-color:var(--pk)}
+
+/* Panels */
+.wrap{max-width:1400px;margin:0 auto;padding:20px}
+.pnl{display:none;animation:fi .3s ease}.pnl.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* Cards */
+.c{background:var(--card);border:1.5px solid var(--brd);border-radius:var(--rad);overflow:hidden;box-shadow:var(--sh);margin-bottom:14px;transition:all .3s}
+.c:hover{border-color:var(--pk);transform:translateY(-1px)}
+.c-h{padding:12px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;background:linear-gradient(135deg,var(--srf),var(--card));border-bottom:1px solid var(--brd);user-select:none}
+.c-h:hover{background:var(--srf)}
+.c-b{padding:14px 16px}
+.c.coll .c-b{display:none}.c.coll .chv{transform:rotate(-90deg)}
+.chv{font-size:.7rem;color:var(--txm);transition:transform .2s;margin-left:auto}
+
+/* Stars */
+.stars{display:flex;gap:2px}.star{font-size:1rem;cursor:pointer;opacity:.3;transition:all .15s}.star.on{opacity:1}
+
+/* Pill Comments */
+.pill-area{margin-top:10px}
+.pill-add{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;background:var(--srf);border:1.5px dashed var(--brd);border-radius:20px;font-size:.72rem;color:var(--txm);cursor:pointer;transition:all .2s}
+.pill-add:hover{border-color:var(--pk);color:var(--pk)}
+.pill-input{display:none;margin-top:6px}
+.pill-input.show{display:flex;gap:6px;align-items:center}
+.pill-input input{flex:1;padding:6px 10px;background:var(--srf);border:1.5px solid var(--brd);border-radius:20px;color:var(--tx);font-family:var(--font);font-size:.78rem;outline:none}
+.pill-input input:focus{border-color:var(--pk)}
+.pill-note{background:var(--pk-bg);border:1px solid var(--pk);border-radius:10px;padding:6px 12px;font-size:.78rem;margin-top:6px;color:var(--tx2);display:flex;align-items:center;gap:6px}
+.pill-note .pill-del{cursor:pointer;opacity:.5;font-size:.7rem}.pill-note .pill-del:hover{opacity:1;color:var(--warn)}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:8px;font-size:.68rem;font-weight:700}
+.b-pk{background:var(--pk-bg);color:var(--pk);border:1px solid var(--pk)}
+.b-gn{background:var(--gn-bg);color:var(--gn);border:1px solid var(--gn)}
+.b-gd{background:var(--gd-bg);color:var(--gd);border:1px solid var(--gd)}
+.b-warn{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn)}
+
+/* Meter */
+.meter{display:flex;align-items:center;gap:6px;margin:4px 0}
+.meter-bar{flex:1;height:8px;background:var(--brd);border-radius:4px;overflow:hidden}
+.meter-fill{height:100%;border-radius:4px;transition:width .5s}
+.meter-lbl{font-size:.68rem;color:var(--txm);min-width:28px;text-align:right}
+
+/* Popup/Tooltip */
+.info-btn{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--pk-bg);color:var(--pk);font-size:.65rem;font-weight:900;cursor:pointer;border:1px solid var(--pk);transition:all .15s;vertical-align:middle;margin-left:4px}
+.info-btn:hover{background:var(--pk);color:#fff}
+.popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.popup-overlay.show{opacity:1;pointer-events:auto}
+.popup{background:var(--card);border:2px solid var(--pk);border-radius:var(--rad);padding:20px;max-width:500px;width:90%;max-height:70vh;overflow-y:auto;box-shadow:0 8px 40px rgba(233,30,144,.2)}
+.popup h3{color:var(--pk);margin-bottom:10px;font-size:1rem}
+.popup p{font-size:.82rem;color:var(--tx2);line-height:1.6;margin-bottom:8px}
+.popup .close{position:absolute;top:10px;right:14px;background:none;border:none;color:var(--txm);font-size:1.2rem;cursor:pointer}
+
+/* Comparison Grid */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0}
+.cmp-item{background:var(--srf);border:1.5px solid var(--brd);border-radius:10px;padding:12px;text-align:center}
+.cmp-item h4{font-size:.82rem;margin-bottom:6px}
+
+/* Checkboxes */
+.chk{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--brd);cursor:pointer;font-size:.82rem}
+.chk-box{width:18px;height:18px;border-radius:5px;border:2px solid var(--brd);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;font-size:.65rem}
+.chk.done .chk-box{background:var(--gn);border-color:var(--gn);color:#fff}
+.chk.done .chk-txt{text-decoration:line-through;opacity:.5}
+
+/* Responsive */
+@media(max-width:700px){.cmp{grid-template-columns:1fr}.wrap{padding:10px}}
+</style>
+</head>
+<body>
+
+<!-- Popup Container -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup()">
+  <div class="popup" onclick="event.stopPropagation()" id="popupContent"></div>
+</div>
+
+<!-- Header -->
+<header class="hdr"><div class="hdr-in">
+  <span style="font-size:1.8rem">🌸</span>
+  <div><h1>Programming Languages Guide</h1><div class="hdr-sub">🧪 Interactive • 🎨 Visual • 💡 ADHD-Friendly • Click anything to explore!</div></div>
+  <div style="margin-left:auto;display:flex;gap:6px">
+    <span class="badge b-pk">📌 Saved to features_analyser/docs/</span>
+  </div>
+</div></header>
+
+<!-- Tabs -->
+<nav class="tabs" id="mainTabs">
+  <button class="tab on" onclick="go('overview')">🗺️ Overview</button>
+  <button class="tab" onclick="go('web')">🌐 Web Languages</button>
+  <button class="tab" onclick="go('desktop')">🖥️ Desktop .EXE</button>
+  <button class="tab" onclick="go('pwa')">📱 PWA</button>
+  <button class="tab" onclick="go('compare')">⚖️ Compare</button>
+  <button class="tab" onclick="go('deploy')">☁️ Deployment</button>
+  <button class="tab" onclick="go('path')">🛤️ Your Path</button>
+  <button class="tab" onclick="go('notes')">📝 My Notes</button>
+</nav>
+
+<main class="wrap">
+
+<!-- ═══ OVERVIEW ═══ -->
+<div id="p-overview" class="pnl on">
+
+  <div style="text-align:center;padding:16px 0;margin-bottom:16px">
+    <div style="font-size:2rem;margin-bottom:6px">🧠</div>
+    <div style="font-size:1.1rem;font-weight:800;color:var(--pk)">What Language Should I Use?</div>
+    <div style="font-size:.82rem;color:var(--txm);margin-top:4px">It depends on WHAT you're building! Here's the map 👇</div>
+  </div>
+
+  <!-- Decision Flowchart -->
+  <div class="c"><div class="c-h" onclick="tog(this)"><span>🔀</span><span style="font-weight:800">Decision Flowchart — What Do You Want to Build?</span><span class="chv">▼</span></div>
+  <div class="c-b">
+    <svg viewBox="0 0 700 320" style="width:100%;height:auto;max-height:300px">
+      <!-- Start -->
+      <rect x="270" y="10" width="160" height="40" rx="20" fill="#e91e90" stroke="#fff" stroke-width="1.5"/>
+      <text x="350" y="35" fill="#fff" font-size="12" text-anchor="middle" font-weight="700">What are you building?</text>
+
+      <!-- Branches -->
+      <line x1="290" y1="50" x2="120" y2="90" stroke="#4caf50" stroke-width="2"/>
+      <line x1="350" y1="50" x2="350" y2="90" stroke="#f59e0b" stroke-width="2"/>
+      <line x1="410" y1="50" x2="580" y2="90" stroke="#e91e90" stroke-width="2"/>
+
+      <!-- Web App -->
+      <rect x="40" y="90" width="160" height="36" rx="10" fill="#122b1e" stroke="#4caf50" stroke-width="2"/>
+      <text x="120" y="113" fill="#4caf50" font-size="11" text-anchor="middle" font-weight="700">🌐 Web App / PWA</text>
+      <line x1="120" y1="126" x2="70" y2="160" stroke="#4caf50" stroke-width="1.5"/>
+      <line x1="120" y1="126" x2="170" y2="160" stroke="#4caf50" stroke-width="1.5"/>
+      <rect x="20" y="160" width="100" height="30" rx="8" fill="#4caf50" stroke="none"/><text x="70" y="180" fill="#fff" font-size="9" text-anchor="middle" font-weight="700">JavaScript</text>
+      <rect x="130" y="160" width="100" height="30" rx="8" fill="#2e7d32" stroke="none"/><text x="180" y="180" fill="#fff" font-size="9" text-anchor="middle" font-weight="700">TypeScript</text>
+
+      <!-- Desktop -->
+      <rect x="270" y="90" width="160" height="36" rx="10" fill="#122b1e" stroke="#f59e0b" stroke-width="2"/>
+      <text x="350" y="113" fill="#f59e0b" font-size="11" text-anchor="middle" font-weight="700">🖥️ Desktop .EXE</text>
+      <line x1="310" y1="126" x2="280" y2="160" stroke="#f59e0b" stroke-width="1.5"/>
+      <line x1="350" y1="126" x2="350" y2="160" stroke="#f59e0b" stroke-width="1.5"/>
+      <line x1="390" y1="126" x2="420" y2="160" stroke="#f59e0b" stroke-width="1.5"/>
+      <rect x="240" y="160" width="80" height="30" rx="8" fill="#f59e0b" stroke="none"/><text x="280" y="180" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">Tauri</text>
+      <rect x="325" y="160" width="80" height="30" rx="8" fill="#f59e0b" stroke="none"/><text x="365" y="180" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">Electron</text>
+      <rect x="410" y="160" width="80" height="30" rx="8" fill="#f59e0b" stroke="none"/><text x="450" y="180" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">C# .NET</text>
+
+      <!-- Mobile/Cross -->
+      <rect x="500" y="90" width="160" height="36" rx="10" fill="#122b1e" stroke="#e91e90" stroke-width="2"/>
+      <text x="580" y="113" fill="#e91e90" font-size="11" text-anchor="middle" font-weight="700">📱 Mobile / Both</text>
+      <line x1="550" y1="126" x2="530" y2="160" stroke="#e91e90" stroke-width="1.5"/>
+      <line x1="610" y1="126" x2="630" y2="160" stroke="#e91e90" stroke-width="1.5"/>
+      <rect x="490" y="160" width="80" height="30" rx="8" fill="#e91e90" stroke="none"/><text x="530" y="180" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">Flutter</text>
+      <rect x="590" y="160" width="80" height="30" rx="8" fill="#be185d" stroke="none"/><text x="630" y="180" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">React Native</text>
+
+      <!-- Bottom: YOUR STACK -->
+      <rect x="150" y="240" width="400" height="50" rx="14" fill="none" stroke="#e91e90" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="350" y="260" fill="#e91e90" font-size="11" text-anchor="middle" font-weight="800">🌸 YOUR BEST PATH: JS → TypeScript → Tauri</text>
+      <text x="350" y="278" fill="#5a8a60" font-size="9" text-anchor="middle">Same code → Web + PWA + Desktop .EXE</text>
+    </svg>
+  </div></div>
+
+  <!-- Quick Summary Cards -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:14px">
+    <div class="c" style="border-left:4px solid var(--gn)"><div class="c-b" style="text-align:center">
+      <div style="font-size:1.8rem">📜</div>
+      <div style="font-weight:800;color:var(--gn);margin:4px 0">JavaScript</div>
+      <div style="font-size:.72rem;color:var(--txm)">The language of the web</div>
+      <div class="badge b-gn" style="margin-top:6px">✅ You know this!</div>
+    </div></div>
+    <div class="c" style="border-left:4px solid var(--pk)"><div class="c-b" style="text-align:center">
+      <div style="font-size:1.8rem">🔷</div>
+      <div style="font-weight:800;color:var(--pk);margin:4px 0">TypeScript</div>
+      <div style="font-size:.72rem;color:var(--txm)">JavaScript + safety net</div>
+      <div class="badge b-pk" style="margin-top:6px">⭐ Your next step</div>
+    </div></div>
+    <div class="c" style="border-left:4px solid var(--gd)"><div class="c-b" style="text-align:center">
+      <div style="font-size:1.8rem">🐍</div>
+      <div style="font-weight:800;color:var(--gd);margin:4px 0">Python</div>
+      <div style="font-size:.72rem;color:var(--txm)">Algorithms & data science</div>
+      <div class="badge b-gd" style="margin-top:6px">🔧 For algorithms</div>
+    </div></div>
+    <div class="c" style="border-left:4px solid var(--gn)"><div class="c-b" style="text-align:center">
+      <div style="font-size:1.8rem">🦀</div>
+      <div style="font-weight:800;color:var(--gn);margin:4px 0">Rust (via Tauri)</div>
+      <div style="font-size:.72rem;color:var(--txm)">Tiny, fast .EXE files</div>
+      <div class="badge b-gn" style="margin-top:6px">🖥️ For desktop</div>
+    </div></div>
+  </div>
+</div>
+
+<!-- ═══ WEB LANGUAGES ═══ -->
+<div id="p-web" class="pnl">
+  <h2 style="color:var(--pk);margin-bottom:14px">🌐 Web Languages — Detailed Breakdown</h2>
+
+  <!-- JavaScript -->
+  <div class="c" id="lang-js"><div class="c-h" onclick="tog(this)">
+    <span style="font-size:1.3rem">📜</span>
+    <div style="flex:1"><div style="font-weight:800;font-size:.95rem">JavaScript (JS)</div><div style="font-size:.68rem;color:var(--txm)">ECMAScript • Born 1995 • Brendan Eich @ Netscape</div></div>
+    <div class="stars" data-id="js">${stars(5,4)}</div>
+    <span class="chv">▼</span>
+  </div><div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:10px">
+      The <strong style="color:var(--gn)">only language browsers understand natively</strong>. Every website uses it. From buttons to full apps.
+      <span class="info-btn" onclick="popup('js-deep')">?</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="background:var(--gn-bg);border:1px solid var(--gn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gn);margin-bottom:6px">✅ PROS</div>
+        <div style="font-size:.75rem;color:var(--tx2)">
+          🌸 Runs everywhere (browser, server, desktop)<br>
+          🌸 Huge community & resources<br>
+          🌸 Easy to start learning<br>
+          🌸 No compilation needed<br>
+          🌸 Can make PWAs, websites, servers, apps<br>
+          🌸 YOU ALREADY KNOW IT! 💪
+        </div>
+      </div>
+      <div style="background:var(--warn-bg);border:1px solid var(--warn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--warn);margin-bottom:6px">⚠️ CONS</div>
+        <div style="font-size:.75rem;color:var(--tx2)">
+          😤 No type checking (bugs hide until runtime)<br>
+          😤 "undefined is not a function" errors<br>
+          😤 Inconsistent across browsers (rare now)<br>
+          😤 Can get messy in large projects<br>
+          😤 Easy to write bad code
+        </div>
+      </div>
+    </div>
+
+    <div style="font-size:.75rem;font-weight:700;color:var(--txm);margin-bottom:4px">Difficulty & Power:</div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Learning</span><div class="meter-bar"><div class="meter-fill" style="width:30%;background:var(--gn)"></div></div><div class="meter-lbl" style="color:var(--gn)">Easy</div></div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Power</span><div class="meter-bar"><div class="meter-fill" style="width:75%;background:var(--pk)"></div></div><div class="meter-lbl">75%</div></div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Jobs</span><div class="meter-bar"><div class="meter-fill" style="width:95%;background:var(--gd)"></div></div><div class="meter-lbl" style="color:var(--gd)">🔥</div></div>
+
+    <div class="pill-area" data-lang="js"></div>
+  </div></div>
+
+  <!-- TypeScript -->
+  <div class="c" id="lang-ts"><div class="c-h" onclick="tog(this)">
+    <span style="font-size:1.3rem">🔷</span>
+    <div style="flex:1"><div style="font-weight:800;font-size:.95rem">TypeScript (TS)</div><div style="font-size:.68rem;color:var(--txm)">Microsoft • Born 2012 • Superset of JavaScript</div></div>
+    <div class="stars" data-id="ts">${stars(5,5)}</div>
+    <span class="chv">▼</span>
+  </div><div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:10px">
+      TypeScript = <strong style="color:var(--pk)">JavaScript with a spell-checker</strong>. It catches bugs BEFORE you run the code. Compiles down to regular JS.
+      <span class="info-btn" onclick="popup('ts-deep')">?</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="background:var(--gn-bg);border:1px solid var(--gn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gn);margin-bottom:6px">✅ PROS</div>
+        <div style="font-size:.75rem;color:var(--tx2)">
+          🌸 Catches bugs before runtime<br>
+          🌸 Better autocomplete in editors<br>
+          🌸 Self-documenting code<br>
+          🌸 Easier refactoring<br>
+          🌸 Industry standard for serious apps<br>
+          🌸 YOUR JS CODE IS VALID TS! 🎉
+        </div>
+      </div>
+      <div style="background:var(--warn-bg);border:1px solid var(--warn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--warn);margin-bottom:6px">⚠️ CONS</div>
+        <div style="font-size:.75rem;color:var(--tx2)">
+          😤 Needs a compilation step<br>
+          😤 Extra syntax to learn (types)<br>
+          😤 Can feel verbose at first<br>
+          😤 Some libraries lack type definitions<br>
+          😤 Setup is more complex
+        </div>
+      </div>
+    </div>
+
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Learning</span><div class="meter-bar"><div class="meter-fill" style="width:45%;background:var(--gd)"></div></div><div class="meter-lbl" style="color:var(--gd)">Medium</div></div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Power</span><div class="meter-bar"><div class="meter-fill" style="width:90%;background:var(--pk)"></div></div><div class="meter-lbl">90%</div></div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Jobs</span><div class="meter-bar"><div class="meter-fill" style="width:90%;background:var(--gd)"></div></div><div class="meter-lbl" style="color:var(--gd)">🔥</div></div>
+
+    <div class="pill-area" data-lang="ts"></div>
+  </div></div>
+
+  <!-- Python -->
+  <div class="c" id="lang-py"><div class="c-h" onclick="tog(this)">
+    <span style="font-size:1.3rem">🐍</span>
+    <div style="flex:1"><div style="font-weight:800;font-size:.95rem">Python</div><div style="font-size:.68rem;color:var(--txm)">Guido van Rossum • Born 1991 • General Purpose</div></div>
+    <div class="stars" data-id="py">${stars(5,4)}</div>
+    <span class="chv">▼</span>
+  </div><div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:10px">
+      The <strong style="color:var(--gd)">friendliest language to read</strong>. Best for algorithms, data science, AI, automation. Can make .exe with PyInstaller.
+      <span class="info-btn" onclick="popup('py-deep')">?</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px">
+      <div style="background:var(--gn-bg);border:1px solid var(--gn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gn);margin-bottom:6px">✅ PROS</div>
+        <div style="font-size:.75rem;color:var(--tx2)">
+          🌸 Reads like English<br>
+          🌸 #1 for AI/ML/Data Science<br>
+          🌸 Huge library ecosystem (pip)<br>
+          🌸 Great for algorithms<br>
+          🌸 Can make .exe (PyInstaller)<br>
+          🌸 Runs in browser via Pyodide! 🧪
+        </div>
+      </div>
+      <div style="background:var(--warn-bg);border:1px solid var(--warn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--warn);margin-bottom:6px">⚠️ CONS</div>
+        <div style="font-size:.75rem;color:var(--tx2)">
+          😤 Slow compared to compiled languages<br>
+          😤 Not native in browsers<br>
+          😤 .exe files are HUGE (50-200MB)<br>
+          😤 Not great for mobile apps<br>
+          😤 GIL limits multithreading
+        </div>
+      </div>
+    </div>
+
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Learning</span><div class="meter-bar"><div class="meter-fill" style="width:20%;background:var(--gn)"></div></div><div class="meter-lbl" style="color:var(--gn)">Easiest</div></div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Power</span><div class="meter-bar"><div class="meter-fill" style="width:80%;background:var(--pk)"></div></div><div class="meter-lbl">80%</div></div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Jobs</span><div class="meter-bar"><div class="meter-fill" style="width:85%;background:var(--gd)"></div></div><div class="meter-lbl" style="color:var(--gd)">🔥</div></div>
+
+    <div class="pill-area" data-lang="py"></div>
+  </div></div>
+</div>
+
+<!-- ═══ DESKTOP .EXE ═══ -->
+<div id="p-desktop" class="pnl">
+  <h2 style="color:var(--gd);margin-bottom:14px">🖥️ How to Make .EXE Files</h2>
+
+  <div style="background:var(--gd-bg);border:1.5px solid var(--gd);border-radius:var(--rad);padding:14px;margin-bottom:14px">
+    <div style="font-weight:800;color:var(--gd);margin-bottom:6px">💡 Key Insight</div>
+    <div style="font-size:.82rem;color:var(--tx2)">You DON'T need to learn a new language for .exe! <strong style="color:var(--pk)">Tauri</strong> wraps your existing JS/HTML/CSS into a tiny Windows executable. Same code, two outputs: web + desktop.</div>
+  </div>
+
+  <div class="c"><div class="c-h" onclick="tog(this)"><span>⚡</span><span style="font-weight:800;flex:1">Tauri <span class="badge b-pk">🌸 RECOMMENDED</span></span><span class="chv">▼</span></div>
+  <div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:8px">Your JS app → ~3MB .exe. Uses system webview (not bundled Chrome). Backend in Rust (you don't need to learn Rust!).</div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">.exe size</span><div class="meter-bar"><div class="meter-fill" style="width:10%;background:var(--gn)"></div></div><div class="meter-lbl" style="color:var(--gn)">~3MB</div></div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Speed</span><div class="meter-bar"><div class="meter-fill" style="width:95%;background:var(--gn)"></div></div><div class="meter-lbl" style="color:var(--gn)">⚡</div></div>
+    <div style="font-size:.72rem;color:var(--txm);margin-top:6px">🔗 <a href="https://tauri.app" target="_blank">tauri.app</a> • License: MIT (free)</div>
+    <div class="pill-area" data-lang="tauri"></div>
+  </div></div>
+
+  <div class="c"><div class="c-h" onclick="tog(this)"><span>⚙️</span><span style="font-weight:800;flex:1">Electron</span><span class="chv">▼</span></div>
+  <div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:8px">Same idea but bundles entire Chrome browser. VS Code, Discord, Slack use it. Heavy but battle-tested.</div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">.exe size</span><div class="meter-bar"><div class="meter-fill" style="width:70%;background:var(--warn)"></div></div><div class="meter-lbl" style="color:var(--warn)">~150MB</div></div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Speed</span><div class="meter-bar"><div class="meter-fill" style="width:50%;background:var(--gd)"></div></div><div class="meter-lbl">Medium</div></div>
+    <div style="font-size:.72rem;color:var(--txm);margin-top:6px">🔗 <a href="https://www.electronjs.org" target="_blank">electronjs.org</a> • License: MIT (free)</div>
+    <div class="pill-area" data-lang="electron"></div>
+  </div></div>
+
+  <div class="c"><div class="c-h" onclick="tog(this)"><span>🐍</span><span style="font-weight:800;flex:1">Python + PyInstaller</span><span class="chv">▼</span></div>
+  <div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:8px">Converts Python scripts to .exe. Good for tools/scripts, not great for GUI apps.</div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">.exe size</span><div class="meter-bar"><div class="meter-fill" style="width:60%;background:var(--gd)"></div></div><div class="meter-lbl" style="color:var(--gd)">~50-200MB</div></div>
+    <div style="font-size:.72rem;color:var(--txm);margin-top:6px">🔗 <a href="https://pyinstaller.org" target="_blank">pyinstaller.org</a> • License: GPL (free)</div>
+    <div class="pill-area" data-lang="pyinst"></div>
+  </div></div>
+
+  <div class="c"><div class="c-h" onclick="tog(this)"><span>🎯</span><span style="font-weight:800;flex:1">C# / .NET MAUI (Microsoft)</span><span class="chv">▼</span></div>
+  <div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:8px">Microsoft's native app framework. Great for Windows-first apps. Visual Studio required.</div>
+    <div class="meter"><span style="font-size:.7rem;min-width:70px">Learning</span><div class="meter-bar"><div class="meter-fill" style="width:55%;background:var(--gd)"></div></div><div class="meter-lbl">Medium</div></div>
+    <div style="font-size:.72rem;color:var(--txm);margin-top:6px">🔗 <a href="https://dotnet.microsoft.com/apps/maui" target="_blank">dotnet.microsoft.com/maui</a> • License: MIT (free)</div>
+    <div class="pill-area" data-lang="csharp"></div>
+  </div></div>
+</div>
+
+<!-- ═══ PWA ═══ -->
+<div id="p-pwa" class="pnl">
+  <h2 style="color:var(--gn);margin-bottom:14px">📱 PWA — Progressive Web Apps</h2>
+
+  <div style="background:var(--gn-bg);border:1.5px solid var(--gn);border-radius:var(--rad);padding:14px;margin-bottom:14px">
+    <div style="font-weight:800;color:var(--gn);margin-bottom:6px">🌸 What IS a PWA?</div>
+    <div style="font-size:.82rem;color:var(--tx2)">
+      A website that <strong style="color:var(--pk)">acts like an app</strong>. Install it from the browser, works offline, gets its own icon.
+      <strong>No app store needed!</strong> Your Feature Analyser is already PWA-ready! 🎉
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px">
+    <div class="c" style="margin:0"><div class="c-b" style="text-align:center">
+      <div style="font-size:1.5rem">📦</div>
+      <div style="font-weight:800;font-size:.82rem;color:var(--gn);margin:4px 0">manifest.json</div>
+      <div style="font-size:.68rem;color:var(--txm)">App name, icon, colors</div>
+      <div class="badge b-gn" style="margin-top:4px">✅ You have this</div>
+    </div></div>
+    <div class="c" style="margin:0"><div class="c-b" style="text-align:center">
+      <div style="font-size:1.5rem">⚙️</div>
+      <div style="font-weight:800;font-size:.82rem;color:var(--pk);margin:4px 0">Service Worker</div>
+      <div style="font-size:.68rem;color:var(--txm)">Offline caching</div>
+      <div class="badge b-pk" style="margin-top:4px">✅ You have this</div>
+    </div></div>
+    <div class="c" style="margin:0"><div class="c-b" style="text-align:center">
+      <div style="font-size:1.5rem">☁️</div>
+      <div style="font-weight:800;font-size:.82rem;color:var(--gd);margin:4px 0">HTTPS Hosting</div>
+      <div style="font-size:.68rem;color:var(--txm)">CloudFront / Netlify</div>
+      <div class="badge b-gd" style="margin-top:4px">📋 Deploy step</div>
+    </div></div>
+  </div>
+
+  <div class="c"><div class="c-b">
+    <div style="font-weight:800;font-size:.9rem;color:var(--pk);margin-bottom:8px">🆚 PWA vs Native App vs Electron</div>
+    <table style="width:100%;font-size:.75rem;border-collapse:collapse">
+      <tr style="border-bottom:2px solid var(--brd)"><th style="text-align:left;padding:6px;color:var(--txm)"></th><th style="padding:6px;color:var(--gn)">PWA</th><th style="padding:6px;color:var(--gd)">Electron .exe</th><th style="padding:6px;color:var(--pk)">Native App</th></tr>
+      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">📦 Size</td><td style="padding:6px;color:var(--gn);text-align:center">~1MB</td><td style="padding:6px;color:var(--gd);text-align:center">~150MB</td><td style="padding:6px;text-align:center">~50MB</td></tr>
+      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">🌐 Works offline</td><td style="padding:6px;text-align:center">✅</td><td style="padding:6px;text-align:center">✅</td><td style="padding:6px;text-align:center">✅</td></tr>
+      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">📱 Mobile</td><td style="padding:6px;color:var(--gn);text-align:center">✅ auto</td><td style="padding:6px;text-align:center">❌</td><td style="padding:6px;text-align:center">Separate</td></tr>
+      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">🏪 App Store</td><td style="padding:6px;text-align:center">❌ not needed</td><td style="padding:6px;text-align:center">❌</td><td style="padding:6px;text-align:center">Required</td></tr>
+      <tr><td style="padding:6px">💰 Cost</td><td style="padding:6px;color:var(--gn);text-align:center">Free</td><td style="padding:6px;color:var(--gn);text-align:center">Free</td><td style="padding:6px;color:var(--gd);text-align:center">$99/yr (Apple)</td></tr>
+    </table>
+  </div></div>
+</div>
+
+<!-- ═══ COMPARE ═══ -->
+<div id="p-compare" class="pnl">
+  <h2 style="color:var(--pk);margin-bottom:14px">⚖️ Side-by-Side Comparison</h2>
+  <div style="overflow-x:auto">
+    <table style="width:100%;font-size:.75rem;border-collapse:collapse;min-width:600px">
+      <tr style="border-bottom:2px solid var(--pk)">
+        <th style="text-align:left;padding:8px;color:var(--txm)">Feature</th>
+        <th style="padding:8px;color:var(--gn)">📜 JS</th>
+        <th style="padding:8px;color:var(--pk)">🔷 TS</th>
+        <th style="padding:8px;color:var(--gd)">🐍 Python</th>
+        <th style="padding:8px;color:var(--gn)">🦀 Rust</th>
+        <th style="padding:8px">🎯 C#</th>
+      </tr>
+      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:8px">🌐 Web apps</td><td style="text-align:center;color:var(--gn)">⭐⭐⭐</td><td style="text-align:center;color:var(--gn)">⭐⭐⭐</td><td style="text-align:center;color:var(--gd)">⭐</td><td style="text-align:center">⭐</td><td style="text-align:center">⭐</td></tr>
+      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:8px">📱 PWA</td><td style="text-align:center;color:var(--gn)">⭐⭐⭐</td><td style="text-align:center;color:var(--gn)">⭐⭐⭐</td><td style="text-align:center">❌</td><td style="text-align:center">❌</td><td style="text-align:center">❌</td></tr>
+      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:8px">🖥️ .EXE</td><td style="text-align:center;color:var(--gd)">via Tauri</td><td style="text-align:center;color:var(--gd)">via Tauri</td><td style="text-align:center;color:var(--gd)">PyInstaller</td><td style="text-align:center;color:var(--gn)">⭐⭐⭐</td><td style="text-align:center;color:var(--gn)">⭐⭐⭐</td></tr>
+      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:8px">🤖 AI/ML</td><td style="text-align:center">⭐</td><td style="text-align:center">⭐</td><td style="text-align:center;color:var(--gn)">⭐⭐⭐</td><td style="text-align:center">⭐</td><td style="text-align:center">⭐</td></tr>
+      <tr style="border-bottom:1px solid var(--brd)"><td style="padding:8px">⚡ Speed</td><td style="text-align:center;color:var(--gd)">⭐⭐</td><td style="text-align:center;color:var(--gd)">⭐⭐</td><td style="text-align:center">⭐</td><td style="text-align:center;color:var(--gn)">⭐⭐⭐</td><td style="text-align:center;color:var(--gd)">⭐⭐</td></tr>
+      <tr><td style="padding:8px">📚 Learning</td><td style="text-align:center;color:var(--gn)">Easy</td><td style="text-align:center;color:var(--gd)">Medium</td><td style="text-align:center;color:var(--gn)">Easiest</td><td style="text-align:center;color:var(--warn)">Hard</td><td style="text-align:center;color:var(--gd)">Medium</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══ YOUR PATH ═══ -->
+<div id="p-path" class="pnl">
+  <h2 style="color:var(--gn);margin-bottom:14px">🛤️ Your Learning Path</h2>
+
+  <div style="position:relative;padding-left:30px">
+    <div style="position:absolute;left:12px;top:0;bottom:0;width:3px;background:linear-gradient(var(--gn),var(--pk))"></div>
+
+    <div style="margin-bottom:16px;position:relative">
+      <div style="position:absolute;left:-24px;width:18px;height:18px;border-radius:50%;background:var(--gn);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:.55rem;color:#fff;font-weight:900">✓</div>
+      <div class="c" style="margin:0;border-left:3px solid var(--gn)"><div class="c-b">
+        <div style="font-weight:800;color:var(--gn)">📜 Phase 1: JavaScript (NOW)</div>
+        <div style="font-size:.78rem;color:var(--tx2)">You're here! Building real tools (Feature Analyser). Keep going!</div>
+        <div class="badge b-gn" style="margin-top:4px">✅ IN PROGRESS</div>
+      </div></div>
+    </div>
+
+    <div style="margin-bottom:16px;position:relative">
+      <div style="position:absolute;left:-24px;width:18px;height:18px;border-radius:50%;background:var(--pk);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:.6rem">2</div>
+      <div class="c" style="margin:0;border-left:3px solid var(--pk)"><div class="c-b">
+        <div style="font-weight:800;color:var(--pk)">🔷 Phase 2: TypeScript</div>
+        <div style="font-size:.78rem;color:var(--tx2)">Add types to your existing JS. Same code, fewer bugs. Your .js files barely change!</div>
+      </div></div>
+    </div>
+
+    <div style="margin-bottom:16px;position:relative">
+      <div style="position:absolute;left:-24px;width:18px;height:18px;border-radius:50%;background:var(--gd);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:.6rem">3</div>
+      <div class="c" style="margin:0;border-left:3px solid var(--gd)"><div class="c-b">
+        <div style="font-weight:800;color:var(--gd)">🐍 Phase 3: Python (algorithms)</div>
+        <div style="font-size:.78rem;color:var(--tx2)">Already in your Feature Analyser! Write algorithms in python/ folder, call via Pyodide.</div>
+      </div></div>
+    </div>
+
+    <div style="position:relative">
+      <div style="position:absolute;left:-24px;width:18px;height:18px;border-radius:50%;background:var(--gn);border:3px solid var(--bg);display:flex;align-items:center;justify-content:center;font-size:.6rem">4</div>
+      <div class="c" style="margin:0;border-left:3px solid var(--gn)"><div class="c-b">
+        <div style="font-weight:800;color:var(--gn)">🖥️ Phase 4: Tauri (.exe)</div>
+        <div style="font-size:.78rem;color:var(--tx2)">Same web app → tiny .exe for Windows. No new language needed!</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DEPLOYMENT ═══ -->
+<div id="p-deploy" class="pnl">
+
+  <h2 style="color:var(--gn);margin-bottom:6px">☁️ Deployment — Where Does Your App Live?</h2>
+  <div style="font-size:.78rem;color:var(--txm);margin-bottom:16px">How to get your app from your computer → the internet (or a .exe on someone's desktop)</div>
+
+  <!-- What IS Deployment -->
+  <div style="background:linear-gradient(135deg,var(--gn-bg),var(--pk-bg));border:1.5px solid var(--gn);border-radius:var(--rad);padding:16px;margin-bottom:16px">
+    <div style="font-weight:800;color:var(--gn);margin-bottom:6px;font-size:.95rem">🌸 What IS Deployment?</div>
+    <div style="font-size:.82rem;color:var(--tx2)">
+      <strong style="color:var(--pk)">Deployment = putting your files somewhere people can access them.</strong><br>
+      Your app lives on your computer now. Deployment copies it to a server in the cloud so anyone with the URL can use it.
+      <span class="info-btn" onclick="popup('deploy-how')">?</span>
+    </div>
+  </div>
+
+  <!-- Deployment Methods Flowchart -->
+  <div class="c"><div class="c-h" onclick="tog(this)"><span>🔀</span><span style="font-weight:800;flex:1">Decision Map — Which Deployment?</span><span class="chv">▼</span></div>
+  <div class="c-b">
+    <svg viewBox="0 0 700 280" style="width:100%;max-height:260px">
+      <rect x="250" y="5" width="200" height="36" rx="18" fill="#e91e90" stroke="#fff" stroke-width="1.5"/>
+      <text x="350" y="28" fill="#fff" font-size="11" text-anchor="middle" font-weight="700">What kind of app?</text>
+
+      <!-- Static/PWA -->
+      <line x1="280" y1="41" x2="130" y2="70" stroke="#4caf50" stroke-width="2"/>
+      <rect x="30" y="70" width="200" height="32" rx="8" fill="#122b1e" stroke="#4caf50" stroke-width="2"/>
+      <text x="130" y="91" fill="#4caf50" font-size="10" text-anchor="middle" font-weight="700">🌐 Static / PWA (your apps!)</text>
+      <line x1="80" y1="102" x2="55" y2="130" stroke="#4caf50" stroke-width="1.5"/>
+      <line x1="130" y1="102" x2="130" y2="130" stroke="#4caf50" stroke-width="1.5"/>
+      <line x1="180" y1="102" x2="205" y2="130" stroke="#4caf50" stroke-width="1.5"/>
+      <rect x="10" y="130" width="90" height="28" rx="7" fill="#4caf50"/><text x="55" y="149" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">CloudFront</text>
+      <rect x="110" y="130" width="90" height="28" rx="7" fill="#4caf50"/><text x="155" y="149" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">Netlify</text>
+      <rect x="160" y="130" width="90" height="28" rx="7" fill="#2e7d32"/><text x="205" y="149" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">Azure Static</text>
+
+      <!-- Backend/API -->
+      <line x1="350" y1="41" x2="350" y2="70" stroke="#f59e0b" stroke-width="2"/>
+      <rect x="250" y="70" width="200" height="32" rx="8" fill="#122b1e" stroke="#f59e0b" stroke-width="2"/>
+      <text x="350" y="91" fill="#f59e0b" font-size="10" text-anchor="middle" font-weight="700">⚙️ Has Backend / API</text>
+      <line x1="310" y1="102" x2="290" y2="130" stroke="#f59e0b" stroke-width="1.5"/>
+      <line x1="390" y1="102" x2="410" y2="130" stroke="#f59e0b" stroke-width="1.5"/>
+      <rect x="250" y="130" width="90" height="28" rx="7" fill="#f59e0b"/><text x="295" y="149" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">AWS Lambda</text>
+      <rect x="370" y="130" width="90" height="28" rx="7" fill="#f59e0b"/><text x="415" y="149" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">Azure Functions</text>
+
+      <!-- Enterprise -->
+      <line x1="420" y1="41" x2="570" y2="70" stroke="#e91e90" stroke-width="2"/>
+      <rect x="470" y="70" width="200" height="32" rx="8" fill="#122b1e" stroke="#e91e90" stroke-width="2"/>
+      <text x="570" y="91" fill="#e91e90" font-size="10" text-anchor="middle" font-weight="700">🏢 Enterprise / Full Cloud</text>
+      <line x1="530" y1="102" x2="520" y2="130" stroke="#e91e90" stroke-width="1.5"/>
+      <line x1="610" y1="102" x2="620" y2="130" stroke="#e91e90" stroke-width="1.5"/>
+      <rect x="480" y="130" width="80" height="28" rx="7" fill="#e91e90"/><text x="520" y="149" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">AWS</text>
+      <rect x="580" y="130" width="80" height="28" rx="7" fill="#be185d"/><text x="620" y="149" fill="#fff" font-size="8" text-anchor="middle" font-weight="700">Azure</text>
+
+      <!-- YOUR ANSWER -->
+      <rect x="140" y="200" width="420" height="50" rx="14" fill="none" stroke="#e91e90" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="350" y="220" fill="#e91e90" font-size="11" text-anchor="middle" font-weight="800">🌸 YOUR BEST FIT: AWS S3 + CloudFront (PWA)</text>
+      <text x="350" y="238" fill="#5a8a60" font-size="9" text-anchor="middle">Static files → S3 bucket → CloudFront CDN → HTTPS globally</text>
+    </svg>
+  </div></div>
+
+  <!-- ═══ Deployment Format Types ═══ -->
+  <div class="c"><div class="c-h" onclick="tog(this)"><span>📦</span><span style="font-weight:800;flex:1">Deployment Formats — What Gets Uploaded?</span><span class="chv">▼</span></div>
+  <div class="c-b">
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">
+      <div style="background:var(--gn-bg);border:1.5px solid var(--gn);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:1.5rem">📄</div>
+        <div style="font-weight:800;color:var(--gn);font-size:.85rem;margin:4px 0">Static Files</div>
+        <div style="font-size:.7rem;color:var(--txm)">HTML + CSS + JS files uploaded as-is.<br>No server processing.<br><strong style="color:var(--gn)">This is YOU! 🌸</strong></div>
+      </div>
+      <div style="background:var(--gd-bg);border:1.5px solid var(--gd);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:1.5rem">⚙️</div>
+        <div style="font-weight:800;color:var(--gd);font-size:.85rem;margin:4px 0">Serverless Functions</div>
+        <div style="font-size:.7rem;color:var(--txm)">Small code that runs on demand.<br>AWS Lambda / Azure Functions.<br>Pay per execution, not per hour.</div>
+      </div>
+      <div style="background:var(--pk-bg);border:1.5px solid var(--pk);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:1.5rem">🐳</div>
+        <div style="font-weight:800;color:var(--pk);font-size:.85rem;margin:4px 0">Containers (Docker)</div>
+        <div style="font-size:.7rem;color:var(--txm)">Your app + all dependencies packaged.<br>Runs anywhere identically.<br>For complex backends.</div>
+      </div>
+      <div style="background:var(--gn-bg);border:1.5px solid var(--gn);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:1.5rem">🖥️</div>
+        <div style="font-weight:800;color:var(--gn);font-size:.85rem;margin:4px 0">.EXE / Installer</div>
+        <div style="font-size:.7rem;color:var(--txm)">Desktop distribution.<br>Tauri / Electron → .exe or .msi<br>Distributed via website or store.</div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- ═══ AWS DEEP DIVE ═══ -->
+  <div class="c" style="border-left:4px solid var(--gd)"><div class="c-h" onclick="tog(this)">
+    <span style="font-size:1.3rem">🟠</span>
+    <div style="flex:1"><div style="font-weight:800;font-size:.95rem">Amazon Web Services (AWS)</div><div style="font-size:.68rem;color:var(--txm)">Amazon • Founded 2006 • Market Leader (#1 cloud) • <a href="https://aws.amazon.com" target="_blank">aws.amazon.com</a></div></div>
+    <span class="badge b-gd">Market Leader</span>
+    <span class="chv">▼</span>
+  </div><div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:10px">
+      The <strong style="color:var(--gd)">biggest cloud platform</strong>. 200+ services. Used by Netflix, Airbnb, NASA. Can do EVERYTHING but can feel overwhelming.
+      <span class="info-btn" onclick="popup('aws-deep')">?</span>
+    </div>
+
+    <!-- AWS Services You'd Use -->
+    <div style="font-weight:800;font-size:.78rem;color:var(--gd);margin-bottom:6px">☁️ AWS Services For Your Apps:</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:12px">
+      <div style="background:var(--srf);border:1px solid var(--brd);border-radius:8px;padding:8px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gn)">📦 S3 <span class="badge b-gn" style="font-size:.55rem">YOU NEED</span></div>
+        <div style="font-size:.68rem;color:var(--txm)">Simple Storage Service<br>Stores your HTML/CSS/JS files<br>Like a file cabinet in the cloud</div>
+        <div style="font-size:.6rem;color:var(--gd);margin-top:4px">💰 ~$0.023/GB/month</div>
+      </div>
+      <div style="background:var(--srf);border:1px solid var(--brd);border-radius:8px;padding:8px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gn)">🌐 CloudFront <span class="badge b-gn" style="font-size:.55rem">YOU NEED</span></div>
+        <div style="font-size:.68rem;color:var(--txm)">CDN (Content Delivery Network)<br>Copies files to 400+ locations<br>Users load from nearest server</div>
+        <div style="font-size:.6rem;color:var(--gd);margin-top:4px">💰 ~$0.085/GB transfer</div>
+      </div>
+      <div style="background:var(--srf);border:1px solid var(--brd);border-radius:8px;padding:8px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gd)">🔐 ACM</div>
+        <div style="font-size:.68rem;color:var(--txm)">Certificate Manager<br>Free HTTPS certificates<br>Auto-renewing SSL</div>
+        <div style="font-size:.6rem;color:var(--gn);margin-top:4px">💰 FREE! 🌸</div>
+      </div>
+      <div style="background:var(--srf);border:1px solid var(--brd);border-radius:8px;padding:8px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gd)">🌍 Route 53</div>
+        <div style="font-size:.68rem;color:var(--txm)">Domain name system<br>Points myapp.com to CloudFront<br>Like a phone book for websites</div>
+        <div style="font-size:.6rem;color:var(--gd);margin-top:4px">💰 $0.50/domain/month</div>
+      </div>
+      <div style="background:var(--srf);border:1px solid var(--brd);border-radius:8px;padding:8px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--txm)">⚡ Lambda</div>
+        <div style="font-size:.68rem;color:var(--txm)">Serverless functions<br>Run code without servers<br>For APIs & backends</div>
+        <div style="font-size:.6rem;color:var(--gd);margin-top:4px">💰 1M free requests/month</div>
+      </div>
+      <div style="background:var(--srf);border:1px solid var(--brd);border-radius:8px;padding:8px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--txm)">🗄️ DynamoDB</div>
+        <div style="font-size:.68rem;color:var(--txm)">NoSQL database<br>Store user data<br>Scales automatically</div>
+        <div style="font-size:.6rem;color:var(--gd);margin-top:4px">💰 25GB free forever</div>
+      </div>
+    </div>
+
+    <!-- AWS Deploy Steps -->
+    <div style="font-weight:800;font-size:.78rem;color:var(--pk);margin-bottom:6px">🚀 How to Deploy YOUR App to AWS:</div>
+    <div style="background:var(--srf);border-radius:10px;padding:12px;font-family:var(--mono);font-size:.72rem;color:var(--tx2);white-space:pre-wrap;margin-bottom:12px"># 1. Create S3 bucket
+aws s3 mb s3://my-feature-analyser
+
+# 2. Upload files
+aws s3 sync ./features_analyser/ s3://my-feature-analyser/ --delete
+
+# 3. Create CloudFront distribution (points to S3)
+# → Console: CloudFront → Create Distribution → Origin: S3 bucket
+
+# 4. Get HTTPS certificate (free!)
+# → Console: ACM → Request Certificate → your-domain.com
+
+# 5. Done! Your app is live at:
+# https://d1234abc.cloudfront.net 🌸</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--gn-bg);border:1px solid var(--gn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.75rem;color:var(--gn);margin-bottom:4px">✅ PROS</div>
+        <div style="font-size:.72rem;color:var(--tx2)">
+          🌸 Most services & features (200+)<br>
+          🌸 Best documentation<br>
+          🌸 12-month free tier (generous!)<br>
+          🌸 Global CDN (400+ edge locations)<br>
+          🌸 Most tutorials & community support<br>
+          🌸 Industry standard (great for resume)
+        </div>
+      </div>
+      <div style="background:var(--warn-bg);border:1px solid var(--warn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.75rem;color:var(--warn);margin-bottom:4px">⚠️ CONS</div>
+        <div style="font-size:.72rem;color:var(--tx2)">
+          😤 Overwhelming UI (too many options)<br>
+          😤 Pricing is confusing<br>
+          😤 Can accidentally run up bills<br>
+          😤 IAM permissions are complex<br>
+          😤 Console UI is ugly 😅
+        </div>
+      </div>
+    </div>
+    <div class="pill-area" data-lang="aws"></div>
+  </div></div>
+
+  <!-- ═══ AZURE DEEP DIVE ═══ -->
+  <div class="c" style="border-left:4px solid var(--gn)"><div class="c-h" onclick="tog(this)">
+    <span style="font-size:1.3rem">🟢</span>
+    <div style="flex:1"><div style="font-weight:800;font-size:.95rem">Microsoft Azure</div><div style="font-size:.68rem;color:var(--txm)">Microsoft • Founded 2010 • #2 Cloud • <a href="https://azure.microsoft.com" target="_blank">azure.microsoft.com</a></div></div>
+    <span class="badge b-gn">#2 Cloud</span>
+    <span class="chv">▼</span>
+  </div><div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:10px">
+      Microsoft's cloud. <strong style="color:var(--gn)">Best if you're already in the Microsoft ecosystem</strong> (Windows, Office 365, Teams, .NET). Great enterprise features.
+      <span class="info-btn" onclick="popup('azure-deep')">?</span>
+    </div>
+
+    <!-- Azure Services -->
+    <div style="font-weight:800;font-size:.78rem;color:var(--gn);margin-bottom:6px">☁️ Azure Services Equivalent:</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-bottom:12px">
+      <div style="background:var(--srf);border:1px solid var(--brd);border-radius:8px;padding:8px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gn)">📄 Static Web Apps <span class="badge b-gn" style="font-size:.55rem">EASIEST</span></div>
+        <div style="font-size:.68rem;color:var(--txm)">One-click deploy for static sites<br>Auto HTTPS + CDN included<br>GitHub integration built-in</div>
+        <div style="font-size:.6rem;color:var(--gn);margin-top:4px">💰 FREE for personal use! 🌸</div>
+      </div>
+      <div style="background:var(--srf);border:1px solid var(--brd);border-radius:8px;padding:8px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gd)">📦 Blob Storage</div>
+        <div style="font-size:.68rem;color:var(--txm)">= AWS S3 equivalent<br>File storage in the cloud<br>Can host static websites</div>
+        <div style="font-size:.6rem;color:var(--gd);margin-top:4px">💰 ~$0.018/GB/month</div>
+      </div>
+      <div style="background:var(--srf);border:1px solid var(--brd);border-radius:8px;padding:8px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gd)">🌐 Azure CDN</div>
+        <div style="font-size:.68rem;color:var(--txm)">= AWS CloudFront<br>Global content delivery<br>170+ points of presence</div>
+        <div style="font-size:.6rem;color:var(--gd);margin-top:4px">💰 ~$0.081/GB</div>
+      </div>
+      <div style="background:var(--srf);border:1px solid var(--brd);border-radius:8px;padding:8px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--gd)">⚡ Azure Functions</div>
+        <div style="font-size:.68rem;color:var(--txm)">= AWS Lambda<br>Serverless code execution<br>Supports JS, Python, C#</div>
+        <div style="font-size:.6rem;color:var(--gd);margin-top:4px">💰 1M free executions/month</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--gn-bg);border:1px solid var(--gn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.75rem;color:var(--gn);margin-bottom:4px">✅ PROS</div>
+        <div style="font-size:.72rem;color:var(--tx2)">
+          🌸 Best for Microsoft shops (O365, Teams)<br>
+          🌸 Static Web Apps is SUPER easy<br>
+          🌸 Great free tier<br>
+          🌸 Excellent .NET / C# support<br>
+          🌸 Good enterprise compliance<br>
+          🌸 $200 free credits for 30 days
+        </div>
+      </div>
+      <div style="background:var(--warn-bg);border:1px solid var(--warn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.75rem;color:var(--warn);margin-bottom:4px">⚠️ CONS</div>
+        <div style="font-size:.72rem;color:var(--tx2)">
+          😤 Fewer services than AWS<br>
+          😤 Documentation can be outdated<br>
+          😤 Portal UI is slow<br>
+          😤 Naming is confusing (keeps changing)<br>
+          😤 Less community content than AWS
+        </div>
+      </div>
+    </div>
+    <div class="pill-area" data-lang="azure"></div>
+  </div></div>
+
+  <!-- ═══ CLOUDFLARE ═══ -->
+  <div class="c" style="border-left:4px solid var(--gd)"><div class="c-h" onclick="tog(this)">
+    <span style="font-size:1.3rem">🟡</span>
+    <div style="flex:1"><div style="font-weight:800;font-size:.95rem">Cloudflare Pages + Workers</div><div style="font-size:.68rem;color:var(--txm)">Cloudflare • Edge Computing • <a href="https://pages.cloudflare.com" target="_blank">pages.cloudflare.com</a></div></div>
+    <span class="badge b-gd">Simplest</span>
+    <span class="chv">▼</span>
+  </div><div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:10px">
+      <strong style="color:var(--gd)">The simplest option for static sites/PWAs.</strong> Free tier is incredibly generous. Deploy in 2 minutes. Your Marex PM app uses this!
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--gn-bg);border:1px solid var(--gn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.75rem;color:var(--gn);margin-bottom:4px">✅ PROS</div>
+        <div style="font-size:.72rem;color:var(--tx2)">🌸 Incredibly fast (edge network)<br>🌸 Free HTTPS + CDN automatic<br>🌸 Generous free tier (unlimited sites)<br>🌸 Workers for serverless (100K req/day free)<br>🌸 KV storage included<br>🌸 Deploy from GitHub in 2 clicks</div>
+      </div>
+      <div style="background:var(--warn-bg);border:1px solid var(--warn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.75rem;color:var(--warn);margin-bottom:4px">⚠️ CONS</div>
+        <div style="font-size:.72rem;color:var(--tx2)">😤 Limited backend capabilities<br>😤 Workers have execution time limits<br>😤 Less enterprise features<br>😤 Smaller ecosystem than AWS/Azure<br>😤 KV is eventually consistent</div>
+      </div>
+    </div>
+    <div class="pill-area" data-lang="cloudflare"></div>
+  </div></div>
+
+  <!-- ═══ NETLIFY / VERCEL ═══ -->
+  <div class="c" style="border-left:4px solid var(--pk)"><div class="c-h" onclick="tog(this)">
+    <span style="font-size:1.3rem">🌸</span>
+    <div style="flex:1"><div style="font-weight:800;font-size:.95rem">Netlify & Vercel</div><div style="font-size:.68rem;color:var(--txm)">Developer-first platforms • <a href="https://netlify.com" target="_blank">netlify.com</a> • <a href="https://vercel.com" target="_blank">vercel.com</a></div></div>
+    <span class="badge b-pk">Beginner Fav</span>
+    <span class="chv">▼</span>
+  </div><div class="c-b">
+    <div style="font-size:.82rem;color:var(--tx2);margin-bottom:10px">
+      <strong style="color:var(--pk)">The easiest deployment ever.</strong> Drag-drop your folder and it's live. Free HTTPS, free CDN, automatic deploys from GitHub. Perfect for learning!
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--gn-bg);border:1px solid var(--gn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.75rem;color:var(--gn);margin-bottom:4px">✅ PROS</div>
+        <div style="font-size:.72rem;color:var(--tx2)">🌸 DRAG-DROP DEPLOY! 🎉<br>🌸 Free tier = 100GB bandwidth<br>🌸 Auto-deploys from GitHub<br>🌸 Preview URLs for each branch<br>🌸 Built-in forms & functions<br>🌸 Best DX (developer experience)</div>
+      </div>
+      <div style="background:var(--warn-bg);border:1px solid var(--warn);border-radius:10px;padding:10px">
+        <div style="font-weight:800;font-size:.75rem;color:var(--warn);margin-bottom:4px">⚠️ CONS</div>
+        <div style="font-size:.72rem;color:var(--tx2)">😤 Limited to static + serverless<br>😤 Bandwidth limits on free tier<br>😤 Build minutes limited (300/month)<br>😤 Vercel optimized for Next.js mainly<br>😤 Not ideal for enterprise scale</div>
+      </div>
+    </div>
+    <div class="pill-area" data-lang="netlify"></div>
+  </div></div>
+
+  <!-- ═══ MEGA COMPARISON TABLE ═══ -->
+  <div class="c"><div class="c-h" onclick="tog(this)"><span>⚖️</span><span style="font-weight:800;flex:1">🔥 Full Comparison Table — All Platforms</span><span class="chv">▼</span></div>
+  <div class="c-b">
+    <div style="overflow-x:auto">
+      <table style="width:100%;font-size:.72rem;border-collapse:collapse;min-width:650px">
+        <tr style="border-bottom:2px solid var(--pk)">
+          <th style="text-align:left;padding:8px;color:var(--txm)">Feature</th>
+          <th style="padding:8px;color:var(--gd)">🟠 AWS</th>
+          <th style="padding:8px;color:var(--gn)">🟢 Azure</th>
+          <th style="padding:8px;color:var(--gd)">🟡 Cloudflare</th>
+          <th style="padding:8px;color:var(--pk)">🌸 Netlify</th>
+        </tr>
+        <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">💰 Free tier</td><td style="padding:6px;text-align:center">12 months</td><td style="padding:6px;text-align:center">12 months + $200</td><td style="padding:6px;text-align:center;color:var(--gn);font-weight:700">Forever! ⭐</td><td style="padding:6px;text-align:center;color:var(--gn)">Forever</td></tr>
+        <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">🌐 CDN locations</td><td style="padding:6px;text-align:center;color:var(--gn);font-weight:700">400+ ⭐</td><td style="padding:6px;text-align:center">170+</td><td style="padding:6px;text-align:center;color:var(--gn)">310+</td><td style="padding:6px;text-align:center">~100</td></tr>
+        <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">🚀 Deploy ease</td><td style="padding:6px;text-align:center">😤 Complex</td><td style="padding:6px;text-align:center">🙂 Medium</td><td style="padding:6px;text-align:center;color:var(--gn)">😊 Easy</td><td style="padding:6px;text-align:center;color:var(--gn);font-weight:700">🥰 Easiest ⭐</td></tr>
+        <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">📄 Static hosting</td><td style="padding:6px;text-align:center">S3+CloudFront</td><td style="padding:6px;text-align:center">Static Web Apps</td><td style="padding:6px;text-align:center">Pages</td><td style="padding:6px;text-align:center">Drop folder!</td></tr>
+        <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">⚡ Serverless</td><td style="padding:6px;text-align:center;color:var(--gn)">Lambda ⭐</td><td style="padding:6px;text-align:center">Functions</td><td style="padding:6px;text-align:center">Workers</td><td style="padding:6px;text-align:center">Functions</td></tr>
+        <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">🗄️ Database</td><td style="padding:6px;text-align:center;color:var(--gn)">DynamoDB ⭐</td><td style="padding:6px;text-align:center">CosmosDB</td><td style="padding:6px;text-align:center">D1 / KV</td><td style="padding:6px;text-align:center">❌ (use external)</td></tr>
+        <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">🔐 Auth</td><td style="padding:6px;text-align:center">Cognito</td><td style="padding:6px;text-align:center">AD B2C</td><td style="padding:6px;text-align:center">Access</td><td style="padding:6px;text-align:center">Identity</td></tr>
+        <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">🔧 Services count</td><td style="padding:6px;text-align:center;color:var(--gn);font-weight:700">200+ ⭐</td><td style="padding:6px;text-align:center">200+</td><td style="padding:6px;text-align:center">~30</td><td style="padding:6px;text-align:center">~10</td></tr>
+        <tr style="border-bottom:1px solid var(--brd)"><td style="padding:6px">📚 Learning curve</td><td style="padding:6px;text-align:center;color:var(--warn)">Steep 📈</td><td style="padding:6px;text-align:center;color:var(--gd)">Medium</td><td style="padding:6px;text-align:center;color:var(--gn)">Gentle</td><td style="padding:6px;text-align:center;color:var(--gn);font-weight:700">Tiny ⭐</td></tr>
+        <tr><td style="padding:6px;font-weight:700;color:var(--pk)">🌸 Best for you</td><td style="padding:6px;text-align:center;font-weight:700;color:var(--gd)">Production PWA</td><td style="padding:6px;text-align:center">If using M365</td><td style="padding:6px;text-align:center;font-weight:700;color:var(--gn)">Quick deploy ⭐</td><td style="padding:6px;text-align:center;font-weight:700;color:var(--pk)">Learning ⭐</td></tr>
+      </table>
+    </div>
+  </div></div>
+
+  <!-- ═══ RECOMMENDATION ═══ -->
+  <div style="background:linear-gradient(135deg,var(--gn-bg),var(--pk-bg));border:2px solid var(--pk);border-radius:var(--rad);padding:18px;margin-top:14px">
+    <div style="font-weight:900;font-size:1rem;color:var(--pk);margin-bottom:8px;text-align:center">🌸 Mari's Deployment Strategy 🌸</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="background:var(--card);border:1.5px solid var(--gn);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:1.2rem">🧪</div>
+        <div style="font-weight:800;font-size:.85rem;color:var(--gn)">Learning / Testing</div>
+        <div style="font-size:.75rem;color:var(--tx2);margin-top:4px">Use <strong>Netlify</strong> — drag-drop your folder, instant live URL. Zero config!</div>
+      </div>
+      <div style="background:var(--card);border:1.5px solid var(--pk);border-radius:10px;padding:12px;text-align:center">
+        <div style="font-size:1.2rem">🚀</div>
+        <div style="font-weight:800;font-size:.85rem;color:var(--pk)">Production / Serious</div>
+        <div style="font-size:.75rem;color:var(--tx2);margin-top:4px">Use <strong>AWS S3 + CloudFront</strong> — global CDN, custom domain, maximum control.</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:10px;font-size:.72rem;color:var(--txm)">
+      💡 Start with Netlify to test → Move to AWS when you want custom domains & full control
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══ MY NOTES ═══ -->
+<div id="p-notes" class="pnl">
+  <h2 style="color:var(--pk);margin-bottom:14px">📝 My Notes & Comments</h2>
+  <div style="font-size:.82rem;color:var(--txm);margin-bottom:12px">Click 🌸+ on any language card to add a pill note. All your notes appear here too!</div>
+  <div id="allNotes"></div>
+</div>
+
+</main>
+
+<script>
+// Tab switching
+function go(id){
+  document.querySelectorAll('.pnl').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  const p=document.getElementById('p-'+id);if(p)p.classList.add('on');
+  const tabs=[...document.querySelectorAll('.tab')];
+  const map=['overview','web','desktop','pwa','compare','deploy','path','notes'];
+  const i=map.indexOf(id);if(i>=0&&tabs[i])tabs[i].classList.add('on');
+}
+
+// Card collapse
+function tog(header){header.parentElement.classList.toggle('coll')}
+
+// Stars (visual only for now)
+function stars(max,filled){return Array.from({length:max},(_,i)=>`<span class="star ${i<filled?'on':''}" onclick="this.classList.toggle('on')">🌸</span>`).join('')}
+// Re-render stars in page
+document.querySelectorAll('.stars').forEach(el=>{const id=el.dataset.id;el.innerHTML=stars(5,id==='ts'?5:4)});
+
+// Popups
+function popup(id){
+  const content={
+    'js-deep':`<h3>📜 JavaScript — Deep Dive</h3>
+      <p><strong style="color:var(--gn)">What it actually is:</strong> A programming language that runs inside web browsers. Every website you visit uses it. When you click a button and something happens — that's JavaScript.</p>
+      <p><strong style="color:var(--pk)">How it works:</strong> The browser has a built-in "engine" (V8 in Chrome, SpiderMonkey in Firefox) that reads and executes your JS code in real-time. No compilation step needed — you write it, save it, refresh the page, and it runs.</p>
+      <p><strong style="color:var(--gd)">Technical concept — "Interpreted" language:</strong> Unlike C++ or Rust which are "compiled" (translated to machine code before running), JS is "interpreted" — the engine reads your code line by line and executes it on the fly. Modern engines actually do "JIT compilation" (Just-In-Time) which compiles hot code paths to machine code for speed.</p>
+      <p><strong style="color:var(--gn)">Vanilla JS vs Frameworks:</strong> "Vanilla JS" = plain JavaScript without any framework. React, Vue, Angular are "frameworks" — pre-built tools that add structure. You're using vanilla JS — which means you understand the fundamentals! Frameworks are just JS code someone else wrote.</p>`,
+    'ts-deep':`<h3>🔷 TypeScript — Deep Dive</h3>
+      <p><strong style="color:var(--gn)">What it actually is:</strong> TypeScript is JavaScript with "type annotations." Instead of <code>let x = 5</code> you write <code>let x: number = 5</code>. Now if you accidentally write <code>x = "hello"</code>, TypeScript catches it BEFORE you run the code.</p>
+      <p><strong style="color:var(--pk)">How it works:</strong> You write .ts files. The TypeScript compiler (tsc) checks for errors and converts them to regular .js files. Browsers never see TypeScript — they only run the compiled JavaScript.</p>
+      <p><strong style="color:var(--gd)">Technical concept — "Static typing":</strong> "Dynamic typing" (JS) = types checked while running. "Static typing" (TS) = types checked before running. It's like spell-check for your code. The "static" means "at rest" — before the code moves/runs.</p>
+      <p><strong style="color:var(--gn)">Migration is gradual:</strong> You can rename .js to .ts and it works! Then add types one file at a time. No need to rewrite everything.</p>`,
+    'py-deep':`<h3>🐍 Python — Deep Dive</h3>
+      <p><strong style="color:var(--gn)">What it actually is:</strong> A general-purpose language designed for readability. Uses indentation (whitespace) instead of curly braces. Reads almost like English.</p>
+      <p><strong style="color:var(--pk)">How it works:</strong> Python has its own runtime (interpreter). You install Python, then run <code>python script.py</code>. It reads your code and executes it. Not as fast as compiled languages, but much faster to write.</p>
+      <p><strong style="color:var(--gd)">Technical concept — "Interpreted vs Compiled":</strong> Python is interpreted (like JS). Rust/C++ are compiled (translated to machine code — faster but harder). Python sacrifices speed for developer speed — you write less code and it's more readable.</p>
+      <p><strong style="color:var(--gn)">In your browser (Pyodide):</strong> Your Feature Analyser uses Pyodide — a version of Python compiled to WebAssembly (WASM). This means Python algorithms run directly in the browser! No server needed.</p>`,
+    'deploy-how':`<h3>☁️ Deployment — How It Actually Works</h3>
+      <p><strong style="color:var(--gn)">Think of it like this:</strong> Your app files (HTML, CSS, JS) are sitting on your computer. Only YOU can see them. Deployment = copying those files to a computer that's connected to the internet 24/7 (a "server").</p>
+      <p><strong style="color:var(--pk)">Static hosting (your case):</strong> Your files don't need any server-side processing. They're just files! A service like S3 or Netlify stores them and serves them when someone visits your URL. Like putting a book in a library — anyone can come read it.</p>
+      <p><strong style="color:var(--gd)">CDN (Content Delivery Network):</strong> Instead of one server in one location, your files are copied to hundreds of servers worldwide. When someone in Tokyo visits your app, they get it from a server in Tokyo — not from a server in Virginia. FAST! 🚀</p>
+      <p><strong style="color:var(--gn)">HTTPS:</strong> The padlock in the browser URL bar. It means the connection is encrypted. All modern hosting gives you this for free. Without it, browsers show "Not Secure" warnings.</p>
+      <p><strong style="color:var(--pk)">Domain name:</strong> Instead of <code>d1234abc.cloudfront.net</code>, you get <code>myapp.com</code>. You buy a domain (~$12/year) and point it to your hosting. Route 53 (AWS) or Cloudflare manages this.</p>`,
+    'aws-deep':`<h3>🟠 AWS — Deep Dive</h3>
+      <p><strong style="color:var(--gn)">What it is:</strong> Amazon Web Services — the cloud computing division of Amazon. Started in 2006 when Amazon realized they could rent out their massive server infrastructure to other companies.</p>
+      <p><strong style="color:var(--pk)">Why it's #1:</strong> First mover advantage + massive scale. They have data centers in 33 regions worldwide. Netflix, NASA, Airbnb, and ~33% of all cloud workloads run on AWS.</p>
+      <p><strong style="color:var(--gd)">For your apps specifically:</strong> You'd use S3 (file storage, $0.023/GB/month) + CloudFront (CDN, makes it fast globally) + ACM (free HTTPS). Total cost for a PWA with moderate traffic: <strong>$1-5/month</strong>.</p>
+      <p><strong style="color:var(--gn)">Free Tier:</strong> 12 months of free access to many services. S3: 5GB free. CloudFront: 1TB free transfer/month. Lambda: 1 million free requests/month. After 12 months, you only pay for what you use.</p>
+      <p><strong style="color:var(--pk)">Technical concept — "Regions & AZs":</strong> AWS has "regions" (geographic areas like us-east-1 = Virginia). Each region has multiple "Availability Zones" (AZs) — separate data centers. Your data is replicated across AZs for reliability. If one building loses power, your app still works!</p>`,
+    'azure-deep':`<h3>🟢 Azure — Deep Dive</h3>
+      <p><strong style="color:var(--gn)">What it is:</strong> Microsoft's cloud platform. Born in 2010 as "Windows Azure," renamed to "Microsoft Azure" in 2014. Second largest cloud after AWS (~23% market share).</p>
+      <p><strong style="color:var(--pk)">Why choose it:</strong> If your company uses Microsoft 365, Teams, Active Directory — Azure integrates seamlessly. Single sign-on, same admin portal, unified billing. Also great if you code in C# / .NET.</p>
+      <p><strong style="color:var(--gd)">For your apps:</strong> Azure Static Web Apps is the easiest option — connect your GitHub repo, it auto-deploys on every push. Free tier includes HTTPS, CDN, and serverless functions. Literally 3 clicks to deploy.</p>
+      <p><strong style="color:var(--gn)">Free tier:</strong> $200 credit for first 30 days + 12 months of free services. Static Web Apps: free forever for personal use! Functions: 1M executions/month free. Blob Storage: 5GB free.</p>
+      <p><strong style="color:var(--pk)">Biggest strength:</strong> Enterprise compliance & security. If you ever work for a big company, they're very likely using Azure. Azure AD (Active Directory) handles identity for millions of enterprises. Knowing Azure = employable in corporate world.</p>`
+  };
+  document.getElementById('popupContent').innerHTML=(content[id]||'<p>Coming soon!</p>')+'<div style="text-align:right;margin-top:12px"><button class="info-btn" style="width:auto;padding:4px 12px;border-radius:8px" onclick="closePopup()">Got it! 🌸</button></div>';
+  document.getElementById('popupOverlay').classList.add('show');
+}
+function closePopup(){document.getElementById('popupOverlay').classList.remove('show')}
+
+// Pill Comments System
+const pillData=JSON.parse(localStorage.getItem('langPills')||'{}');
+
+function initPills(){
+  document.querySelectorAll('.pill-area').forEach(area=>{
+    const lang=area.dataset.lang;
+    const notes=pillData[lang]||[];
+    area.innerHTML=notes.map((n,i)=>`<div class="pill-note">🌸 ${esc(n)} <span class="pill-del" onclick="removePill('${lang}',${i})">✕</span></div>`).join('')+
+      `<div class="pill-add" onclick="showPillInput(this,'${lang}')">🌸+ Add note</div>
+       <div class="pill-input" id="pill-input-${lang}">
+         <input placeholder="Your thought..." onkeydown="if(event.key==='Enter')savePill('${lang}',this)">
+         <button style="background:var(--pk);color:#fff;border:none;padding:4px 10px;border-radius:8px;cursor:pointer;font-size:.72rem" onclick="savePill('${lang}',this.previousElementSibling)">Save</button>
+       </div>`;
+  });
+  renderAllNotes();
+}
+
+function showPillInput(btn,lang){document.getElementById('pill-input-'+lang).classList.add('show');document.querySelector('#pill-input-'+lang+' input').focus()}
+
+function savePill(lang,input){
+  const text=input.value.trim();if(!text)return;
+  if(!pillData[lang])pillData[lang]=[];
+  pillData[lang].push(text);
+  localStorage.setItem('langPills',JSON.stringify(pillData));
+  input.value='';
+  initPills();
+}
+
+function removePill(lang,idx){
+  if(pillData[lang])pillData[lang].splice(idx,1);
+  localStorage.setItem('langPills',JSON.stringify(pillData));
+  initPills();
+}
+
+function renderAllNotes(){
+  const c=document.getElementById('allNotes');if(!c)return;
+  let html='';
+  for(const[lang,notes]of Object.entries(pillData)){
+    if(!notes.length)continue;
+    html+=`<div style="margin-bottom:10px"><div style="font-weight:800;font-size:.82rem;color:var(--pk);margin-bottom:4px">${lang.toUpperCase()}</div>${notes.map(n=>'<div class="pill-note">🌸 '+esc(n)+'</div>').join('')}</div>`;
+  }
+  c.innerHTML=html||'<div style="text-align:center;color:var(--txm);padding:20px">No notes yet! Add them from any language card 🌸</div>';
+}
+
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+document.addEventListener('DOMContentLoaded',initPills);
+</script>
+</body>
+</html>

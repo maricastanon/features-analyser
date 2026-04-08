@@ -1,0 +1,11 @@
+/* ═══════════════════════════════════════════════════════════════
+   CODE EDITOR — Algorithm panel and code editing styles
+   ═══════════════════════════════════════════════════════════════ */
+
+#algJSEditor,
+#algPyEditor {
+  tab-size: 2;
+  white-space: pre;
+  overflow-wrap: normal;
+  overflow-x: auto;
+}

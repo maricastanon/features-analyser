@@ -1,0 +1,9 @@
+const Globalsearch={
+  init(cid){this.el=document.getElementById(cid);this.render()},
+  render(){if(!this.el)return;this.el.innerHTML=`<div style="padding:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:1.3rem">🔍</span><span style="font-weight:800;font-size:1rem">Global Search</span></div>
+      <input placeholder="Search across all projects, tasks, notes..." style="width:100%;padding:10px 14px;border-radius:10px;border:2px solid #1a3d28;background:#122b1e;color:#e8f5e9;font-size:.86rem;margin-bottom:10px;font-family:inherit" onfocus="this.style.borderColor='#e91e90'" onblur="this.style.borderColor='#1a3d28'">
+      <div style="font-size:.68rem;color:#5a8a60;margin-bottom:8px">Recent searches:</div>
+      <div style="display:flex;flex-direction:column;gap:4px"><div style="background:#163224;border:1px solid #1a3d28;border-radius:6px;padding:7px 10px;font-size:.76rem;display:flex;align-items:center;gap:6px;cursor:pointer" onmouseover="this.style.borderColor='#e91e90'" onmouseout="this.style.borderColor='#1a3d28'"><span>📋</span> "dashboard bug" <span style="margin-left:auto;font-size:.6rem;color:#5a8a60">3 results</span></div>
+      <div style="background:#163224;border:1px solid #1a3d28;border-radius:6px;padding:7px 10px;font-size:.76rem;display:flex;align-items:center;gap:6px;cursor:pointer" onmouseover="this.style.borderColor='#e91e90'" onmouseout="this.style.borderColor='#1a3d28'"><span>📓</span> "API architecture" <span style="margin-left:auto;font-size:.6rem;color:#5a8a60">7 results</span></div>
+      <div style="background:#163224;border:1px solid #1a3d28;border-radius:6px;padding:7px 10px;font-size:.76rem;display:flex;align-items:center;gap:6px;cursor:pointer" onmouseover="this.style.borderColor='#e91e90'" onmouseout="this.style.borderColor='#1a3d28'"><span>💡</span> "mindmap export" <span style="margin-left:auto;font-size:.6rem;color:#5a8a60">2 results</span></div></div></div>`;}
+};

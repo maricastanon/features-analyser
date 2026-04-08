@@ -1,0 +1,21 @@
+/* ═══════════════════════════════════════════════════════════════
+   DATA FLOW — Flow graph and recorder styles
+   ═══════════════════════════════════════════════════════════════ */
+
+#flowGraphArea {
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-3);
+  min-height: 350px;
+}
+
+#flowGraphArea svg {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+}
+
+@keyframes flowPulse {
+  0% { stroke-dashoffset: 12; }
+  100% { stroke-dashoffset: 0; }
+}

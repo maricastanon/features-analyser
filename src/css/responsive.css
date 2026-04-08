@@ -1,0 +1,29 @@
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE — Mobile & tablet breakpoints
+   ═══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1200px) {
+  .grid-sidebar { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 900px) {
+  .grid-auto { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+
+  .hdr-inner { flex-wrap: wrap; }
+  .hdr-progress { order: 3; width: 100%; justify-content: center; }
+  .side-nav { display: none; }
+}
+
+@media (max-width: 600px) {
+  .wrap { padding: 10px; }
+  .card-header { padding: 10px; }
+  .tab-btn { padding: 9px 12px; font-size: var(--font-size-xs); }
+  .hdr { padding: 10px 14px; }
+  .hdr-title { font-size: var(--font-size-xl); }
+  .sub-tabs { gap: 4px; }
+  .sub-tab { padding: 5px 10px; font-size: var(--font-size-xs); }
+  .modal { width: 95%; max-height: 90vh; }
+}

@@ -1,0 +1,24 @@
+/* ═══════════════════════════════════════════════════════════════
+   MOCKUPS — Import zone, sandbox container styles
+   ═══════════════════════════════════════════════════════════════ */
+
+.import-zone {
+  border: 3px dashed var(--accent-green-lt);
+  border-radius: var(--radius-lg);
+  padding: 30px;
+  text-align: center;
+  background: var(--accent-green-bg);
+  transition: all .3s var(--ease-out);
+  cursor: pointer;
+  margin-bottom: var(--sp-4);
+}
+.import-zone:hover {
+  border-color: var(--accent-pink);
+  background: var(--accent-pink-bg);
+}
+.import-zone.dragover {
+  border-color: var(--accent-pink);
+  background: var(--accent-pink-bg);
+  transform: scale(1.01);
+  box-shadow: var(--shadow-pink);
+}

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d1f17">
+<meta name="description" content="Universal feature development sandbox — brainstorm, build, test, and integrate features for any app.">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<title>🚀 Feature Brainstorm Hub</title>
+
+<!-- CSS (load order matters) -->
+<link rel="stylesheet" href="css/vars.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/features.css">
+<link rel="stylesheet" href="css/mockups.css">
+<link rel="stylesheet" href="css/css-editor.css">
+<link rel="stylesheet" href="css/integration-guide.css">
+<link rel="stylesheet" href="css/data-flow.css">
+<link rel="stylesheet" href="css/code-editor.css">
+<link rel="stylesheet" href="css/inspector.css">
+<link rel="stylesheet" href="css/project-config.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <div class="hdr-logo" title="Feature Brainstorm Hub V4">🧪</div>
+    <div class="hdr-title-wrap">
+      <div class="hdr-title" id="projTitle" contenteditable="true" spellcheck="false">Feature Brainstorm Hub</div>
+      <div class="hdr-sub">
+        <span id="headerFeatCount">0</span> features •
+        <span id="headerImplCount">0</span> implementing •
+        <span id="projectSwitcherSlot"></span>
+      </div>
+    </div>
+    <div class="hdr-progress">
+      <div class="prog-bar"><div class="prog-fill" id="globalProgress" style="width:0%"></div></div>
+      <span class="prog-txt" id="globalProgressTxt">0%</span>
+    </div>
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark/light theme">🌙</button>
+  </div>
+</header>
+
+<!-- ═══ TABS ═══ -->
+<nav class="tabs" id="mainTabs"></nav>
+
+<!-- ═══ CONTENT PANELS ═══ -->
+<main class="wrap">
+  <!-- Features Panel -->
+  <div id="panel-features" class="panel active">
+    <div id="featureSubTabs" class="sub-tabs"></div>
+    <div id="featureGrid" class="grid-auto"></div>
+    <div id="featureAddForm"></div>
+  </div>
+
+  <!-- Improvements Panel -->
+  <div id="panel-improvements" class="panel">
+    <div class="section-header">
+      <h2 class="section-title" style="color:var(--accent-gold)">🔧 Features to Improve</h2>
+      <button class="btn btn-outline" id="addImprovementBtn">+ Add Improvement</button>
+    </div>
+    <div id="improvementGrid"></div>
+  </div>
+
+  <!-- Implementation Panel -->
+  <div id="panel-implementation" class="panel">
+    <div class="section-header">
+      <h2 class="section-title" style="color:var(--accent-pink)">🎯 Implementation Queue</h2>
+      <div class="btn-row">
+        <button class="btn btn-sm btn-outline" id="sortPriorityBtn">Sort: Priority</button>
+        <button class="btn btn-sm btn-outline" id="sortNameBtn">Sort: Name</button>
+      </div>
+    </div>
+    <div id="implementationList"></div>
+  </div>
+
+  <!-- Mockups Panel -->
+  <div id="panel-mockups" class="panel">
+    <div class="section-header">
+      <h2 class="section-title" style="color:var(--accent-green)">🧪 Functional Mockups</h2>
+      <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Import JS+CSS modules • Test live • Customize everything</span>
+    </div>
+    <div id="importZone"></div>
+    <div id="mockupTabs" class="sub-tabs"></div>
+    <div id="mockupContent"></div>
+  </div>
+
+  <!-- Integration Guide Panel -->
+  <div id="panel-integration" class="panel">
+    <div class="section-header">
+      <h2 class="section-title" style="color:var(--accent-pink)">🔧 Integration Helper</h2>
+      <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Your coding arms — step-by-step guides to add features to your app</span>
+    </div>
+    <div id="integrationContent"></div>
+  </div>
+
+  <!-- Inspector Panel -->
+  <div id="panel-inspector" class="panel">
+    <div class="section-header">
+      <h2 class="section-title" style="color:var(--accent-green)">🔬 Data Flow Inspector</h2>
+    </div>
+    <div id="inspectorContent" class="grid-sidebar">
+      <div id="flowGraphArea"></div>
+      <div id="variableInspector"></div>
+    </div>
+  </div>
+
+  <!-- AI Guide Panel -->
+  <div id="panel-guide" class="panel">
+    <div id="guideContent"></div>
+  </div>
+</main>
+
+<!-- ═══ SIDE NAVIGATOR ═══ -->
+<aside class="side-nav" id="sideNav"></aside>
+
+<!-- ═══ MODAL CONTAINER ═══ -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<!-- ═══ TOAST CONTAINER ═══ -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ═══ JAVASCRIPT (load order matters) ═══ -->
+<!-- Utils -->
+<script src="js/utils/Debounce.js"></script>
+<script src="js/utils/DOM.js"></script>
+<script src="js/utils/FileIO.js"></script>
+
+<!-- Core -->
+<script src="js/core/EventBus.js"></script>
+<script src="js/core/Toast.js"></script>
+<script src="js/core/Store.js"></script>
+<script src="js/core/Theme.js"></script>
+
+<!-- Project -->
+<script src="js/project/ProjectConfig.js"></script>
+<script src="js/project/ProjectSwitcher.js"></script>
+
+<!-- Features -->
+<script src="js/features/Categories.js"></script>
+<script src="js/features/Features.js"></script>
+<script src="js/features/AIPrompt.js"></script>
+
+<!-- Improvements -->
+<script src="js/improvements/Improvements.js"></script>
+
+<!-- Implementation -->
+<script src="js/implementation/Implementation.js"></script>
+
+<!-- Mockups -->
+<script src="js/mockups/Sandbox.js"></script>
+<script src="js/mockups/ModuleRegistry.js"></script>
+<script src="js/mockups/MockupManager.js"></script>
+
+<!-- CSS Editor -->
+<script src="js/css-editor/CSSVarExtractor.js"></script>
+<script src="js/css-editor/CSSControls.js"></script>
+<script src="js/css-editor/CSSEditor.js"></script>
+<script src="js/css-editor/CSSExporter.js"></script>
+
+<!-- Integration Helper -->
+<script src="js/integration/UIPatterns.js"></script>
+<script src="js/integration/CodeGenerator.js"></script>
+<script src="js/integration/IntegrationGuide.js"></script>
+<script src="js/integration/StepByStep.js"></script>
+
+<!-- Data Flow -->
+<script src="js/data-flow/ProxyTracker.js"></script>
+<script src="js/data-flow/FlowGraph.js"></script>
+<script src="js/data-flow/FlowRecorder.js"></script>
+<script src="js/data-flow/DataFlow.js"></script>
+
+<!-- Algorithm -->
+<script src="js/algorithm/AlgorithmPanel.js"></script>
+<script src="js/algorithm/PythonRunner.js"></script>
+<script src="js/algorithm/DiffView.js"></script>
+
+<!-- Inspector -->
+<script src="js/inspector/TreeView.js"></script>
+<script src="js/inspector/ChangeTracker.js"></script>
+<script src="js/inspector/Inspector.js"></script>
+
+<!-- App (last — initializes everything) -->
+<script src="js/core/App.js"></script>
+
+<!-- PWA Service Worker Registration -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('[PWA] SW registered:', reg.scope))
+      .catch(err => console.warn('[PWA] SW registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>

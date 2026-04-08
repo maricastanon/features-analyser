@@ -1,0 +1,30 @@
+{
+  "name": "Feature Brainstorm Hub",
+  "short_name": "BrainHub",
+  "description": "Universal feature development sandbox — brainstorm, build, test, and integrate features for any app.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0d1f17",
+  "theme_color": "#e91e90",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["developer tools", "productivity"],
+  "lang": "en"
+}

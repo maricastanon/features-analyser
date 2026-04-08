@@ -1,0 +1,60 @@
+/* ═══════════════════════════════════════════════════════════════
+   CSS EDITOR — Visual CSS customization panel styles
+   ═══════════════════════════════════════════════════════════════ */
+.css-group {
+  margin-bottom: var(--sp-4);
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: var(--sp-3);
+}
+.css-group-title {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  color: var(--accent-pink);
+  margin-bottom: var(--sp-2);
+}
+.css-controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: var(--sp-2);
+}
+.css-control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.css-control-label {
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: capitalize;
+}
+.css-control-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.css-value-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  min-width: 55px;
+  text-align: right;
+}
+.css-color-picker {
+  width: 32px;
+  height: 26px;
+  border: 2px solid var(--border-soft);
+  border-radius: 6px;
+  cursor: pointer;
+  background: none;
+  padding: 1px;
+}
+.css-color-picker:hover {
+  border-color: var(--accent-pink);
+}

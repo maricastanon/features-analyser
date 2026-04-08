@@ -1,0 +1,15 @@
+
+const AICopilot={
+  _msgs:[{role:'ai',text:'Hello! I\'m your AI Copilot. I can help generate plans, analyze risks, suggest priorities, and create status reports. What would you like to do?'}],
+  _suggestions:['📊 Generate status report','🎯 Reprioritize tasks','⚠️ Analyze risks','📋 Create sprint plan','🔄 Suggest automations'],
+  init(cid){this.el=document.getElementById(cid);this.render()},
+  render(){if(!this.el)return;
+    this.el.innerHTML=`<div style="padding:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:1.3rem">🤖</span><span style="font-weight:800;font-size:1rem">AI Copilot</span></div>
+      <div style="background:#163224;border:1px solid #1a3d28;border-radius:10px;padding:10px;margin-bottom:10px;max-height:200px;overflow-y:auto">${this._msgs.map(m=>`<div style="margin-bottom:8px;display:flex;gap:8px"><span style="font-size:.9rem">${m.role==='ai'?'🤖':'👤'}</span><div style="background:${m.role==='ai'?'rgba(233,30,144,.08)':'rgba(76,175,80,.08)'};border-radius:8px;padding:8px 10px;font-size:.78rem;line-height:1.4;flex:1">${m.text}</div></div>`).join('')}</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px">${this._suggestions.map(s=>`<button onclick="AICopilot.ask('${s}')" style="padding:4px 10px;border-radius:6px;border:1px solid #1a3d28;background:rgba(233,30,144,.05);color:#f472b6;font-size:.68rem;cursor:pointer;font-family:inherit;transition:.15s" onmouseover="this.style.background='rgba(233,30,144,.15)'" onmouseout="this.style.background='rgba(233,30,144,.05)'">${s}</button>`).join('')}</div>
+      <div style="display:flex;gap:6px"><input id="aiInput" placeholder="Ask your AI Copilot..." style="flex:1;padding:8px;border-radius:8px;border:1px solid #1a3d28;background:#122b1e;color:#e8f5e9;font-size:.8rem;font-family:inherit" onkeypress="if(event.key==='Enter')AICopilot.send()">
+      <button onclick="AICopilot.send()" style="padding:8px 14px;border-radius:8px;border:none;background:#e91e90;color:#fff;font-weight:700;font-size:.78rem;cursor:pointer;font-family:inherit">Send</button></div></div>`},
+  ask(q){this._msgs.push({role:'user',text:q});const responses={'📊 Generate status report':'Here\'s your status: 12 tasks completed, 5 in progress, 2 blocked. Sprint velocity: 85%. On track for deadline! 🎯','🎯 Reprioritize tasks':'I\'d suggest moving "API integration" to P1 — it blocks 3 other tasks. "UI polish" can wait to P3.','⚠️ Analyze risks':'Top risk: API rate limiting (P:4 × I:5 = 20). Recommend implementing caching layer and retry logic.','📋 Create sprint plan':'Sprint 15 plan: 8 tasks, 34 story points. Focus: Backend API completion + Integration testing.','🔄 Suggest automations':'You could automate: daily standup summaries, PR notifications, deployment status updates, and test result reporting.'};
+    this._msgs.push({role:'ai',text:responses[q]||'I\'d be happy to help with that! Let me analyze your project data...'});this.render()},
+  send(){const inp=document.getElementById('aiInput');if(!inp?.value.trim())return;this.ask(inp.value.trim());inp.value=''}
+};
