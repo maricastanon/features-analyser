@@ -6,7 +6,7 @@
 const Sandbox = {
   _instances: {}, // moduleId -> { iframe, container, state }
 
-  create(moduleId, containerEl, jsSource, cssSource) {
+  create(moduleId, containerEl, jsSource, cssSource, htmlSource = '') {
     // Build iframe srcdoc with the module's CSS and JS
     const theme = App.currentProject?.theme || {};
     const srcdoc = `<!DOCTYPE html>
@@ -40,7 +40,7 @@ body {
 <style id="overrideCSS"></style>
 </head>
 <body>
-<div id="moduleRoot"></div>
+<div id="moduleRoot">${htmlSource || ''}</div>
 <script>
 // Message handler for parent communication
 window.addEventListener('message', function(e) {
