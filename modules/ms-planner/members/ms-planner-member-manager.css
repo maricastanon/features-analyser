@@ -1,0 +1,193 @@
+.mpm-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 700px;
+}
+
+.mpm-title {
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  margin: 0 0 16px;
+}
+
+.mpm-search {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  margin-bottom: 12px;
+  box-sizing: border-box;
+  font-size: 0.9rem;
+}
+
+.mpm-add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.mpm-input {
+  padding: 8px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  flex: 1;
+  min-width: 120px;
+}
+
+.mpm-select {
+  padding: 8px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.mpm-btn {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  background: var(--accent-pink);
+  color: #fff;
+  white-space: nowrap;
+}
+
+.mpm-btn:hover {
+  opacity: 0.85;
+}
+
+.mpm-btn-add {
+  background: var(--accent-green);
+}
+
+.mpm-btn-save {
+  background: var(--accent-green);
+}
+
+.mpm-btn-cancel {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+}
+
+.mpm-btn-remove {
+  background: transparent;
+  color: var(--accent-pink);
+  border: 1px solid var(--accent-pink);
+}
+
+.mpm-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mpm-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  transition: background 0.15s;
+}
+
+.mpm-item:hover {
+  background: var(--bg-surface);
+}
+
+.mpm-item-editing {
+  background: var(--bg-surface);
+  flex-wrap: wrap;
+}
+
+.mpm-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.mpm-status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-card);
+}
+
+.mpm-status-online {
+  background: var(--accent-green);
+}
+
+.mpm-status-offline {
+  background: var(--text-muted);
+}
+
+.mpm-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.mpm-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.mpm-email {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mpm-role-badge {
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.mpm-role-owner {
+  background: var(--accent-pink);
+  color: #fff;
+}
+
+.mpm-role-member {
+  background: var(--accent-green);
+  color: #fff;
+}
+
+.mpm-role-guest {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+}
+
+.mpm-confirm-remove .mpm-btn-remove {
+  background: var(--accent-pink);
+  color: #fff;
+}

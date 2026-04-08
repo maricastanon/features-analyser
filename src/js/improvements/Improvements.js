@@ -112,6 +112,14 @@ const Improvements = {
     if (!item) return;
     item.status = status;
     await Store.put('improvements', item);
+    if (item.sourceFeatureId) {
+      const feature = await Store.get('features', item.sourceFeatureId);
+      if (feature) {
+        feature.status = status === 'resolved' ? 'done' : status === 'archived' ? 'archived' : 'improving';
+        feature.updated = new Date().toISOString();
+        await Store.put('features', feature);
+      }
+    }
     if (item.sourceModuleId) {
       const moduleStatus = status === 'resolved' ? 'done' : status === 'archived' ? 'archived' : 'improvement';
       await ModuleRegistry.updateMeta(item.sourceModuleId, {

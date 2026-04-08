@@ -195,5 +195,8 @@ const Implementation = {
         checklist: item.checklist
       });
     }
+
+    if (typeof Features !== 'undefined') await Features.render();
+    if (typeof Improvements !== 'undefined') await Improvements.render();
   }
 };

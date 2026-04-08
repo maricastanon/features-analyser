@@ -1,0 +1,145 @@
+.mps-cal-wrapper {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 16px;
+  font-family: 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+}
+.mps-cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding: 0 8px;
+}
+.mps-cal-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.mps-cal-nav {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.15s;
+}
+.mps-cal-nav:hover {
+  background: var(--accent-pink);
+  color: #fff;
+}
+.mps-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+.mps-cal-dayname {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  padding: 6px 0;
+  text-transform: uppercase;
+}
+.mps-cal-cell {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  min-height: 80px;
+  padding: 4px;
+  cursor: pointer;
+  transition: background 0.15s;
+  overflow: hidden;
+}
+.mps-cal-cell:hover {
+  background: var(--bg-surface);
+}
+.mps-cal-empty {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+.mps-cal-today {
+  border: 2px solid var(--accent-pink);
+}
+.mps-cal-overdue .mps-cal-daynum {
+  color: #e74c3c;
+}
+.mps-cal-daynum {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 2px;
+  color: var(--text-muted);
+}
+.mps-cal-pill {
+  display: block;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  color: #fff;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.mps-cal-pill:hover {
+  filter: brightness(1.15);
+}
+.mps-cal-form-area {
+  margin-top: 12px;
+}
+.mps-cal-form {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.mps-cal-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 6px 10px;
+  font-size: 13px;
+  outline: none;
+}
+.mps-cal-input:focus {
+  border-color: var(--accent-pink);
+}
+.mps-cal-form-actions {
+  display: flex;
+  gap: 6px;
+}
+.mps-cal-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.mps-cal-btn-save {
+  background: var(--accent-green);
+  color: #fff;
+}
+.mps-cal-btn-del {
+  background: var(--accent-pink);
+  color: #fff;
+}
+.mps-cal-btn-cancel {
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+}
+.mps-cal-btn:hover {
+  filter: brightness(1.1);
+}

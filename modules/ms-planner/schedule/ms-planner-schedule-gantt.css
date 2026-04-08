@@ -1,0 +1,214 @@
+.mps-gt-wrapper {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 16px;
+  font-family: 'Segoe UI', sans-serif;
+  color: var(--text-primary);
+}
+.mps-gt-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 24px;
+  font-size: 14px;
+}
+.mps-gt-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--bg-card);
+}
+.mps-gt-header {
+  display: flex;
+  border-bottom: 2px solid var(--border-soft);
+  background: var(--bg-surface);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+.mps-gt-task-hdr {
+  width: 120px;
+  flex-shrink: 0;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border-soft);
+}
+.mps-gt-chart-hdr {
+  display: flex;
+}
+.mps-gt-hcell {
+  flex-shrink: 0;
+  padding: 6px 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  border-right: 1px solid var(--border-soft);
+  font-weight: 500;
+}
+.mps-gt-body {
+  position: relative;
+}
+.mps-gt-row {
+  display: flex;
+  border-bottom: 1px solid var(--border-soft);
+  height: 44px;
+}
+.mps-gt-row:last-child {
+  border-bottom: none;
+}
+.mps-gt-task-cell {
+  width: 120px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-soft);
+  gap: 4px;
+}
+.mps-gt-task-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+.mps-gt-task-name:hover {
+  color: var(--accent-pink);
+  text-decoration: underline;
+}
+.mps-gt-del-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 2px;
+  line-height: 1;
+}
+.mps-gt-del-btn:hover {
+  color: var(--accent-pink);
+}
+.mps-gt-chart-cell {
+  position: relative;
+  height: 44px;
+}
+.mps-gt-bar {
+  position: absolute;
+  top: 10px;
+  height: 24px;
+  background: var(--accent-green);
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+.mps-gt-critical {
+  background: #e74c3c;
+}
+.mps-gt-progress {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 4px 0 0 4px;
+  transition: width 0.2s;
+}
+.mps-gt-bar-text {
+  position: relative;
+  z-index: 1;
+  font-size: 10px;
+  color: #fff;
+  padding: 0 6px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.mps-gt-milestone {
+  position: absolute;
+  top: 10px;
+  width: 18px;
+  height: 18px;
+  background: var(--accent-pink);
+  transform: rotate(45deg);
+  border: 2px solid #fff;
+}
+.mps-gt-svg {
+  pointer-events: none;
+  z-index: 1;
+}
+.mps-gt-arrow {
+  fill: none;
+  stroke: var(--text-muted);
+  stroke-width: 1.5;
+}
+.mps-gt-today-line {
+  stroke: #e74c3c;
+  stroke-width: 2;
+  stroke-dasharray: 4 3;
+}
+.mps-gt-add-area,
+.mps-gt-edit-area {
+  margin-top: 12px;
+}
+.mps-gt-form {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.mps-gt-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  color: var(--text-primary);
+  padding: 6px 10px;
+  font-size: 13px;
+  outline: none;
+}
+.mps-gt-input:focus {
+  border-color: var(--accent-pink);
+}
+.mps-gt-input[type="number"] {
+  width: 60px;
+}
+.mps-gt-chk {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.mps-gt-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.mps-gt-btn-add,
+.mps-gt-btn-save {
+  background: var(--accent-green);
+  color: #fff;
+}
+.mps-gt-btn-cancel {
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+}
+.mps-gt-btn:hover {
+  filter: brightness(1.1);
+}

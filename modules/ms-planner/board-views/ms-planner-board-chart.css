@@ -1,0 +1,258 @@
+.ch-root {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  padding: 16px;
+  min-height: 400px;
+}
+
+.ch-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--accent-pink);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.ch-btn-clear {
+  margin-left: auto;
+  padding: 4px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.ch-btn-clear:hover {
+  background: var(--accent-pink);
+  color: var(--bg-deep);
+}
+
+.ch-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.ch-stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+}
+
+.ch-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.ch-stat--green {
+  color: var(--accent-green);
+}
+
+.ch-stat--pink {
+  color: var(--accent-pink);
+}
+
+.ch-stat-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.ch-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.ch-chart-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.ch-chart-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.ch-donut {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 14px;
+}
+
+.ch-donut-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: conic-gradient(var(--donut-gradient, #95a5a6 0% 100%));
+  mask: radial-gradient(farthest-side, transparent 60%, #000 61%);
+  -webkit-mask: radial-gradient(farthest-side, transparent 60%, #000 61%);
+}
+
+.ch-donut-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.ch-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ch-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.ch-legend-item:hover {
+  background: var(--bg-surface);
+}
+
+.ch-legend-item strong {
+  margin-left: auto;
+}
+
+.ch-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ch-hbars {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ch-hbar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: background 0.15s;
+}
+
+.ch-hbar-row:hover {
+  background: var(--bg-surface);
+}
+
+.ch-hbar-label {
+  font-size: 12px;
+  min-width: 70px;
+  text-align: right;
+  color: var(--text-muted);
+}
+
+.ch-hbar-track {
+  flex: 1;
+  height: 18px;
+  background: var(--bg-surface);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.ch-hbar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.ch-hbar-fill--pink {
+  background: var(--accent-pink);
+}
+
+.ch-hbar-fill--green {
+  background: var(--accent-green);
+}
+
+.ch-hbar-val {
+  font-size: 12px;
+  font-weight: 600;
+  min-width: 20px;
+}
+
+.ch-tasklist {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.ch-task-ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ch-task-li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-soft);
+  font-size: 13px;
+}
+
+.ch-task-li:last-child {
+  border-bottom: none;
+}
+
+.ch-task-status {
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.ch-task-name {
+  flex: 1;
+  font-weight: 500;
+}
+
+.ch-task-meta {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.ch-task-due {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.ch-task-due--overdue {
+  background: #e74c3c;
+  color: #fff;
+}

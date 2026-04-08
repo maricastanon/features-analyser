@@ -341,7 +341,7 @@ const BundledModules = {
   },
 
   getStarterSet() {
-    return this.ITEMS.filter(item => item.jsPath.includes('feature-modules-17'));
+    return this.ITEMS.filter(item => item.jsPath.includes('feature-modules-universal'));
   },
 
   getRecommended(appType) {

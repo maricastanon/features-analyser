@@ -1,0 +1,167 @@
+.pfp-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.pfp-header {
+  margin-bottom: 12px;
+}
+
+.pfp-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.pfp-section-label {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 14px 0 6px;
+}
+
+.pfp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pfp-preset-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-surface);
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.pfp-preset-item:hover {
+  border-color: var(--border-soft);
+}
+
+.pfp-preset-item.pfp-active {
+  border-color: var(--accent-pink);
+  background: var(--bg-deep);
+}
+
+.pfp-preset-item.pfp-active .pfp-preset-name {
+  color: var(--accent-pink);
+  font-weight: 600;
+}
+
+.pfp-preset-name {
+  flex: 1;
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.pfp-usage-badge {
+  background: var(--bg-deep);
+  color: var(--text-muted);
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.pfp-icon-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+.pfp-icon-btn:hover {
+  color: var(--accent-pink);
+  background: var(--bg-deep);
+}
+
+.pfp-delete-btn:hover {
+  color: #e74c3c;
+}
+
+.pfp-editing {
+  background: var(--bg-deep);
+  border-color: var(--accent-pink);
+}
+
+.pfp-rename-input {
+  flex: 1;
+  padding: 4px 8px;
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.pfp-rename-input:focus {
+  border-color: var(--accent-pink);
+}
+
+.pfp-save-rename {
+  background: var(--accent-green);
+  color: #fff;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.pfp-empty {
+  color: var(--text-muted);
+  font-size: 13px;
+  padding: 8px 12px;
+  font-style: italic;
+}
+
+.pfp-create-section {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.pfp-new-name {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.pfp-new-name:focus {
+  border-color: var(--accent-pink);
+}
+
+.pfp-create-btn {
+  background: var(--accent-pink);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pfp-create-btn:hover {
+  opacity: 0.9;
+}

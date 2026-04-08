@@ -241,6 +241,9 @@ const Features = {
         status: 'open',
         created: new Date().toISOString()
       });
+    } else if (!matched.sourceFeatureId) {
+      matched.sourceFeatureId = f.id;
+      await Store.put('improvements', matched);
     }
 
     f.status = 'improving';

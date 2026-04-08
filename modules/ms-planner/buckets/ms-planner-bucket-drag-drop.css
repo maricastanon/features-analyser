@@ -1,0 +1,239 @@
+.dd-root {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  padding: 20px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  overflow-x: auto;
+}
+
+.dd-board {
+  display: flex;
+  gap: 16px;
+  min-height: 400px;
+  align-items: flex-start;
+}
+
+.dd-bucket {
+  min-width: 260px;
+  max-width: 300px;
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dd-bucket-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.dd-bucket-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.dd-bucket-count {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.dd-card-list {
+  padding: 10px;
+  min-height: 60px;
+  flex: 1;
+  transition: background 0.2s;
+  border-radius: 0 0 10px 10px;
+}
+
+.dd-card-list.dd-drop-active {
+  background: rgba(233, 30, 99, 0.08);
+  outline: 2px dashed var(--accent-pink);
+  outline-offset: -4px;
+  border-radius: 6px;
+}
+
+.dd-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  cursor: grab;
+  position: relative;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+
+.dd-card:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.dd-card.dd-dragging {
+  opacity: 0.4;
+  transform: rotate(2deg);
+}
+
+.dd-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 2px;
+}
+
+.dd-card.dd-priority-high::before {
+  background: var(--accent-pink);
+}
+
+.dd-card.dd-priority-medium::before {
+  background: #ff9800;
+}
+
+.dd-card.dd-priority-low::before {
+  background: var(--accent-green);
+}
+
+.dd-card-title {
+  font-size: 0.88rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  padding-right: 20px;
+}
+
+.dd-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dd-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--accent-pink);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dd-dots {
+  color: var(--text-muted);
+  font-size: 0.6rem;
+  letter-spacing: 2px;
+}
+
+.dd-card-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 2px 4px;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.dd-card:hover .dd-card-remove {
+  opacity: 1;
+}
+
+.dd-card-remove:hover {
+  background: #e53935;
+  color: #fff;
+}
+
+.dd-add-zone {
+  padding: 8px 10px 10px;
+  border-top: 1px solid var(--border-soft);
+}
+
+.dd-btn-add-card {
+  width: 100%;
+  padding: 7px;
+  background: transparent;
+  border: 1px dashed var(--border-soft);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background 0.15s, color 0.15s;
+}
+
+.dd-btn-add-card:hover {
+  background: var(--bg-surface);
+  color: var(--accent-pink);
+  border-color: var(--accent-pink);
+}
+
+.dd-add-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.dd-input,
+.dd-select {
+  padding: 7px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 0.85rem;
+}
+
+.dd-input:focus {
+  outline: 2px solid var(--accent-pink);
+  outline-offset: -1px;
+}
+
+.dd-form-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.dd-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.dd-btn-confirm {
+  background: var(--accent-green);
+  color: #fff;
+  flex: 1;
+}
+
+.dd-btn-cancel {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+}
+
+.dd-hidden {
+  display: none !important;
+}

@@ -63,8 +63,9 @@ const MockupManager = {
       <input type="file" id="importFileInput" multiple accept=".js,.css,.html,.htm,.py,.md,.markdown,.mmd,.txt,.csv,.json,.svg,.png,.jpg,.jpeg,.webp,.gif" style="display:none" onchange="MockupManager.handleFileInput(this.files)">
     </div>
     <div class="btn-row" style="margin-bottom:var(--sp-4)">
-      <button class="btn btn-pink" onclick="MockupManager.loadStarterSet()">🚀 Load 17 Starter Mockups</button>
-      <button class="btn btn-outline" onclick="MockupManager.importBundled('kanban-board')">📋 Load Kanban Example</button>
+      <button class="btn btn-pink" onclick="MockupManager.loadStarterSet()">🚀 Load 17 Universal Mockups</button>
+      <button class="btn btn-outline" onclick="MockupManager.loadBundledSet('company-x1')">🏢 Company X1 Set</button>
+      <button class="btn btn-outline" onclick="MockupManager.loadBundledSet('marex-dynamic')">🌱 Marex Dynamic Set</button>
       <button class="btn btn-outline" onclick="MockupManager.loadAllBundled()">📚 Load Full Catalog</button>
       <button class="btn btn-outline" onclick="MockupManager.exportProjectList()">📝 Export Project List</button>
     </div>
@@ -91,6 +92,8 @@ const MockupManager = {
     const existing = await ModuleRegistry.getAll();
     const loadedIds = new Set(existing.map(item => item.bundleId).filter(Boolean));
     const items = BundledModules.getAll();
+    const starterCount = BundledModules.getStarterSet().length;
+    const domainCount = items.filter(item => item.jsPath.includes('feature-modules-17')).length;
 
     container.innerHTML = `
     <div class="card" style="margin-bottom:var(--sp-4)">
@@ -99,7 +102,7 @@ const MockupManager = {
           <div>
             <div class="field-label pink"><span class="dot"></span> Built-In Functional Mockups</div>
             <div style="font-size:var(--font-size-sm);color:var(--text-muted)">
-              Starter library: the original 17 planner mockups, a reusable kanban example, and extra universal modules for cross-app experiments.
+              Library: ${starterCount} universal mockups, ${domainCount} planner mockups, and a reusable kanban example.
             </div>
           </div>
           <span class="badge badge-green">${loadedIds.size} loaded</span>
@@ -248,7 +251,7 @@ const MockupManager = {
     }
     await this._renderBundledLibrary();
     await this._renderModuleTabs();
-    Toast.show('17 starter mockups loaded.');
+    Toast.show('17 universal mockups loaded.');
   },
 
   async loadAllBundled() {
@@ -268,7 +271,7 @@ const MockupManager = {
     container.innerHTML = modules.map(item => `
       <button class="sub-tab ${item.id === this._activeModuleId ? 'active' : ''}"
               onclick="MockupManager.showModule('${item.id}')">
-        ${this._itemIcon(item)} ${DOM.esc(item.name)}
+        ${this._itemIcon(item)} ${DOM.esc(item.name)}${item.status === 'done' ? ' ✅' : item.status === 'archived' ? ' 🗂️' : item.status === 'implementation' ? ' 🎯' : item.status === 'improvement' ? ' 🔧' : ''}
       </button>
     `).join('') || '<span style="font-size:var(--font-size-sm);color:var(--text-muted)">No work items imported yet</span>';
   },
@@ -418,10 +421,12 @@ const MockupManager = {
     if (target === 'feature') {
       const feature = await this._ensureFeatureLink(mod, mod.analysis || null);
       await ModuleRegistry.updateMeta(moduleId, { status: 'feature', linkedFeatureId: feature.id });
+      await this._syncLinkedRecords({ ...mod, status: 'feature', linkedFeatureId: feature.id });
       if (typeof Features !== 'undefined') await Features.render();
     } else if (target === 'improvement') {
       const improvement = await this._ensureImprovementLink(mod, mod.analysis || null);
       await ModuleRegistry.updateMeta(moduleId, { status: 'improvement', linkedImprovementId: improvement.id });
+      await this._syncLinkedRecords({ ...mod, status: 'improvement', linkedImprovementId: improvement.id });
       if (typeof Improvements !== 'undefined') await Improvements.render();
     } else if (target === 'implementation') {
       const feature = await this._ensureFeatureLink(mod, mod.analysis || null);
@@ -440,6 +445,7 @@ const MockupManager = {
         linkedFeatureId: feature.id,
         linkedImplementationId: linked?.id || ''
       });
+      await this._syncLinkedRecords({ ...mod, status: 'implementation', linkedFeatureId: feature.id, linkedImplementationId: linked?.id || '' });
       if (typeof Implementation !== 'undefined') await Implementation.render();
     }
 
@@ -776,6 +782,7 @@ const MockupManager = {
       });
     }
 
+    await this._syncLinkedRecords(updated);
     return updated;
   },
 
@@ -800,8 +807,12 @@ const MockupManager = {
     payload.sourceModuleId = mod.id;
     payload.name = mod.name;
     payload.description = payload.description || mod.summary || analysis?.summary || this._fallbackDescription(mod);
-    payload.category = payload.category || mod.category || analysis?.categoryId || Categories.getAll()[0]?.id || 'custom';
-    payload.priority = payload.priority || mod.priority || analysis?.recommendedPriority || 3;
+    payload.category = !payload.category || payload.category === 'custom'
+      ? (mod.category || analysis?.categoryId || Categories.getAll()[0]?.id || 'custom')
+      : payload.category;
+    payload.priority = payload.priority && payload.priority !== 3
+      ? payload.priority
+      : (mod.priority || analysis?.recommendedPriority || 3);
     payload.status = payload.status === 'done' ? 'done' : 'imported';
     payload.updated = now;
 
@@ -827,7 +838,9 @@ const MockupManager = {
     payload.name = mod.name;
     payload.why = payload.why || mod.summary || analysis?.summary || this._fallbackDescription(mod);
     payload.how = payload.how || mod.notes || '';
-    payload.priority = payload.priority || mod.priority || analysis?.recommendedPriority || 3;
+    payload.priority = payload.priority && payload.priority !== 3
+      ? payload.priority
+      : (mod.priority || analysis?.recommendedPriority || 3);
     payload.status = payload.status || 'open';
     payload.checklist = mod.checklist || payload.checklist || [];
 
@@ -839,7 +852,13 @@ const MockupManager = {
     if (mod.linkedFeatureId) {
       const feature = await Store.get('features', mod.linkedFeatureId);
       if (feature) {
-        feature.status = mod.status === 'feature' ? 'imported' : mod.status === 'implementation' ? 'implementing' : mod.status;
+        feature.status = mod.status === 'feature'
+          ? 'imported'
+          : mod.status === 'implementation'
+            ? 'implementing'
+            : mod.status === 'improvement'
+              ? 'improving'
+              : mod.status;
         feature.updated = new Date().toISOString();
         await Store.put('features', feature);
       }
@@ -858,12 +877,16 @@ const MockupManager = {
     const implementation = items.find(item => item.sourceModuleId === mod.id || item.id === mod.linkedImplementationId);
     if (implementation) {
       implementation.checklist = mod.checklist || implementation.checklist || [];
+      implementation.progress = this._calcImplementationProgress(implementation);
       if (mod.status === 'done') {
         implementation.done = true;
         implementation.progress = 100;
       } else if (mod.status === 'archived') {
         implementation.done = false;
-        implementation.progress = this._calcImplementationProgress(implementation);
+      } else if (implementation.progress < 100) {
+        implementation.done = false;
+      } else {
+        implementation.done = true;
       }
       await Store.put('implementation', implementation);
     }

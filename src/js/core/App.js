@@ -13,7 +13,7 @@ const App = {
     mockups:        { label: 'Mockups',        emoji: '🧪' },
     integration:    { label: 'Integration',   emoji: '🔧' },
     inspector:      { label: 'Inspector',     emoji: '🔬' },
-    guide:          { label: 'AI Guide',      emoji: '📘' }
+    guide:          { label: 'Guide',         emoji: '📘' }
   },
 
   async init() {

@@ -1,0 +1,150 @@
+.pfb-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.pfb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.pfb-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.pfb-result-count {
+  background: var(--bg-surface);
+  color: var(--accent-green);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pfb-conditions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.pfb-condition-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: var(--bg-surface);
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-soft);
+}
+
+.pfb-condition-row select,
+.pfb-condition-row input {
+  padding: 6px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.pfb-field {
+  min-width: 120px;
+}
+
+.pfb-operator {
+  min-width: 100px;
+}
+
+.pfb-value {
+  flex: 1;
+  min-width: 120px;
+}
+
+.pfb-condition-row select:focus,
+.pfb-condition-row input:focus {
+  border-color: var(--accent-pink);
+  box-shadow: 0 0 0 2px rgba(255, 105, 180, 0.15);
+}
+
+.pfb-remove-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 18px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  line-height: 1;
+}
+
+.pfb-remove-btn:hover {
+  background: var(--accent-pink);
+  color: #fff;
+}
+
+.pfb-logic-row {
+  display: flex;
+  justify-content: center;
+  padding: 2px 0;
+}
+
+.pfb-logic-toggle {
+  background: var(--accent-pink);
+  color: #fff;
+  border: none;
+  padding: 3px 14px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+}
+
+.pfb-logic-toggle:hover {
+  opacity: 0.85;
+}
+
+.pfb-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.pfb-add-btn {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px dashed var(--border-soft);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.pfb-add-btn:hover {
+  border-color: var(--accent-pink);
+  color: var(--accent-pink);
+}
+
+.pfb-apply-btn {
+  background: var(--accent-green);
+  color: #fff;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pfb-apply-btn:hover {
+  opacity: 0.9;
+}

@@ -42,7 +42,7 @@ const GuidePanel = {
             ${this._step('2', 'Import references', 'Drop mindmaps, markdown notes, JSON, SVG, or screenshots as reviewable work items.')}
             ${this._step('3', 'Use the analysis', 'Each code mockup gets tags, a suggested track, and a generated checklist so you can decide faster.')}
             ${this._step('4', 'Promote deliberately', 'Send the item to Features, Improve, or Implementation based on what decision you made. Mindmaps and other references can stay as references until you are ready.')}
-            ${this._step('5', 'Close the loop', 'Mark the work item done, archive it, or remove it after the idea has been absorbed. Done keeps history; archive hides it from active work.')}
+            ${this._step('5', 'Close the loop', 'Mark the work item done, archive it, or remove it after the idea has been absorbed. Done and archive both keep history; remove deletes it outright.')}
           </div>
           <div class="btn-row" style="margin-top:14px">
             <button class="btn btn-pink" onclick="MockupManager.loadStarterSet()">🚀 Load 17 Starter Mockups</button>
