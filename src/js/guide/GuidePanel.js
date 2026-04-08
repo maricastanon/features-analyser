@@ -9,6 +9,9 @@ const GuidePanel = {
     this.render();
     if (this._initialized) return;
     EventBus.on('project:switched', () => this.render());
+    EventBus.on('module:imported', () => this.render());
+    EventBus.on('module:updated', () => this.render());
+    EventBus.on('module:removed', () => this.render());
     this._initialized = true;
   },
 
@@ -42,6 +45,7 @@ const GuidePanel = {
             ${this._step('5', 'Close the loop', 'Mark the work item done, archive it, or remove it after the idea has been absorbed. Done keeps history; archive hides it from active work.')}
           </div>
           <div class="btn-row" style="margin-top:14px">
+            <button class="btn btn-pink" onclick="MockupManager.loadStarterSet()">🚀 Load 17 Starter Mockups</button>
             <button class="btn btn-pink" onclick="App.go('mockups')">🧪 Open Mockups</button>
             <button class="btn btn-outline" onclick="MockupManager.exportProjectList()">📝 Export Project List</button>
           </div>

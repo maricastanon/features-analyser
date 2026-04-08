@@ -1,0 +1,225 @@
+/* ═══════════════════════════════════════════════
+   MS PLANNER: Task Creator — CSS Module
+   Companion to ms-planner-task-creator.js
+   ═══════════════════════════════════════════════ */
+
+/* ── Wrapper ── */
+.mptc-wrap {
+  background: var(--bg-deep, #0d1f17);
+  border-radius: 14px;
+  border: 1.5px solid var(--border-soft, #1a3d28);
+  padding: 20px;
+  font-family: inherit;
+}
+
+.mptc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.mptc-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary, #e8f5e9);
+  margin: 0;
+}
+
+.mptc-btn-add {
+  background: var(--accent-pink, #e91e90);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.mptc-btn-add:hover { opacity: 0.85; }
+
+/* ── Form ── */
+.mptc-form {
+  background: var(--bg-card, #122b1e);
+  border: 1.5px solid var(--border-soft, #1a3d28);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: mptc-slide 0.25s ease;
+}
+
+@keyframes mptc-slide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mptc-input, .mptc-textarea, .mptc-select {
+  background: var(--bg-surface, #163224);
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text-primary, #e8f5e9);
+  font-size: 0.85rem;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.mptc-input:focus, .mptc-textarea:focus, .mptc-select:focus {
+  outline: none;
+  border-color: var(--accent-pink, #e91e90);
+}
+
+.mptc-textarea { min-height: 60px; resize: vertical; }
+.mptc-input-sm { width: auto; min-width: 140px; }
+
+.mptc-form-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.mptc-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted, #81c784);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mptc-form-actions { display: flex; justify-content: flex-end; }
+
+.mptc-btn-save {
+  background: var(--accent-green, #4caf50);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.mptc-btn-save:hover { opacity: 0.85; }
+
+/* ── Priority Balls ── */
+.mptc-priority-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.mptc-pball {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-soft, #1a3d28);
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.mptc-pball:hover { transform: scale(1.3); }
+.mptc-pball.p1 { background: #ef4444; }
+.mptc-pball.p2 { background: #f97316; }
+.mptc-pball.p3 { background: #eab308; }
+.mptc-pball.p4 { background: #22c55e; }
+.mptc-pball.p5 { background: #3b82f6; }
+
+.mptc-priority-label {
+  font-size: 0.75rem;
+  color: var(--text-muted, #81c784);
+  margin-left: 6px;
+}
+
+/* ── Task List ── */
+.mptc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mptc-empty {
+  text-align: center;
+  color: var(--text-muted, #81c784);
+  font-size: 0.85rem;
+  padding: 24px;
+  opacity: 0.6;
+}
+
+.mptc-task {
+  background: var(--bg-card, #122b1e);
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 10px;
+  padding: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.mptc-task:hover {
+  border-color: var(--accent-pink, #e91e90);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.mptc-task-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mptc-task-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary, #e8f5e9);
+}
+
+.mptc-task-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted, #81c784);
+  line-height: 1.4;
+  margin: 6px 0;
+}
+
+.mptc-task-meta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.mptc-badge {
+  font-size: 0.68rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: var(--bg-surface, #163224);
+  color: var(--text-muted, #81c784);
+  font-weight: 600;
+}
+
+.mptc-badge-assign { color: var(--accent-pink, #e91e90); }
+.mptc-badge.mptc-overdue { color: #ef4444; background: #ef444422; }
+
+/* ── Action Buttons ── */
+.mptc-task-actions { display: flex; gap: 4px; }
+
+.mptc-btn-icon {
+  background: transparent;
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 6px;
+  color: var(--text-muted, #81c784);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 3px 7px;
+  transition: all 0.2s;
+}
+
+.mptc-btn-icon:hover { border-color: var(--accent-green, #4caf50); color: var(--accent-green, #4caf50); }
+.mptc-btn-del:hover { border-color: #ef4444; color: #ef4444; }
