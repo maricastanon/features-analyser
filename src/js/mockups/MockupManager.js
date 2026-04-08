@@ -63,7 +63,7 @@ const MockupManager = {
       <input type="file" id="importFileInput" multiple accept=".js,.css,.html,.htm,.py,.md,.markdown,.mmd,.txt,.csv,.json,.svg,.png,.jpg,.jpeg,.webp,.gif" style="display:none" onchange="MockupManager.handleFileInput(this.files)">
     </div>
     <div class="btn-row" style="margin-bottom:var(--sp-4)">
-      <button class="btn btn-pink" onclick="MockupManager.loadBundledSet('company-x1')">🚀 Load 17 Starter Mockups</button>
+      <button class="btn btn-pink" onclick="MockupManager.loadStarterSet()">🚀 Load 17 Starter Mockups</button>
       <button class="btn btn-outline" onclick="MockupManager.importBundled('kanban-board')">📋 Load Kanban Example</button>
       <button class="btn btn-outline" onclick="MockupManager.loadAllBundled()">📚 Load Full Catalog</button>
       <button class="btn btn-outline" onclick="MockupManager.exportProjectList()">📝 Export Project List</button>
@@ -239,6 +239,16 @@ const MockupManager = {
     await this._renderBundledLibrary();
     await this._renderModuleTabs();
     Toast.show(`Recommended set processed for ${appType}.`);
+  },
+
+  async loadStarterSet() {
+    const items = BundledModules.getStarterSet();
+    for (const item of items) {
+      await this.importBundled(item.id, { silent: true });
+    }
+    await this._renderBundledLibrary();
+    await this._renderModuleTabs();
+    Toast.show('17 starter mockups loaded.');
   },
 
   async loadAllBundled() {
@@ -747,8 +757,8 @@ const MockupManager = {
     let updated = await ModuleRegistry.updateMeta(mod.id, {
       analysis,
       summary: mod.summary || analysis.summary,
-      priority: mod.priority || analysis.recommendedPriority,
-      category: mod.category || analysis.categoryId,
+      priority: mod.priority && mod.priority !== 3 ? mod.priority : analysis.recommendedPriority,
+      category: !mod.category || mod.category === 'custom' ? analysis.categoryId : mod.category,
       checklist: mod.checklist?.length ? mod.checklist : analysis.checklist
     });
 

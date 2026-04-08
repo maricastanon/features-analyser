@@ -340,6 +340,10 @@ const BundledModules = {
     return this.ITEMS.find(item => item.id === id) || null;
   },
 
+  getStarterSet() {
+    return this.ITEMS.filter(item => item.jsPath.includes('feature-modules-17'));
+  },
+
   getRecommended(appType) {
     const aliases = {
       'company-x1': 'pm-toolkit',
