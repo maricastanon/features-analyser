@@ -350,7 +350,55 @@ const BundledModules = {
       'marex-dynamic': 'sight-reading-trainer'
     };
     const normalized = aliases[appType] || appType;
-    return this.ITEMS.filter(item => item.appFit.includes(normalized) || item.appFit.includes('universal'));
+
+    const curated = {
+      'pm-toolkit': [
+        'kanban-board',
+        'risk-matrix',
+        'role-system',
+        'capacity-planner',
+        'critical-path',
+        'status-reports',
+        'report-wizard',
+        'time-tracker',
+        'vacation-impact',
+        'global-search',
+        'baselines',
+        'qa-testing',
+        'dependency-graph',
+        'user-stories',
+        'api-explorer',
+        'data-import-export',
+        'feature-flags',
+        'accessibility-checker'
+      ],
+      'sight-reading-trainer': [
+        'ai-copilot',
+        'ideas-board',
+        'offline-mode',
+        'custom-dashboard',
+        'time-tracker',
+        'status-reports',
+        'recurring-tasks',
+        'custom-backgrounds',
+        'mindmap',
+        'feedback-board',
+        'workflow-builder',
+        'notifications',
+        'settings-panel',
+        'changelog',
+        'color-palette',
+        'performance-monitor'
+      ]
+    };
+
+    if (curated[normalized]) {
+      return curated[normalized]
+        .map(id => this.getById(id))
+        .filter(Boolean);
+    }
+
+    return this.ITEMS.filter(item => item.appFit.includes(normalized));
   },
 
   getAllTags() {

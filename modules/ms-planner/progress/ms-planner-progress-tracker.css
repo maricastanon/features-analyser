@@ -1,0 +1,263 @@
+.ppt-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 20px;
+  color: var(--text-primary);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.ppt-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.ppt-header h3 {
+  margin: 0;
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.ppt-btn {
+  padding: 6px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ppt-btn-add {
+  background: var(--accent-green);
+  color: #fff;
+}
+
+.ppt-btn-save {
+  background: var(--accent-green);
+  color: #fff;
+}
+
+.ppt-btn-cancel {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+}
+
+.ppt-add-form {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.ppt-input {
+  padding: 6px 10px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-size: 13px;
+  flex: 1;
+  min-width: 100px;
+}
+
+.ppt-form-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.ppt-top {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: var(--bg-surface);
+  border-radius: 8px;
+}
+
+.ppt-ring-wrap {
+  flex-shrink: 0;
+}
+
+.ppt-ring-text {
+  font-size: 22px;
+  font-weight: 700;
+  fill: var(--text-primary);
+}
+
+.ppt-status-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.ppt-status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ppt-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ppt-status-name {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.ppt-status-count {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.ppt-section {
+  margin-bottom: 16px;
+}
+
+.ppt-section-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.ppt-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.ppt-bar-label {
+  font-size: 13px;
+  width: 90px;
+  flex-shrink: 0;
+  color: var(--text-primary);
+}
+
+.ppt-bar-track {
+  flex: 1;
+  height: 10px;
+  background: var(--bg-deep);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.ppt-bar-fill {
+  height: 100%;
+  background: var(--accent-green);
+  border-radius: 5px;
+  transition: width 0.3s ease;
+}
+
+.ppt-bar-fill-pink {
+  background: var(--accent-pink);
+}
+
+.ppt-bar-val {
+  font-size: 12px;
+  color: var(--text-muted);
+  width: 40px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.ppt-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 120px;
+  padding: 8px 0;
+}
+
+.ppt-chart-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.ppt-chart-bar-wrap {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ppt-chart-bar {
+  width: 70%;
+  background: var(--accent-pink);
+  border-radius: 4px 4px 0 0;
+  min-height: 2px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  padding-top: 2px;
+  transition: height 0.3s ease;
+}
+
+.ppt-chart-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.ppt-task-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.ppt-task-item:last-child {
+  border-bottom: none;
+}
+
+.ppt-task-title {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.ppt-task-meta {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.ppt-btn-del {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 16px;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.ppt-btn-del:hover {
+  background: var(--accent-pink);
+  color: #fff;
+}
