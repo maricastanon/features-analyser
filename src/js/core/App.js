@@ -65,27 +65,53 @@ const App = {
 
   async _loadActiveProject() {
     const activeId = await Store.getSetting('activeProject');
+    const selectionPinned = await Store.getSetting('projectSelectionPinned', false);
     if (activeId) {
       this.currentProject = await Store.get('projects', activeId);
     }
-    if (!this.currentProject) {
-      // Check if any projects exist
-      let projects = await Store.getAll('projects');
-      if (projects.length === 0 && typeof ProjectConfig !== 'undefined') {
-        projects = await ProjectConfig.ensurePresetProjects();
-      }
-      if (projects.length > 0) {
-        this.currentProject = projects[0];
-        await Store.setSetting('activeProject', this.currentProject.id);
-      }
+
+    let projects = await Store.getAll('projects');
+    if (typeof ProjectConfig !== 'undefined') {
+      projects = await ProjectConfig.ensurePresetProjects();
     }
+
+    if (this.currentProject && !selectionPinned) {
+      const shouldReset = await this._shouldResetAutoSeededSelection(projects);
+      if (shouldReset) this.currentProject = null;
+    }
+
+    if (!this.currentProject && projects.length > 0) {
+      this.currentProject = typeof ProjectConfig !== 'undefined'
+        ? ProjectConfig.getDefaultPresetProject(projects)
+        : projects[0];
+      await Store.setSetting('activeProject', this.currentProject.id);
+    }
+
     // Apply project theme if exists
     if (this.currentProject) {
       await Theme.applyProjectTheme(this.currentProject);
       this._updateTitle(this.currentProject.name);
     } else {
+      Theme.resetToDefaults();
       this._updateTitle('Feature Brainstorm Hub');
     }
+  },
+
+  async _shouldResetAutoSeededSelection(projects) {
+    if (!this.currentProject?.presetId || this.currentProject.presetId === 'feature-lab-workspace') return false;
+    const workspace = typeof ProjectConfig !== 'undefined'
+      ? ProjectConfig.getDefaultPresetProject(projects)
+      : null;
+    if (!workspace || workspace.id === this.currentProject.id) return false;
+
+    const [features, improvements, implementation, modules] = await Promise.all([
+      Store.getAll('features'),
+      Store.getAll('improvements'),
+      Store.getAll('implementation'),
+      Store.getAll('modules')
+    ]);
+
+    return (features.length + improvements.length + implementation.length + modules.length) === 0;
   },
 
   async _initModules() {
@@ -179,9 +205,12 @@ const App = {
     if (txt) txt.textContent = pct + '%';
   },
 
-  async switchProject(projectId) {
+  async switchProject(projectId, options = {}) {
     this.currentProject = await Store.get('projects', projectId);
     await Store.setSetting('activeProject', projectId);
+    if (options.explicit) {
+      await Store.setSetting('projectSelectionPinned', true);
+    }
     if (this.currentProject) {
       await Theme.applyProjectTheme(this.currentProject);
       this._updateTitle(this.currentProject.name);

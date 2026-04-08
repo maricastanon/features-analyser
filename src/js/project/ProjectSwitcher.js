@@ -33,7 +33,7 @@ const ProjectSwitcher = {
   },
 
   async onSwitch(projectId) {
-    await App.switchProject(projectId);
+    await App.switchProject(projectId, { explicit: true });
     this.render();
   },
 

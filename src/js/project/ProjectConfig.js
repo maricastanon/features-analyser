@@ -73,14 +73,84 @@ Create TWO files:
 
   async ensurePresetProjects() {
     const existing = await Store.getAll('projects');
-    if (existing.length > 0) return existing;
+    const projects = [...existing];
+    const presetDefs = [
+      { presetId: 'feature-lab-workspace', name: 'Feature Lab Workspace', build: () => this._buildWorkspacePreset() },
+      { presetId: 'company-x1-pm', name: 'Company X1 PM', build: () => this._buildCompanyX1Preset() },
+      { presetId: 'marex-dynamic-pm', name: 'Marex Dynamic PM', build: () => this._buildMarexPreset() }
+    ];
 
-    const presets = [this._buildCompanyX1Preset(), this._buildMarexPreset()];
-    for (const preset of presets) {
-      await Store.put('projects', preset);
+    for (const def of presetDefs) {
+      const matchIdx = projects.findIndex(p => p.presetId === def.presetId || p.name === def.name);
+      if (matchIdx === -1) {
+        const preset = def.build();
+        await Store.put('projects', preset);
+        projects.push(preset);
+        continue;
+      }
+
+      const match = projects[matchIdx];
+      if (!match.presetId || !match.isPreset) {
+        const updated = { ...match, presetId: def.presetId, isPreset: true };
+        await Store.put('projects', updated);
+        projects[matchIdx] = updated;
+      }
     }
-    await Store.setSetting('activeProject', presets[0].id);
-    return presets;
+
+    return projects;
+  },
+
+  getDefaultPresetProject(projects = []) {
+    return projects.find(project => project.presetId === 'feature-lab-workspace') || projects[0] || null;
+  },
+
+  _buildWorkspacePreset() {
+    const project = JSON.parse(JSON.stringify(this.DEFAULT_PROJECT));
+    const now = new Date().toISOString();
+
+    project.id = Store.generateId();
+    project.presetId = 'feature-lab-workspace';
+    project.isPreset = true;
+    project.name = 'Feature Lab Workspace';
+    project.description = 'Neutral feature analyser workspace for testing modules before promoting them into a real target app.';
+    project.stack = ['vanilla-js', 'css', 'pwa'];
+    project.theme = {
+      primary: '#e91e90',
+      secondary: '#4caf50',
+      bgDeep: '#0a1a10',
+      bgCard: '#122b1e',
+      bgSurface: '#173225',
+      borderSoft: '#1e4632',
+      textPrimary: '#e8f5e9',
+      textMuted: '#6f9977',
+      fontFamily: "'Nunito', 'Calibri', system-ui, sans-serif",
+      fontSize: '0.88rem',
+      mode: 'dark'
+    };
+    project.fileStructure = `project/
+ГДД index.html
+ГДД css/
+і   ГДД base.css
+і   ГДД layout.css
+і   АДД [feature].css
+ГДД js/
+і   ГДД app.js
+і   ГДД modules/
+і   АДД [feature].js
+АДД notes/
+    АДД brainstorm.md`;
+    project.categories = [
+      { id: 'core',        name: 'Core',        emoji: '?', color: '#ef4444' },
+      { id: 'ui',          name: 'UI / UX',     emoji: '??', color: '#f97316' },
+      { id: 'data',        name: 'Data',        emoji: '??', color: '#eab308' },
+      { id: 'automation',  name: 'Automation',  emoji: '??', color: '#22c55e' },
+      { id: 'integration', name: 'Integration', emoji: '??', color: '#14b8a6' },
+      { id: 'ai',          name: 'AI',          emoji: '??', color: '#3b82f6' },
+      { id: 'custom',      name: 'Custom',      emoji: '?', color: '#a855f7' }
+    ];
+    project.created = now;
+    project.updated = now;
+    return project;
   },
 
   _buildCompanyX1Preset() {
@@ -88,6 +158,8 @@ Create TWO files:
     const now = new Date().toISOString();
 
     project.id = Store.generateId();
+    project.presetId = 'company-x1-pm';
+    project.isPreset = true;
     project.name = 'Company X1 PM';
     project.description = 'Enterprise multi-tenant project manager: role-heavy, security-first, and broad in operational coverage.';
     project.stack = ['vanilla-js', 'css', 'aws-amplify', 'cognito', 'lambda', 'dynamodb', 's3', 'cloudfront'];
@@ -138,6 +210,8 @@ Create TWO files:
     const now = new Date().toISOString();
 
     project.id = Store.generateId();
+    project.presetId = 'marex-dynamic-pm';
+    project.isPreset = true;
     project.name = 'Marex Dynamic PM';
     project.description = 'Personal creative PWA and project command center: deeper idea workflows, offline-first behavior, and fast solo iteration.';
     project.stack = ['vanilla-js', 'css', 'pwa', 'cloudflare-workers', 'kv', 'service-worker'];
@@ -396,7 +470,7 @@ Create TWO files:
     Toast.show('Project saved! 💾');
 
     if (!App.currentProject) {
-      await App.switchProject(p.id);
+      await App.switchProject(p.id, { explicit: true });
     }
 
     if (typeof ProjectSwitcher !== 'undefined') ProjectSwitcher.render();
