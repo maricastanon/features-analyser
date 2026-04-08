@@ -1,0 +1,149 @@
+.ce-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 20px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+.ce-title {
+  margin: 0 0 12px;
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+}
+.ce-progress-bar-wrap {
+  height: 8px;
+  background: var(--bg-deep);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+.ce-progress-bar {
+  height: 100%;
+  background: var(--accent-green);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+.ce-progress-text {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.ce-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ce-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  transition: background 0.1s;
+}
+.ce-item:last-child { border-bottom: none; }
+.ce-item:hover { background: var(--bg-surface); }
+.ce-done .ce-text {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+.ce-cb {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-green);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.ce-text {
+  flex: 1;
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 4px;
+  border-radius: 3px;
+  transition: background 0.1s;
+}
+.ce-text:hover {
+  background: var(--bg-deep);
+}
+.ce-item-actions {
+  display: flex;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.ce-item:hover .ce-item-actions {
+  opacity: 1;
+}
+.ce-btn {
+  padding: 4px 10px;
+  border: none;
+  border-radius: 3px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.ce-btn:hover { opacity: 0.8; }
+.ce-btn-sm {
+  padding: 2px 6px;
+  background: var(--bg-deep);
+  color: var(--text-muted);
+  font-size: 11px;
+  border: 1px solid var(--border-soft);
+}
+.ce-btn-del {
+  padding: 2px 6px;
+  background: transparent;
+  color: #E74856;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1;
+}
+.ce-btn-add {
+  background: var(--accent-green);
+  color: #fff;
+  font-weight: 500;
+}
+.ce-btn-save {
+  background: var(--accent-green);
+  color: #fff;
+}
+.ce-btn-cancel {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+}
+.ce-edit-input {
+  flex: 1;
+  padding: 5px 8px;
+  border: 1px solid var(--accent-pink);
+  border-radius: 3px;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+}
+.ce-add-form {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  padding: 12px;
+  background: var(--bg-surface);
+  border-radius: 6px;
+  border: 1px solid var(--border-soft);
+}
+.ce-add-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-size: 14px;
+  outline: none;
+}
+.ce-add-input:focus {
+  border-color: var(--accent-pink);
+}

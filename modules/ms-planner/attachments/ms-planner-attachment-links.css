@@ -1,0 +1,192 @@
+.al-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 16px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.al-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.al-title {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.al-count {
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.al-toolbar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.al-search {
+  flex: 1;
+}
+
+.al-filter-select {
+  min-width: 140px;
+}
+
+.al-add-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.al-input {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 13px;
+  flex: 1;
+  min-width: 80px;
+}
+
+.al-cat-select {
+  flex: 0 0 auto;
+  min-width: 100px;
+}
+
+.al-btn {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background 0.15s;
+  white-space: nowrap;
+}
+
+.al-btn:hover {
+  background: var(--border-soft);
+}
+
+.al-btn-primary {
+  background: var(--accent-pink);
+  color: #fff;
+  border-color: var(--accent-pink);
+}
+
+.al-btn-primary:hover {
+  opacity: 0.85;
+}
+
+.al-btn-danger {
+  background: #d32f2f;
+  color: #fff;
+  border-color: #d32f2f;
+}
+
+.al-btn-danger:hover {
+  background: #b71c1c;
+}
+
+.al-btn-sm {
+  padding: 3px 8px;
+  font-size: 11px;
+}
+
+.al-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.al-link-row {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 10px 12px;
+  transition: box-shadow 0.15s;
+}
+
+.al-link-row:hover {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+.al-pinned {
+  border-left: 3px solid var(--accent-pink);
+  background: var(--bg-deep);
+}
+
+.al-link-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.al-pin-icon {
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+}
+
+.al-link-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.al-link-title:hover {
+  color: var(--accent-pink);
+  text-decoration: underline;
+}
+
+.al-cat-badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.al-link-url {
+  color: var(--text-muted);
+  font-size: 11px;
+  margin-bottom: 6px;
+  word-break: break-all;
+}
+
+.al-link-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.al-editing {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.al-edit-btns {
+  display: flex;
+  gap: 6px;
+}
+
+.al-empty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 24px;
+  font-size: 13px;
+}

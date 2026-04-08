@@ -1,0 +1,206 @@
+.pfs-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.pfs-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.pfs-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 16px;
+}
+
+.pfs-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.pfs-export-btn,
+.pfs-import-btn {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-soft);
+  padding: 5px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.pfs-export-btn:hover,
+.pfs-import-btn:hover {
+  border-color: var(--accent-pink);
+  color: var(--accent-pink);
+}
+
+.pfs-create-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.pfs-new-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.pfs-new-input:focus {
+  border-color: var(--accent-pink);
+}
+
+.pfs-add-btn {
+  background: var(--accent-green);
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pfs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pfs-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 12px;
+}
+
+.pfs-item:hover {
+  border-color: var(--accent-pink);
+}
+
+.pfs-item-editing {
+  background: var(--bg-deep);
+  border-color: var(--accent-pink);
+}
+
+.pfs-item-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.pfs-item-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.pfs-filter-name {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.pfs-share-badge {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--bg-deep);
+  color: var(--text-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.pfs-share-badge.pfs-shared {
+  background: var(--accent-green);
+  color: #fff;
+}
+
+.pfs-condition-summary {
+  color: var(--text-muted);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 2px;
+}
+
+.pfs-created {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.pfs-item-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.pfs-action-btn {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-soft);
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pfs-action-btn:hover {
+  color: var(--accent-pink);
+  border-color: var(--accent-pink);
+}
+
+.pfs-del-btn:hover {
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.pfs-edit-input {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid var(--accent-pink);
+  border-radius: 4px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.pfs-save-edit {
+  background: var(--accent-green);
+  color: #fff;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.pfs-empty {
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}

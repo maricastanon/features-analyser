@@ -127,6 +127,7 @@ const Improvements = {
         linkedImprovementId: item.id
       });
     }
+    if (typeof Features !== 'undefined') await Features.render();
     this.render();
   },
 

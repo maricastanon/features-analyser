@@ -1,0 +1,158 @@
+.mpnc-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 500px;
+}
+
+.mpnc-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.mpnc-bell {
+  font-size: 1.5rem;
+  position: relative;
+  line-height: 1;
+}
+
+.mpnc-badge {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  background: var(--accent-pink);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+}
+
+.mpnc-title {
+  color: var(--text-primary);
+  font-size: 1.15rem;
+  margin: 0;
+  flex: 1;
+}
+
+.mpnc-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  background: var(--accent-green);
+  color: #fff;
+}
+
+.mpnc-btn:hover {
+  opacity: 0.85;
+}
+
+.mpnc-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.mpnc-btn-read-all {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+}
+
+.mpnc-btn-delete {
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  padding: 4px 8px;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.mpnc-btn-delete:hover {
+  color: var(--accent-pink);
+}
+
+.mpnc-group-label {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 14px 0 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.mpnc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.mpnc-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.mpnc-item:hover {
+  background: var(--bg-surface);
+}
+
+.mpnc-unread {
+  background: var(--bg-deep);
+}
+
+.mpnc-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+
+.mpnc-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.mpnc-message {
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mpnc-time {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.mpnc-unread-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-pink);
+  flex-shrink: 0;
+}
+
+.mpnc-empty {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  padding: 30px 0;
+}

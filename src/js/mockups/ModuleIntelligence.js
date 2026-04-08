@@ -51,6 +51,9 @@ const ModuleIntelligence = {
     // ── Summary ──
     const summary = this._generateSummary(name, stats);
 
+    // ── Tags ──
+    const tags = this._generateTags(name, stats, js, css);
+
     // ── Checklist ──
     const checklist = this._generateChecklist(name, stats, recommendedTrack);
 
@@ -61,6 +64,7 @@ const ModuleIntelligence = {
       recommendedPriority,
       recommendedTrack,
       workflowReason,
+      tags,
       featureMatchId: featureMatch?.id || null,
       improvementMatchId: improvementMatch?.id || null,
       checklist
@@ -130,6 +134,22 @@ const ModuleIntelligence = {
     items.push({ text: 'Mark done or archive when complete', done: false });
 
     return items;
+  },
+
+  _generateTags(name, stats, js, css) {
+    const tags = [];
+    const text = `${name} ${js} ${css}`.toLowerCase();
+
+    if (/\b(ai|copilot|prompt|assistant)\b/.test(text)) tags.push('AI');
+    if (/\b(board|kanban|timeline|calendar|mindmap|graph)\b/.test(text)) tags.push('Visual');
+    if (/\b(role|permission|access|auth)\b/.test(text)) tags.push('Governance');
+    if (/\b(sync|offline|import|export)\b/.test(text)) tags.push('Sync');
+    if (/\b(report|status|metric|dashboard)\b/.test(text)) tags.push('Reporting');
+    if (stats.cssVarCount > 0) tags.push('Theme ready');
+    if (stats.hasExportState) tags.push('Stateful');
+    if (!tags.length) tags.push('Interactive');
+
+    return tags;
   },
 
   _slug(value) {

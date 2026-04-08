@@ -1,0 +1,251 @@
+/* ═══════════════════════════════════════════════
+   MS PLANNER: Task Checklist — CSS Module
+   Companion to ms-planner-task-checklist.js
+   ═══════════════════════════════════════════════ */
+
+/* ── Wrapper ── */
+.mpcl-wrap {
+  background: var(--bg-deep, #0d1f17);
+  border: 1.5px solid var(--border-soft, #1a3d28);
+  border-radius: 14px;
+  padding: 20px;
+  font-family: inherit;
+}
+
+.mpcl-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mpcl-heading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary, #e8f5e9);
+  margin: 0;
+}
+
+.mpcl-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-muted, #81c784);
+  cursor: pointer;
+}
+
+.mpcl-toggle input[type="checkbox"] {
+  accent-color: var(--accent-green, #4caf50);
+}
+
+/* ── Templates ── */
+.mpcl-templates {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.mpcl-tpl-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted, #81c784);
+}
+
+.mpcl-tpl-btn {
+  background: var(--bg-card, #122b1e);
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 8px;
+  padding: 5px 12px;
+  font-size: 0.78rem;
+  color: var(--text-primary, #e8f5e9);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mpcl-tpl-btn:hover {
+  border-color: var(--accent-pink, #e91e90);
+  color: var(--accent-pink, #e91e90);
+}
+
+/* ── Group ── */
+.mpcl-group {
+  background: var(--bg-card, #122b1e);
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 12px;
+  transition: border-color 0.2s;
+}
+
+.mpcl-group:hover { border-color: var(--accent-green, #4caf50); }
+
+.mpcl-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.mpcl-group-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--text-primary, #e8f5e9);
+  flex: 1;
+}
+
+.mpcl-group-pct {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-green, #4caf50);
+}
+
+/* ── Progress Bar ── */
+.mpcl-progress {
+  background: var(--bg-surface, #163224);
+  border-radius: 6px;
+  height: 5px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.mpcl-progress-bar {
+  height: 100%;
+  background: var(--accent-green, #4caf50);
+  border-radius: 6px;
+  transition: width 0.3s ease;
+}
+
+/* ── Items ── */
+.mpcl-item {
+  padding: 4px 0;
+  border-bottom: 1px solid var(--border-soft, #1a3d28);
+}
+
+.mpcl-item:last-of-type { border-bottom: none; }
+
+.mpcl-item-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.mpcl-item-row input[type="checkbox"] {
+  accent-color: var(--accent-green, #4caf50);
+  flex-shrink: 0;
+}
+
+.mpcl-item-text {
+  font-size: 0.85rem;
+  color: var(--text-primary, #e8f5e9);
+  flex: 1;
+}
+
+.mpcl-item-text.done {
+  text-decoration: line-through;
+  color: var(--text-muted, #81c784);
+  opacity: 0.55;
+}
+
+.mpcl-item-actions {
+  display: flex;
+  gap: 3px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.mpcl-item-row:hover .mpcl-item-actions { opacity: 1; }
+
+/* ── Sub-items ── */
+.mpcl-subs {
+  margin-left: 28px;
+  border-left: 2px solid var(--border-soft, #1a3d28);
+  padding-left: 12px;
+}
+
+.mpcl-sub-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 3px 0;
+}
+
+.mpcl-sub-row input[type="checkbox"] {
+  accent-color: var(--accent-pink, #e91e90);
+  flex-shrink: 0;
+}
+
+.mpcl-sub-add {
+  display: flex;
+  gap: 4px;
+  margin-left: 28px;
+  margin-top: 2px;
+  margin-bottom: 4px;
+}
+
+.mpcl-item-add {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* ── Inputs ── */
+.mpcl-input, .mpcl-input-sm, .mpcl-input-xs {
+  background: var(--bg-surface, #163224);
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color: var(--text-primary, #e8f5e9);
+  font-size: 0.82rem;
+  font-family: inherit;
+  flex: 1;
+}
+
+.mpcl-input-xs { padding: 4px 8px; font-size: 0.78rem; }
+
+.mpcl-input:focus, .mpcl-input-sm:focus, .mpcl-input-xs:focus {
+  outline: none;
+  border-color: var(--accent-pink, #e91e90);
+}
+
+/* ── Buttons ── */
+.mpcl-btn-add {
+  background: var(--accent-pink, #e91e90);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+
+.mpcl-btn-add:hover { opacity: 0.85; }
+
+.mpcl-btn-xs {
+  background: transparent;
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 5px;
+  color: var(--text-muted, #81c784);
+  cursor: pointer;
+  padding: 2px 7px;
+  font-size: 0.72rem;
+  transition: all 0.2s;
+}
+
+.mpcl-btn-xs:hover { border-color: var(--accent-green, #4caf50); color: var(--accent-green, #4caf50); }
+.mpcl-btn-xs:disabled { opacity: 0.3; cursor: default; }
+.mpcl-btn-del:hover { border-color: #ef4444; color: #ef4444; }
+.mpcl-btn-go:hover { border-color: var(--accent-green, #4caf50); color: var(--accent-green, #4caf50); }
+
+/* ── Add Group ── */
+.mpcl-add-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}

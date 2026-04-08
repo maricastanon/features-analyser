@@ -1,0 +1,247 @@
+.mcw-root {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  padding: 1.5rem;
+  border-radius: 10px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.mcw-heading {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.mcw-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.mcw-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.mcw-stat-num {
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.mcw-stat-overdue { color: #e74c3c; }
+
+.mcw-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.mcw-legend {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.mcw-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.mcw-ldot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.mcw-seg-overdue { background: #e74c3c; }
+.mcw-seg-duesoon { background: #f39c12; }
+.mcw-seg-ontrack { background: var(--accent-green); }
+.mcw-cap-dot { background: var(--accent-pink); }
+
+.mcw-members {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.mcw-member {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+}
+
+.mcw-member-info {
+  width: 130px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mcw-member-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mcw-member-count {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.mcw-over-cap {
+  color: #e74c3c;
+  font-weight: 600;
+}
+
+.mcw-bar-wrap {
+  flex: 1;
+  position: relative;
+  height: 24px;
+}
+
+.mcw-bar {
+  display: flex;
+  height: 100%;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+}
+
+.mcw-seg {
+  height: 100%;
+  transition: width 0.3s;
+}
+
+.mcw-cap-line {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  width: 2px;
+  background: var(--accent-pink);
+  border-radius: 1px;
+}
+
+.mcw-member-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.mcw-edit-btn,
+.mcw-del-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 2px 4px;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.mcw-member:hover .mcw-edit-btn,
+.mcw-member:hover .mcw-del-btn { opacity: 1; }
+
+.mcw-edit-btn:hover { color: var(--accent-pink); }
+.mcw-del-btn:hover { color: #e74c3c; }
+
+/* Edit form */
+.mcw-edit-form {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.mcw-edit-name {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  width: 120px;
+}
+
+.mcw-edit-label {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.mcw-edit-field {
+  width: 44px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 0.3rem;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+}
+
+.mcw-edit-save,
+.mcw-edit-cancel {
+  border: none;
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.mcw-edit-save { background: var(--accent-green); color: #fff; }
+.mcw-edit-cancel { background: var(--bg-card); color: var(--text-muted); border: 1px solid var(--border-soft); }
+
+/* Add form */
+.mcw-add-form {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.mcw-add-form input {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  padding: 0.4rem 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+}
+
+.mcw-add-name { flex: 1; min-width: 110px; }
+.mcw-add-overdue,
+.mcw-add-duesoon,
+.mcw-add-ontrack,
+.mcw-add-capacity { width: 50px; }
+
+.mcw-add-btn {
+  background: var(--accent-green);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.mcw-add-btn:hover { opacity: 0.85; }

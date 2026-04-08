@@ -1,0 +1,187 @@
+.mcb-root {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  padding: 1.5rem;
+  border-radius: 10px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.mcb-heading {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.mcb-stats {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.mcb-stat {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 85px;
+}
+
+.mcb-stat-num {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mcb-stat-proj {
+  font-size: 1rem;
+  color: var(--accent-pink);
+}
+
+.mcb-stat-label {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.mcb-chart-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  overflow-x: auto;
+}
+
+.mcb-svg {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  display: block;
+}
+
+.mcb-point {
+  cursor: pointer;
+  transition: r 0.15s;
+}
+
+.mcb-point:hover {
+  r: 7;
+}
+
+.mcb-legend {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.mcb-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.mcb-ldash {
+  width: 20px;
+  height: 0;
+  border-top: 2px dashed var(--text-muted);
+  display: inline-block;
+}
+
+.mcb-lline {
+  width: 20px;
+  height: 0;
+  border-top: 2.5px solid var(--accent-pink);
+  display: inline-block;
+}
+
+.mcb-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.mcb-add-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mcb-add-val {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  padding: 0.4rem 0.6rem;
+  color: var(--text-primary);
+  font-size: 0.85rem;
+  width: 140px;
+}
+
+.mcb-add-btn {
+  background: var(--accent-green);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.mcb-add-btn:hover { opacity: 0.85; }
+
+.mcb-undo-btn {
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border-soft);
+  border-radius: 5px;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.mcb-undo-btn:hover { color: var(--text-primary); }
+
+.mcb-config-row {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.mcb-cfg-label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  gap: 3px;
+}
+
+.mcb-cfg-label input {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 4px;
+  padding: 0.35rem 0.5rem;
+  color: var(--text-primary);
+  font-size: 0.82rem;
+  width: 70px;
+}
+
+.mcb-reset-btn {
+  background: var(--accent-pink);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.mcb-reset-btn:hover { opacity: 0.85; }

@@ -137,7 +137,7 @@ const ModuleRegistry = {
     if (!mod) return;
     Object.assign(mod, patch || {});
     if (patch?.checklist) {
-      mod.checklist = this._mergeChecklist([], patch.checklist);
+      mod.checklist = this._mergeChecklist(mod.checklist, patch.checklist);
     }
     mod.updated = new Date().toISOString();
     await Store.put('modules', mod);
@@ -158,7 +158,12 @@ const ModuleRegistry = {
     };
 
     const current = (existing || []).map(normalize).filter(Boolean);
-    const next = (suggestions || []).map(normalize).filter(Boolean);
+    const next = [];
+    (suggestions || []).map(normalize).filter(Boolean).forEach(item => {
+      if (!next.find(entry => entry.text.toLowerCase() === item.text.toLowerCase())) {
+        next.push(item);
+      }
+    });
     if (!next.length) return current;
 
     const currentMap = new Map(current.map(item => [item.text.toLowerCase(), item]));
