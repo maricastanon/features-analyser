@@ -83,7 +83,7 @@
   <div id="panel-mockups" class="panel">
     <div class="section-header">
       <h2 class="section-title" style="color:var(--accent-green)">🧪 Functional Mockups</h2>
-      <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Import JS+CSS modules • Test live • Customize everything</span>
+      <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Import mockups and references • Test live • Promote the keepers</span>
     </div>
     <div id="importZone"></div>
     <div id="mockupTabs" class="sub-tabs"></div>
@@ -157,6 +157,8 @@
 <!-- Mockups -->
 <script src="js/mockups/Sandbox.js"></script>
 <script src="js/mockups/ModuleRegistry.js"></script>
+<script src="js/mockups/BundledModules.js"></script>
+<script src="js/mockups/ModuleIntelligence.js"></script>
 <script src="js/mockups/MockupManager.js"></script>
 
 <!-- CSS Editor -->
@@ -187,6 +189,9 @@
 <script src="js/inspector/ChangeTracker.js"></script>
 <script src="js/inspector/Inspector.js"></script>
 
+<!-- Guide -->
+<script src="js/guide/GuidePanel.js"></script>
+
 <!-- App (last — initializes everything) -->
 <script src="js/core/App.js"></script>
 
@@ -194,7 +199,7 @@
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
+    navigator.serviceWorker.register('sw.js')
       .then(reg => console.log('[PWA] SW registered:', reg.scope))
       .catch(err => console.warn('[PWA] SW registration failed:', err));
   });

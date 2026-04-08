@@ -13,18 +13,35 @@ const Implementation = {
 
   async addFromFeature(feature) {
     const projectId = App.currentProject ? App.currentProject.id : feature.projectId;
-    await Store.put('implementation', {
-      id: Store.generateId(),
+    const existing = await Store.getAll('implementation', 'projectId', projectId);
+    const matched = existing.find(item =>
+      (feature.improvementId && item.improvementId === feature.improvementId) ||
+      (feature.sourceModuleId && item.sourceModuleId === feature.sourceModuleId) ||
+      item.featureId === feature.id
+    );
+
+    const checklist = (feature.checklist || []).map(item =>
+      typeof item === 'string' ? { text: item, done: false } : { text: item.text, done: Boolean(item.done) }
+    );
+
+    const record = {
+      id: matched?.id || Store.generateId(),
       projectId,
-      featureId: feature.id,
+      featureId: feature.sourceType === 'improvement' ? null : feature.id,
+      improvementId: feature.improvementId || matched?.improvementId || null,
+      sourceModuleId: feature.sourceModuleId || matched?.sourceModuleId || '',
+      sourceType: feature.sourceType || matched?.sourceType || 'feature',
       name: feature.name,
       priority: feature.priority || 3,
-      done: false,
+      done: matched?.done || false,
       progress: 0,
-      checklist: [],
-      integrationSteps: [],
-      added: new Date().toISOString()
-    });
+      checklist: checklist.length ? checklist : (matched?.checklist || []),
+      integrationSteps: matched?.integrationSteps || [],
+      added: matched?.added || new Date().toISOString()
+    };
+    record.progress = record.done ? 100 : this._calcProgress(record);
+
+    await Store.put('implementation', record);
     this.render();
     App.updateCounts();
     App.updateProgress();
@@ -110,6 +127,7 @@ const Implementation = {
     i.done = !i.done;
     i.progress = i.done ? 100 : this._calcProgress(i);
     await Store.put('implementation', i);
+    await this._syncLinkedStatuses(i);
     this.render();
     App.updateProgress();
   },
@@ -123,6 +141,7 @@ const Implementation = {
     i.checklist.push({ text: text.trim(), done: false });
     i.progress = this._calcProgress(i);
     await Store.put('implementation', i);
+    await this._syncLinkedStatuses(i);
     this.render();
   },
 
@@ -133,6 +152,7 @@ const Implementation = {
     i.progress = this._calcProgress(i);
     if (i.progress === 100) i.done = true;
     await Store.put('implementation', i);
+    await this._syncLinkedStatuses(i);
     this.render();
     App.updateProgress();
   },
@@ -148,5 +168,32 @@ const Implementation = {
     this.render();
     App.updateCounts();
     App.updateProgress();
+  },
+
+  async _syncLinkedStatuses(item) {
+    if (item.featureId) {
+      const feature = await Store.get('features', item.featureId);
+      if (feature) {
+        feature.status = item.done ? 'done' : 'implementing';
+        feature.updated = new Date().toISOString();
+        await Store.put('features', feature);
+      }
+    }
+
+    if (item.improvementId) {
+      const improvement = await Store.get('improvements', item.improvementId);
+      if (improvement) {
+        improvement.status = item.done ? 'resolved' : 'open';
+        improvement.checklist = item.checklist;
+        await Store.put('improvements', improvement);
+      }
+    }
+
+    if (item.sourceModuleId) {
+      await ModuleRegistry.updateMeta(item.sourceModuleId, {
+        status: item.done ? 'done' : 'implementation',
+        checklist: item.checklist
+      });
+    }
   }
 };

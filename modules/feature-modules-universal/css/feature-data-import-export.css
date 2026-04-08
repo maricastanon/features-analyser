@@ -1,0 +1,24 @@
+/* ═══ Data Import/Export Styles ═══ */
+.feat-dio-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.dio-header { padding:8px 0; }
+.dio-sections { display:flex; flex-direction:column; gap:12px; }
+.dio-import { }
+.dio-drop { background:#163224; border:2px dashed #1a3d28; border-radius:10px; padding:20px; text-align:center; cursor:pointer; transition:all .2s; }
+.dio-drop:hover { border-color:#22c55e; }
+.dio-preview { background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:12px; }
+.dio-preview-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px; }
+.dio-export-btns { display:flex; gap:4px; }
+.dio-btn { padding:4px 12px; border:1px solid #1a3d28; border-radius:4px; background:transparent; color:#e8f5e9; font-size:0.72rem; font-weight:700; cursor:pointer; }
+.dio-btn-active { background:#e91e9022; border-color:#e91e90; color:#e91e90; }
+.dio-btn-green { background:#22c55e; color:#000; border:none; }
+.dio-table-wrap { overflow-x:auto; max-height:250px; overflow-y:auto; }
+.dio-table { width:100%; border-collapse:collapse; font-size:0.75rem; }
+.dio-table th { background:#0d1f17; padding:6px 10px; text-align:left; font-weight:700; color:#e91e90; position:sticky; top:0; }
+.dio-table td { padding:5px 10px; border-bottom:1px solid #1a3d2844; }
+.dio-table tr:hover { background:#0d1f1744; }
+.dio-bool { font-size:0.7rem; }
+.dio-row-del { background:none; border:none; color:#ef4444; cursor:pointer; font-size:0.8rem; opacity:0.4; }
+.dio-row-del:hover { opacity:1; }
+.dio-add-row { margin-top:8px; width:100%; padding:6px; border:1px dashed #1a3d28; border-radius:6px; background:transparent; color:#5a8a60; font-size:0.75rem; cursor:pointer; }
+.dio-add-row:hover { border-color:#22c55e; color:#22c55e; }
+.dio-stats { display:flex; gap:16px; padding:8px; font-size:0.72rem; color:#5a8a60; }

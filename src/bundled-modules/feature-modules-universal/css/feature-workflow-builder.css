@@ -1,0 +1,27 @@
+/* ═══ Workflow Builder Styles ═══ */
+.feat-wf-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.wf-header { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.wf-btn { padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all .2s; }
+.wf-btn-pink { background:#e91e90; color:#fff; margin-left:auto; }
+.wf-btn:hover { transform:scale(1.05); }
+.wf-tabs { display:flex; gap:6px; margin-bottom:12px; flex-wrap:wrap; }
+.wf-tab { display:flex; align-items:center; gap:6px; padding:6px 14px; border:1px solid #1a3d28; border-radius:6px; background:transparent; color:#e8f5e9; font-size:0.75rem; font-weight:700; cursor:pointer; }
+.wf-tab.active { background:#e91e9022; border-color:#e91e90; }
+.wf-tab-dot { width:6px; height:6px; border-radius:50%; }
+.wf-tab-runs { font-size:0.6rem; color:#5a8a60; }
+.wf-canvas { background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:16px; }
+.wf-meta { display:flex; align-items:center; gap:10px; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid #1a3d28; }
+.wf-active-toggle { display:flex; align-items:center; gap:4px; font-size:0.72rem; cursor:pointer; margin-left:auto; }
+.wf-active-toggle input { accent-color:#22c55e; }
+.wf-runs-badge { font-size:0.65rem; color:#3b82f6; background:#3b82f622; padding:2px 8px; border-radius:10px; }
+.wf-flow { display:flex; flex-direction:column; align-items:center; gap:0; }
+.wf-step { display:flex; gap:10px; padding:10px 14px; border:2px solid; border-radius:10px; background:#0d1f17; width:90%; max-width:400px; }
+.wf-step-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:1.1rem; flex-shrink:0; }
+.wf-step-info { flex:1; }
+.wf-step-type { font-size:0.6rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; }
+.wf-step-label { font-size:0.82rem; font-weight:700; margin-top:2px; }
+.wf-branches { display:flex; gap:4px; margin-top:4px; }
+.wf-branch { padding:2px 8px; border-radius:4px; font-size:0.6rem; font-weight:700; background:#eab30822; color:#eab308; border:1px solid #eab30844; }
+.wf-connector { color:#1a3d28; font-size:1.2rem; padding:2px 0; }
+.wf-add-step { margin-top:8px; padding:8px; border:1px dashed #1a3d28; border-radius:8px; text-align:center; color:#5a8a60; font-size:0.75rem; cursor:pointer; width:90%; max-width:400px; }
+.wf-add-step:hover { border-color:#22c55e; color:#22c55e; }

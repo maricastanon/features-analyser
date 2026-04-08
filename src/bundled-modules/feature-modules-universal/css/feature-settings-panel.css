@@ -1,0 +1,27 @@
+/* ═══ Settings Panel Styles ═══ */
+.feat-settings-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.set-header { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.set-btn { padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer; transition:all .2s; }
+.set-btn-green { background:#22c55e; color:#000; margin-left:auto; }
+.set-btn-outline { background:transparent; border:1px solid #1a3d28; color:#e8f5e9; }
+.set-btn:hover { transform:scale(1.05); }
+.set-layout { display:grid; grid-template-columns:160px 1fr; gap:12px; }
+.set-sidebar { display:flex; flex-direction:column; gap:4px; }
+.set-nav { padding:8px 12px; border:none; border-radius:6px; background:transparent; color:#e8f5e9; font-size:0.78rem; font-weight:700; cursor:pointer; text-align:left; transition:all .2s; border:1px solid transparent; }
+.set-nav:hover { background:#1a3d2844; }
+.set-nav.active { background:#e91e9022; border-color:#e91e90; color:#e91e90; }
+.set-content { background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:16px; }
+.set-item { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid #1a3d2844; }
+.set-item:last-child { border-bottom:none; }
+.set-item-label { font-size:0.82rem; font-weight:700; }
+.set-toggle { position:relative; display:inline-block; width:40px; height:22px; }
+.set-toggle input { opacity:0; width:0; height:0; }
+.set-toggle-slider { position:absolute; cursor:pointer; inset:0; background:#1a3d28; border-radius:11px; transition:.3s; }
+.set-toggle-slider::before { content:''; position:absolute; height:16px; width:16px; left:3px; bottom:3px; background:#5a8a60; border-radius:50%; transition:.3s; }
+.set-toggle input:checked + .set-toggle-slider { background:#22c55e44; }
+.set-toggle input:checked + .set-toggle-slider::before { transform:translateX(18px); background:#22c55e; }
+.set-select { padding:5px 10px; background:#0d1f17; border:1px solid #1a3d28; border-radius:6px; color:#e8f5e9; font-size:0.78rem; }
+.set-input { padding:5px 10px; background:#0d1f17; border:1px solid #1a3d28; border-radius:6px; color:#e8f5e9; font-size:0.78rem; width:160px; }
+.set-color-wrap { display:flex; align-items:center; gap:8px; }
+.set-color { width:30px; height:30px; border:none; border-radius:6px; cursor:pointer; background:none; }
+.set-color-hex { font-family:monospace; font-size:0.75rem; color:#5a8a60; }

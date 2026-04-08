@@ -1,0 +1,32 @@
+/* ═══ A/B Testing Styles ═══ */
+.feat-ab-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.ab-header { display:flex; align-items:center; gap:12px; padding:8px 0; flex-wrap:wrap; }
+.ab-stats { display:flex; gap:6px; }
+.ab-badge { padding:3px 10px; border-radius:12px; font-size:0.7rem; font-weight:700; }
+.ab-badge-green { background:#22c55e22; color:#22c55e; border:1px solid #22c55e44; }
+.ab-badge-blue { background:#3b82f622; color:#3b82f6; border:1px solid #3b82f644; }
+.ab-btn { padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all .2s; }
+.ab-btn-pink { background:#e91e90; color:#fff; margin-left:auto; }
+.ab-btn-green { background:#22c55e; color:#000; }
+.ab-btn-outline { background:transparent; border:1px solid #1a3d28; color:#e8f5e9; }
+.ab-btn-sm { padding:4px 10px; font-size:0.72rem; }
+.ab-btn:hover { transform:scale(1.05); filter:brightness(1.2); }
+.ab-tests { display:flex; flex-direction:column; gap:12px; }
+.ab-test-card { background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:14px; }
+.ab-test-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+.ab-test-name { font-weight:800; font-size:0.9rem; }
+.ab-status { font-size:0.7rem; font-weight:700; }
+.ab-variants { display:flex; gap:10px; align-items:center; }
+.ab-variant { flex:1; background:#0d1f17; border:2px solid; border-radius:8px; padding:10px; position:relative; }
+.ab-winner { box-shadow:0 0 16px rgba(34,197,94,0.3); }
+.ab-vs { font-weight:900; color:#e91e90; font-size:0.9rem; }
+.ab-var-label { position:absolute; top:-8px; left:10px; padding:1px 8px; border-radius:4px; font-size:0.65rem; font-weight:800; color:#fff; }
+.ab-var-name { font-size:0.78rem; font-weight:700; margin-bottom:8px; margin-top:4px; }
+.ab-var-metrics { display:flex; gap:10px; margin-bottom:8px; }
+.ab-metric { text-align:center; }
+.ab-metric-val { font-size:1rem; font-weight:800; }
+.ab-metric-label { font-size:0.6rem; color:#5a8a60; }
+.ab-bar-wrap { height:4px; background:#1a3d28; border-radius:2px; overflow:hidden; }
+.ab-bar { height:100%; border-radius:2px; transition:width .5s; }
+.ab-result { margin-top:10px; font-size:0.78rem; padding:6px 10px; background:#0d1f17; border-radius:6px; }
+.ab-actions { display:flex; gap:6px; margin-top:8px; justify-content:flex-end; }

@@ -1,0 +1,9 @@
+const Customdashboard={
+  init(cid){this.el=document.getElementById(cid);this.render()},
+  render(){if(!this.el)return;this.el.innerHTML=`<div style="padding:14px"><div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span style="font-size:1.3rem">📈</span><span style="font-weight:800;font-size:1rem">Custom Dashboard</span><span style="margin-left:auto;font-size:.65rem;color:#5a8a60">Drag to reorder widgets</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div style="background:#163224;border:1px solid #1a3d28;border-radius:8px;padding:12px;cursor:grab"><div style="font-size:.68rem;color:#5a8a60;margin-bottom:4px">📊 Tasks</div><div style="font-size:1.6rem;font-weight:900;color:#e91e90">24</div></div>
+      <div style="background:#163224;border:1px solid #1a3d28;border-radius:8px;padding:12px;cursor:grab"><div style="font-size:.68rem;color:#5a8a60;margin-bottom:4px">📈 Progress</div><div style="font-size:1.6rem;font-weight:900;color:#4caf50">87%</div></div>
+      <div style="background:#163224;border:1px solid #1a3d28;border-radius:8px;padding:12px;cursor:grab"><div style="font-size:.68rem;color:#5a8a60;margin-bottom:4px">⚠️ Risks</div><div style="font-size:1.6rem;font-weight:900;color:#f97316">3</div></div>
+      <div style="background:#163224;border:1px solid #1a3d28;border-radius:8px;padding:12px;cursor:grab"><div style="font-size:.68rem;color:#5a8a60;margin-bottom:4px">⏱️ Hours</div><div style="font-size:1.6rem;font-weight:900;color:#3b82f6">42h</div></div></div>
+      <div style="margin-top:8px;border:2px dashed #1a3d28;border-radius:8px;padding:10px;text-align:center;font-size:.72rem;color:#5a8a60;cursor:pointer" onclick="alert('Widget picker coming soon!')">+ Add Widget</div></div>`;}
+};

@@ -1,0 +1,21 @@
+/* ═══ Accessibility Checker Styles ═══ */
+.feat-a11y-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.a11y-header { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.a11y-btn { padding:6px 14px; border:1px solid #1a3d28; border-radius:6px; background:transparent; color:#e8f5e9; font-weight:700; font-size:0.78rem; cursor:pointer; margin-left:auto; }
+.a11y-btn:hover { border-color:#22c55e; }
+.a11y-summary { display:flex; align-items:center; gap:20px; padding:14px; background:#163224; border:1px solid #1a3d28; border-radius:10px; margin-bottom:12px; }
+.a11y-score { text-align:center; }
+.a11y-score-circle { width:70px; height:70px; border-radius:50%; border:4px solid; display:flex; align-items:center; justify-content:center; }
+.a11y-score-val { font-size:1.2rem; font-weight:900; }
+.a11y-score-label { font-size:0.65rem; color:#5a8a60; margin-top:4px; }
+.a11y-counts { display:flex; gap:20px; }
+.a11y-count-item { text-align:center; font-size:0.7rem; color:#5a8a60; }
+.a11y-checks { display:flex; flex-direction:column; gap:4px; }
+.a11y-check { display:flex; align-items:flex-start; gap:8px; padding:8px 10px; background:#163224; border:1px solid #1a3d28; border-radius:8px; }
+.a11y-check-status { font-size:0.9rem; flex-shrink:0; margin-top:2px; }
+.a11y-check-body { flex:1; }
+.a11y-check-rule { font-weight:800; font-size:0.8rem; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.a11y-level { font-size:0.6rem; padding:1px 6px; border-radius:4px; background:#3b82f622; color:#3b82f6; font-weight:700; }
+.a11y-impact { font-size:0.6rem; font-weight:700; text-transform:uppercase; }
+.a11y-check-desc { font-size:0.72rem; color:#5a8a60; margin-top:2px; }
+.a11y-check-count { font-size:0.65rem; color:#5a8a6088; white-space:nowrap; flex-shrink:0; }

@@ -1,0 +1,26 @@
+/* ═══ Color Palette Styles ═══ */
+.feat-cp-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.cp-header { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.cp-btn { padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all .2s; }
+.cp-btn-pink { background:#e91e90; color:#fff; margin-left:auto; }
+.cp-btn-outline { background:transparent; border:1px solid #1a3d28; color:#e8f5e9; }
+.cp-btn:hover { transform:scale(1.05); }
+.cp-tabs { display:flex; gap:6px; margin-bottom:10px; }
+.cp-tab { padding:5px 14px; border:1px solid #1a3d28; border-radius:6px; background:transparent; color:#e8f5e9; font-size:0.75rem; font-weight:700; cursor:pointer; }
+.cp-tab.active { background:#e91e9022; border-color:#e91e90; }
+.cp-preview { border-radius:10px; padding:20px; display:flex; justify-content:center; margin-bottom:12px; }
+.cp-preview-card { padding:16px 24px; border-radius:8px; text-align:center; }
+.cp-swatches { display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:8px; margin-bottom:12px; }
+.cp-swatch { background:#163224; border:1px solid #1a3d28; border-radius:8px; overflow:hidden; cursor:pointer; transition:all .2s; }
+.cp-swatch:hover { border-color:#e91e90; transform:scale(1.03); }
+.cp-swatch-color { height:50px; }
+.cp-swatch-info { padding:8px; }
+.cp-swatch-hex { font-size:0.78rem; font-weight:800; font-family:monospace; }
+.cp-swatch-name { font-size:0.65rem; color:#5a8a60; }
+.cp-swatch-role { font-size:0.6rem; color:#e91e90; font-weight:700; }
+.cp-add-swatch { display:flex; align-items:center; justify-content:center; min-height:90px; border-style:dashed; }
+.cp-contrast { display:flex; gap:10px; flex-wrap:wrap; padding:8px; background:#163224; border-radius:8px; }
+.cp-contrast-title { font-size:0.72rem; font-weight:700; color:#e91e90; }
+.cp-cr { font-size:0.7rem; padding:3px 8px; border-radius:4px; }
+.cp-cr-pass { background:#22c55e22; color:#22c55e; }
+.cp-cr-fail { background:#ef444422; color:#ef4444; }

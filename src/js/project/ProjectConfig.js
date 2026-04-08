@@ -71,6 +71,117 @@ Create TWO files:
     ]
   },
 
+  async ensurePresetProjects() {
+    const existing = await Store.getAll('projects');
+    if (existing.length > 0) return existing;
+
+    const presets = [this._buildCompanyX1Preset(), this._buildMarexPreset()];
+    for (const preset of presets) {
+      await Store.put('projects', preset);
+    }
+    await Store.setSetting('activeProject', presets[0].id);
+    return presets;
+  },
+
+  _buildCompanyX1Preset() {
+    const project = JSON.parse(JSON.stringify(this.DEFAULT_PROJECT));
+    const now = new Date().toISOString();
+
+    project.id = Store.generateId();
+    project.name = 'Company X1 PM';
+    project.description = 'Enterprise multi-tenant project manager: role-heavy, security-first, and broad in operational coverage.';
+    project.stack = ['vanilla-js', 'css', 'aws-amplify', 'cognito', 'lambda', 'dynamodb', 's3', 'cloudfront'];
+    project.theme = {
+      primary: '#e91e90',
+      secondary: '#4caf50',
+      bgDeep: '#0d1f17',
+      bgCard: '#122b1e',
+      bgSurface: '#173628',
+      borderSoft: '#1d4731',
+      textPrimary: '#e8f5e9',
+      textMuted: '#6f9877',
+      fontFamily: "'Nunito', 'Calibri', system-ui, sans-serif",
+      fontSize: '0.88rem',
+      mode: 'dark'
+    };
+    project.fileStructure = `project/
+├── index.html
+├── css/
+│   ├── base.css
+│   ├── components.css
+│   ├── responsive.css
+│   └── [feature].css
+├── js/
+│   ├── app.js
+│   ├── auth/
+│   ├── permissions/
+│   ├── reports/
+│   └── [feature].js
+└── lambda/
+    └── [endpoint].js`;
+    project.categories = [
+      { id: 'core',        name: 'Core',        emoji: '⚡', color: '#ef4444' },
+      { id: 'analytics',   name: 'Analytics',   emoji: '📊', color: '#eab308' },
+      { id: 'collab',      name: 'Collab',      emoji: '🤝', color: '#22c55e' },
+      { id: 'security',    name: 'Security',    emoji: '🛡️', color: '#f97316' },
+      { id: 'integration', name: 'Integration', emoji: '🔗', color: '#14b8a6' },
+      { id: 'ai',          name: 'AI',          emoji: '🤖', color: '#3b82f6' },
+      { id: 'custom',      name: 'Custom',      emoji: '✨', color: '#a855f7' }
+    ];
+    project.created = now;
+    project.updated = now;
+    return project;
+  },
+
+  _buildMarexPreset() {
+    const project = JSON.parse(JSON.stringify(this.DEFAULT_PROJECT));
+    const now = new Date().toISOString();
+
+    project.id = Store.generateId();
+    project.name = 'Marex Dynamic PM';
+    project.description = 'Personal creative PWA and project command center: deeper idea workflows, offline-first behavior, and fast solo iteration.';
+    project.stack = ['vanilla-js', 'css', 'pwa', 'cloudflare-workers', 'kv', 'service-worker'];
+    project.theme = {
+      primary: '#4caf50',
+      secondary: '#e91e90',
+      bgDeep: '#102118',
+      bgCard: '#162b20',
+      bgSurface: '#1b3527',
+      borderSoft: '#244632',
+      textPrimary: '#edf7ef',
+      textMuted: '#79a082',
+      fontFamily: "'Nunito', 'Calibri', system-ui, sans-serif",
+      fontSize: '0.88rem',
+      mode: 'dark'
+    };
+    project.fileStructure = `project/
+├── index.html
+├── manifest.json
+├── sw.js
+├── css/
+│   ├── styles.css
+│   └── [feature].css
+├── js/
+│   ├── app.js
+│   ├── ideas/
+│   ├── mindmap/
+│   └── [feature].js
+└── workers/
+    └── sync.js`;
+    project.categories = [
+      { id: 'core',        name: 'Core',        emoji: '⚡', color: '#ef4444' },
+      { id: 'ideas',       name: 'Ideas',       emoji: '💡', color: '#f97316' },
+      { id: 'views',       name: 'Views',       emoji: '🧭', color: '#22c55e' },
+      { id: 'productivity',name: 'Productivity',emoji: '⏱️', color: '#eab308' },
+      { id: 'integration', name: 'Integration', emoji: '🔗', color: '#14b8a6' },
+      { id: 'ai',          name: 'AI',          emoji: '🤖', color: '#3b82f6' },
+      { id: 'custom',      name: 'Custom',      emoji: '✨', color: '#a855f7' }
+    ];
+    project.created = now;
+    project.updated = now;
+    return project;
+  },
+
   async showWizard(existingProject = null) {
     this._editing = existingProject
       ? JSON.parse(JSON.stringify(existingProject))

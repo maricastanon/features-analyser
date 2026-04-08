@@ -9,6 +9,19 @@ const Sandbox = {
   create(moduleId, containerEl, jsSource, cssSource, htmlSource = '') {
     // Build iframe srcdoc with the module's CSS and JS
     const theme = App.currentProject?.theme || {};
+    const esc = (value, { escapeScriptClose = false } = {}) => {
+      let text = String(value || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/`/g, '\\`')
+        .replace(/\$\{/g, '\\${');
+      if (escapeScriptClose) {
+        text = text.replace(/<\/script>/gi, '<\\/script>');
+      }
+      return text;
+    };
+    const safeJS = esc(jsSource, { escapeScriptClose: true });
+    const safeCSS = esc(cssSource);
+    const safeHTML = esc(htmlSource);
     const srcdoc = `<!DOCTYPE html>
 <html>
 <head>
@@ -36,11 +49,11 @@ body {
   min-height: 100%;
 }
 </style>
-<style id="moduleCSS">${cssSource || ''}</style>
+<style id="moduleCSS">${safeCSS}</style>
 <style id="overrideCSS"></style>
 </head>
 <body>
-<div id="moduleRoot">${htmlSource || ''}</div>
+<div id="moduleRoot">${safeHTML}</div>
 <script>
 // Message handler for parent communication
 window.addEventListener('message', function(e) {
@@ -91,7 +104,7 @@ window.addEventListener('message', function(e) {
 // Notify parent when ready
 parent.postMessage({ type: 'sandbox-ready', moduleId: '${moduleId}' }, '*');
 <\/script>
-<script id="moduleJS">${jsSource || ''}</script>
+<script id="moduleJS">${safeJS}</script>
 <script>
 // Auto-init: find module objects and call init
 try {

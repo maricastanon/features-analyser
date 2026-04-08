@@ -2,6 +2,12 @@
    FileIO — File reading, drag-drop handling
    ═══════════════════════════════════════════════════════════════ */
 const FileIO = {
+  async readTextFromUrl(url) {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error(`Failed to load ${url}`);
+    return response.text();
+  },
+
   // Read a File object as text
   readAsText(file) {
     return new Promise((resolve, reject) => {

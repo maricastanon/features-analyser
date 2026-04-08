@@ -1,0 +1,20 @@
+/* ═══ Changelog Styles ═══ */
+.feat-changelog-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.cl-header { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.cl-btn { padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all .2s; }
+.cl-btn-pink { background:#e91e90; color:#fff; margin-left:auto; }
+.cl-btn-outline { background:transparent; border:1px solid #1a3d28; color:#e8f5e9; }
+.cl-btn:hover { transform:scale(1.05); filter:brightness(1.2); }
+.cl-timeline { display:flex; flex-direction:column; gap:14px; padding-left:16px; border-left:2px solid #1a3d28; }
+.cl-release { background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:14px; position:relative; }
+.cl-release::before { content:''; position:absolute; left:-22px; top:18px; width:10px; height:10px; background:#e91e90; border-radius:50%; border:2px solid #0d1f17; }
+.cl-release-header { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+.cl-version { font-size:1.1rem; font-weight:900; color:#e91e90; }
+.cl-date { font-size:0.75rem; color:#5a8a60; }
+.cl-latest { font-size:0.6rem; font-weight:800; background:#22c55e22; color:#22c55e; padding:2px 8px; border-radius:4px; border:1px solid #22c55e44; }
+.cl-changes { display:flex; flex-direction:column; gap:6px; }
+.cl-change { display:flex; align-items:flex-start; gap:8px; }
+.cl-type { padding:2px 8px; border-radius:4px; font-size:0.65rem; font-weight:700; white-space:nowrap; }
+.cl-text { font-size:0.78rem; line-height:1.5; }
+.cl-add-change { margin-top:8px; background:transparent; border:1px dashed #1a3d28; color:#5a8a60; padding:4px 10px; border-radius:6px; font-size:0.7rem; cursor:pointer; width:100%; }
+.cl-add-change:hover { border-color:#e91e90; color:#e91e90; }

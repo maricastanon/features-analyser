@@ -1,0 +1,34 @@
+/* ═══ API Explorer Styles ═══ */
+.feat-api-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.api-header { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.api-btn { padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all .2s; }
+.api-btn-pink { background:#e91e90; color:#fff; margin-left:auto; }
+.api-btn-green { background:#22c55e; color:#000; }
+.api-btn-sm { padding:4px 10px; font-size:0.72rem; }
+.api-btn:hover { transform:scale(1.05); }
+.api-filters { display:flex; gap:6px; margin-bottom:10px; }
+.api-filter { padding:4px 12px; border:1px solid #1a3d28; border-radius:6px; background:transparent; color:#e8f5e9; font-size:0.75rem; font-weight:700; cursor:pointer; }
+.api-filter.active { background:#e91e9022; border-color:#e91e90; }
+.api-list { display:flex; flex-direction:column; gap:6px; }
+.api-endpoint { background:#163224; border:1px solid #1a3d28; border-radius:8px; padding:10px 14px; cursor:pointer; transition:all .2s; }
+.api-endpoint:hover { border-color:#1a3d2888; }
+.api-expanded { border-color:#e91e9044; }
+.api-ep-row { display:flex; align-items:center; gap:8px; }
+.api-method { padding:2px 8px; border-radius:4px; font-size:0.7rem; font-weight:800; font-family:monospace; }
+.api-path { font-size:0.82rem; font-weight:700; font-family:monospace; }
+.api-auth { font-size:0.7rem; }
+.api-status-badge { font-size:0.6rem; font-weight:700; margin-left:auto; text-transform:uppercase; }
+.api-status-stable { color:#22c55e; }
+.api-status-beta { color:#f97316; }
+.api-status-draft { color:#5a8a60; }
+.api-desc { font-size:0.72rem; color:#5a8a60; margin-top:4px; }
+.api-detail { margin-top:10px; padding-top:10px; border-top:1px solid #1a3d28; }
+.api-detail-title { font-size:0.72rem; font-weight:700; color:#e91e90; margin-bottom:4px; }
+.api-params { margin-bottom:8px; }
+.api-param { display:flex; gap:8px; font-size:0.72rem; padding:2px 0; }
+.api-param-name { font-weight:700; font-family:monospace; color:#22c55e; }
+.api-param-type { color:#3b82f6; }
+.api-param-req { color:#ef4444; font-size:0.65rem; }
+.api-param-opt { color:#5a8a60; font-size:0.65rem; }
+.api-response { margin-bottom:8px; }
+.api-code { background:#0d1f17; padding:8px; border-radius:6px; font-size:0.72rem; font-family:monospace; color:#22c55e; overflow-x:auto; white-space:pre-wrap; }

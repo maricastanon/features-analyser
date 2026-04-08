@@ -25,6 +25,11 @@ const App = {
     // 2. Check for V3 migration
     await this._checkMigration();
 
+    // 2.5. Ensure preset projects exist (auto-creates on first run)
+    if (typeof ProjectConfig !== 'undefined') {
+      await ProjectConfig.ensurePresetProjects();
+    }
+
     // 3. Load active project
     await this._loadActiveProject();
 
@@ -65,7 +70,10 @@ const App = {
     }
     if (!this.currentProject) {
       // Check if any projects exist
-      const projects = await Store.getAll('projects');
+      let projects = await Store.getAll('projects');
+      if (projects.length === 0 && typeof ProjectConfig !== 'undefined') {
+        projects = await ProjectConfig.ensurePresetProjects();
+      }
       if (projects.length > 0) {
         this.currentProject = projects[0];
         await Store.setSetting('activeProject', this.currentProject.id);
@@ -90,6 +98,7 @@ const App = {
     if (typeof Implementation !== 'undefined') await Implementation.init();
     if (typeof MockupManager !== 'undefined') await MockupManager.init();
     if (typeof IntegrationGuide !== 'undefined') IntegrationGuide.init();
+    if (typeof GuidePanel !== 'undefined') GuidePanel.init();
   },
 
   _renderTabs() {

@@ -18,6 +18,12 @@
   line-height: 1.4;
 }
 .btn:active { transform: scale(.96); }
+.btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+  box-shadow: none !important;
+  transform: none !important;
+}
 .btn-pink {
   background: var(--accent-pink);
   color: #fff;

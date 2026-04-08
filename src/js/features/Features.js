@@ -4,6 +4,14 @@
    ═══════════════════════════════════════════════════════════════ */
 const Features = {
   _newPriority: 3,
+  STATUS_LABELS: {
+    brainstorm: '💡 Brainstorm',
+    imported: '📦 Imported',
+    improving: '🔧 Improving',
+    implementing: '🎯 Implementing',
+    done: '✅ Done',
+    archived: '🗂️ Archived'
+  },
 
   async init() {
     Categories.renderTabs();
@@ -49,7 +57,7 @@ const Features = {
         <span style="font-size:1.4rem">${cat.emoji}</span>
         <div style="flex:1">
           <div style="font-size:.95rem;font-weight:800">${DOM.esc(f.name)}</div>
-          <div style="font-size:var(--font-size-xs);color:var(--text-muted)">${pl[f.priority] || 'MEDIUM'}${f.status === 'implementing' ? ' • 🎯 Implementing' : ''}</div>
+          <div style="font-size:var(--font-size-xs);color:var(--text-muted)">${pl[f.priority] || 'MEDIUM'}${f.status ? ' • ' + (this.STATUS_LABELS[f.status] || f.status) : ''}</div>
         </div>
         <div class="priority-balls">${balls}</div>
         <span class="card-chevron">▼</span>
@@ -74,6 +82,7 @@ const Features = {
         </div>
         <div class="btn-row" style="margin-top:10px">
           <button class="btn btn-sm btn-green" onclick="Features.sendToImpl('${f.id}')">🎯 → Implementation</button>
+          <button class="btn btn-sm btn-outline" onclick="Features.toImprovement('${f.id}')">🔧 Needs Improvement</button>
           <button class="btn btn-sm btn-outline btn-danger" style="margin-left:auto" onclick="Features.remove('${f.id}')">🗑️</button>
         </div>
       </div>
@@ -197,9 +206,58 @@ const Features = {
       f.status = 'implementing';
       f.updated = new Date().toISOString();
       await Store.put('features', f);
+      if (f.sourceModuleId) {
+        await ModuleRegistry.updateMeta(f.sourceModuleId, {
+          status: 'implementation',
+          linkedFeatureId: f.id
+        });
+      }
       this.render();
       Toast.show('→ Implementation! 🎯');
     }
+  },
+
+  async toImprovement(id) {
+    const f = await Store.get('features', id);
+    if (!f) return;
+
+    const existing = await Store.getAll('improvements', 'projectId', f.projectId);
+    const matched = existing.find(item =>
+      item.sourceModuleId === f.sourceModuleId ||
+      item.sourceFeatureId === f.id ||
+      item.name.toLowerCase() === f.name.toLowerCase()
+    );
+
+    if (!matched) {
+      await Store.put('improvements', {
+        id: Store.generateId(),
+        sourceModuleId: f.sourceModuleId || '',
+        sourceFeatureId: f.id,
+        projectId: f.projectId,
+        name: f.name,
+        why: f.description || `Refine ${f.name} before full integration.`,
+        how: '',
+        priority: f.priority || 3,
+        status: 'open',
+        created: new Date().toISOString()
+      });
+    }
+
+    f.status = 'improving';
+    f.updated = new Date().toISOString();
+    await Store.put('features', f);
+
+    if (f.sourceModuleId) {
+      await ModuleRegistry.updateMeta(f.sourceModuleId, {
+        status: 'improvement',
+        linkedFeatureId: f.id
+      });
+    }
+
+    if (typeof Improvements !== 'undefined') await Improvements.render();
+    await this.render();
+    App.updateCounts();
+    Toast.show('Moved into improvements workflow.');
   },
 
   async remove(id) {

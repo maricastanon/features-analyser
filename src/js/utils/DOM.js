@@ -71,15 +71,15 @@ const DOM = {
 
   // Download file
   download(filename, content, type = 'text/plain') {
-    const blob = new Blob([content], { type });
-    const url = URL.createObjectURL(blob);
+    const isDataUrl = typeof content === 'string' && content.startsWith('data:');
+    const url = isDataUrl ? content : URL.createObjectURL(new Blob([content], { type }));
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    if (!isDataUrl) URL.revokeObjectURL(url);
   },
 
   // Simple confirm dialog

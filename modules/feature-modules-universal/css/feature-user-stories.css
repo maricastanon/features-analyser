@@ -1,0 +1,25 @@
+/* ═══ User Stories Styles ═══ */
+.feat-us-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.us-header { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.us-points-total { font-size:0.75rem; color:#a855f7; font-weight:700; background:#a855f722; padding:3px 10px; border-radius:12px; }
+.us-btn { padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all .2s; }
+.us-btn-pink { background:#e91e90; color:#fff; margin-left:auto; }
+.us-btn:hover { transform:scale(1.05); }
+.us-filters { display:flex; gap:6px; margin-bottom:10px; }
+.us-filter { padding:4px 12px; border:1px solid #1a3d28; border-radius:6px; background:transparent; color:#e8f5e9; font-size:0.75rem; font-weight:700; cursor:pointer; }
+.us-filter.active { background:#e91e9022; border-color:#e91e90; }
+.us-stories { display:flex; flex-direction:column; gap:10px; }
+.us-card { background:#163224; border:1px solid #1a3d28; border-radius:8px; padding:12px; }
+.us-card-top { display:flex; align-items:center; gap:8px; margin-bottom:8px; flex-wrap:wrap; }
+.us-persona { font-size:0.75rem; font-weight:800; }
+.us-sp { font-size:0.7rem; font-weight:700; background:#3b82f622; color:#3b82f6; padding:2px 8px; border-radius:10px; }
+.us-priority { font-size:0.65rem; font-weight:700; padding:2px 8px; border-radius:4px; text-transform:uppercase; }
+.us-status { font-size:0.65rem; font-weight:700; margin-left:auto; }
+.us-status-accepted { color:#22c55e; }
+.us-status-in-progress { color:#f97316; }
+.us-status-backlog { color:#5a8a60; }
+.us-story-text { font-size:0.82rem; line-height:1.6; padding:8px; background:#0d1f17; border-radius:6px; margin-bottom:8px; }
+.us-criteria { font-size:0.75rem; }
+.us-criteria-title { color:#e91e90; font-weight:700; font-size:0.7rem; margin-bottom:4px; }
+.us-criterion { display:flex; align-items:center; gap:6px; padding:2px 0; }
+.us-criterion input { accent-color:#22c55e; }

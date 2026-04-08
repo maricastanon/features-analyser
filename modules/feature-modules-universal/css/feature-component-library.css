@@ -1,0 +1,18 @@
+/* ═══ Component Library Styles ═══ */
+.feat-cl-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.cl-header { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.cl-filters { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+.cl-filter { padding:4px 12px; border:1px solid #1a3d28; border-radius:6px; background:transparent; color:#e8f5e9; font-size:0.75rem; font-weight:700; cursor:pointer; text-transform:capitalize; }
+.cl-filter.active { background:#e91e9022; border-color:#e91e90; }
+.cl-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
+.cl-comp-card { background:#163224; border:1px solid #1a3d28; border-radius:10px; overflow:hidden; transition:all .2s; }
+.cl-comp-card:hover { border-color:#e91e9044; transform:translateY(-2px); }
+.cl-comp-preview { background:#0d1f17; min-height:80px; display:flex; align-items:center; justify-content:center; }
+.cl-comp-info { padding:10px; }
+.cl-comp-name { font-weight:800; font-size:0.82rem; }
+.cl-comp-meta { display:flex; gap:8px; margin-top:4px; }
+.cl-comp-cat { font-size:0.65rem; color:#3b82f6; background:#3b82f622; padding:1px 6px; border-radius:4px; text-transform:capitalize; }
+.cl-comp-usage { font-size:0.65rem; color:#5a8a60; }
+.cl-comp-actions { display:flex; gap:4px; padding:0 10px 10px; }
+.cl-copy { padding:3px 8px; border:1px solid #1a3d28; border-radius:4px; background:transparent; color:#e8f5e9; font-size:0.65rem; cursor:pointer; font-weight:700; }
+.cl-copy:hover { border-color:#22c55e; color:#22c55e; }

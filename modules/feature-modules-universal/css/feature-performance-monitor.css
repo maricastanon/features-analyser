@@ -1,0 +1,25 @@
+/* ═══ Performance Monitor Styles ═══ */
+.feat-perf-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.perf-header { display:flex; align-items:center; gap:10px; padding:8px 0; }
+.perf-btn { padding:6px 14px; border:1px solid #1a3d28; border-radius:6px; background:transparent; color:#e8f5e9; font-weight:700; font-size:0.78rem; cursor:pointer; margin-left:auto; }
+.perf-btn:hover { border-color:#22c55e; }
+.perf-score-section { text-align:center; padding:10px 0; }
+.perf-score-ring { position:relative; width:100px; height:100px; margin:0 auto; }
+.perf-score-ring svg { width:100%; height:100%; }
+.perf-score-val { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:1.6rem; font-weight:900; }
+.perf-score-label { font-size:0.75rem; color:#5a8a60; margin-top:4px; }
+.perf-vitals { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; margin:12px 0; }
+.perf-vital { background:#163224; border:1px solid #1a3d28; border-radius:8px; padding:10px; }
+.perf-vital-header { display:flex; justify-content:space-between; align-items:center; }
+.perf-vital-label { font-weight:800; font-size:0.78rem; }
+.perf-vital-val { font-weight:900; font-size:1rem; }
+.perf-vital-desc { font-size:0.6rem; color:#5a8a60; margin:4px 0; }
+.perf-vital-bar { height:4px; background:#1a3d28; border-radius:2px; overflow:hidden; margin:6px 0 2px; }
+.perf-vital-fill { height:100%; border-radius:2px; transition:width .5s; }
+.perf-vital-target { font-size:0.6rem; color:#5a8a6088; }
+.perf-history { background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:12px; }
+.perf-history-title { font-weight:700; font-size:0.8rem; color:#e91e90; margin-bottom:8px; }
+.perf-chart { display:flex; gap:6px; align-items:flex-end; height:100px; }
+.perf-bar-col { flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end; }
+.perf-bar { width:100%; border-radius:4px 4px 0 0; min-height:4px; transition:height .5s; }
+.perf-bar-label { font-size:0.55rem; color:#5a8a60; margin-top:4px; }

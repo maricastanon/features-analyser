@@ -22,3 +22,119 @@
   transform: scale(1.01);
   box-shadow: var(--shadow-pink);
 }
+
+.bundled-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--sp-3);
+}
+
+.bundled-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  transition: all var(--tr-fast);
+}
+
+.bundled-card:hover {
+  border-color: var(--accent-pink);
+  box-shadow: var(--shadow-pink);
+}
+
+.bundled-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.bundled-tag {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.work-item-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.module-intelligence-card {
+  margin-top: 14px;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.08), rgba(233, 30, 144, 0.08));
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+}
+
+.module-tag-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.module-analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+.module-checklist {
+  margin-top: 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.module-check-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 8px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.module-check-item:hover {
+  border-color: var(--accent-pink);
+}
+
+.artifact-preview {
+  background: var(--bg-deep);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  min-height: 220px;
+}
+
+.artifact-code {
+  white-space: pre-wrap;
+  line-height: 1.6;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--text-secondary);
+}
+
+.artifact-svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+
+.artifact-svg svg {
+  max-width: 100%;
+  height: auto;
+}
