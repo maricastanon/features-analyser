@@ -1,0 +1,209 @@
+/* ═══════════════════════════════════════════════
+   MS PLANNER: Search Filters — CSS
+   ═══════════════════════════════════════════════ */
+
+.mpsf-wrapper {
+  display: flex;
+  gap: 20px;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  border-radius: 10px;
+  padding: 20px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 300px;
+}
+
+.mpsf-panel {
+  width: 240px;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.mpsf-panel-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.mpsf-group { margin-bottom: 14px; }
+
+.mpsf-group-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.mpsf-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  padding: 3px 0;
+  cursor: pointer;
+}
+
+.mpsf-checkbox input[type="checkbox"] { accent-color: var(--accent-pink); }
+
+.mpsf-select {
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-soft);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+.mpsf-select:focus { border-color: var(--accent-pink); }
+
+.mpsf-date-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mpsf-date {
+  flex: 1;
+  padding: 5px 6px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 12px;
+}
+.mpsf-date:focus { border-color: var(--accent-pink); }
+
+.mpsf-date-sep { font-size: 12px; color: var(--text-muted); }
+
+.mpsf-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.mpsf-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.mpsf-btn-clear { background: var(--bg-surface); color: var(--text-primary); }
+.mpsf-btn-clear:hover { background: var(--border-soft); }
+.mpsf-btn-save { background: var(--accent-pink); color: #fff; }
+.mpsf-btn-save:hover { opacity: 0.85; }
+
+.mpsf-inline-input {
+  width: 100%;
+  margin-top: 6px;
+  padding: 5px 8px;
+  border: 1px solid var(--accent-pink);
+  border-radius: 6px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+}
+
+/* Presets */
+.mpsf-presets { margin-top: 14px; }
+
+.mpsf-preset-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 8px;
+  border-radius: 6px;
+  margin-bottom: 4px;
+  background: var(--bg-surface);
+}
+
+.mpsf-preset-name { font-size: 13px; cursor: pointer; }
+.mpsf-preset-name:hover { color: var(--accent-pink); }
+.mpsf-preset-del {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+}
+.mpsf-preset-del:hover { color: var(--accent-pink); }
+
+/* Results area */
+.mpsf-results-area { flex: 1; min-width: 0; }
+
+.mpsf-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.mpsf-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 14px;
+  padding: 3px 10px;
+  font-size: 12px;
+}
+
+.mpsf-chip-x {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 0;
+  line-height: 1;
+}
+.mpsf-chip-x:hover { color: var(--accent-pink); }
+
+.mpsf-match-count {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.mpsf-result-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 6px;
+}
+
+.mpsf-result-title { flex: 1; font-size: 13px; font-weight: 500; }
+.mpsf-result-plan { font-size: 11px; color: var(--text-muted); }
+.mpsf-result-assignee { font-size: 12px; color: var(--text-muted); }
+
+.mpsf-result-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.mpsf-st--not-started { background: var(--bg-surface); color: var(--text-muted); }
+.mpsf-st--in-progress { background: var(--accent-pink); color: #fff; }
+.mpsf-st--completed   { background: var(--accent-green); color: #fff; }
+
+.mpsf-empty {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 32px 0;
+  font-size: 14px;
+}

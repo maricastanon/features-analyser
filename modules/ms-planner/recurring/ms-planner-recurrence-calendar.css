@@ -1,0 +1,241 @@
+/* ═══════════════════════════════════════════════
+   MS PLANNER: Recurrence Calendar — CSS Module
+   Companion to ms-planner-recurrence-calendar.js
+   ═══════════════════════════════════════════════ */
+
+/* ── Wrapper ── */
+.mprc-wrap {
+  background: var(--bg-deep, #0d1f17);
+  border-radius: 14px;
+  border: 1.5px solid var(--border-soft, #1a3d28);
+  padding: 20px;
+  font-family: inherit;
+}
+
+.mprc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.mprc-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary, #e8f5e9);
+  margin: 0;
+}
+
+/* ── Navigation ── */
+.mprc-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.mprc-month-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-primary, #e8f5e9);
+  min-width: 160px;
+  text-align: center;
+}
+
+.mprc-btn-nav {
+  background: var(--bg-card, #122b1e);
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 8px;
+  color: var(--text-primary, #e8f5e9);
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: border-color 0.2s;
+}
+
+.mprc-btn-nav:hover { border-color: var(--accent-pink, #e91e90); }
+
+/* ── Calendar Grid ── */
+.mprc-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.mprc-day-header {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted, #81c784);
+  padding: 6px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mprc-cell {
+  background: var(--bg-card, #122b1e);
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 6px;
+  min-height: 52px;
+  padding: 4px;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.mprc-cell:hover { border-color: var(--accent-pink, #e91e90); }
+
+.mprc-cell-empty {
+  background: transparent;
+  border-color: transparent;
+  cursor: default;
+}
+
+.mprc-cell-empty:hover { border-color: transparent; }
+
+.mprc-cell-num {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-muted, #81c784);
+  margin-bottom: 2px;
+}
+
+.mprc-today {
+  border-color: var(--accent-green, #4caf50);
+  box-shadow: inset 0 0 0 1px var(--accent-green, #4caf50);
+}
+
+.mprc-today .mprc-cell-num { color: var(--accent-green, #4caf50); }
+
+.mprc-selected {
+  border-color: var(--accent-pink, #e91e90);
+  box-shadow: 0 0 8px rgba(233, 30, 144, 0.3);
+}
+
+.mprc-cell-dots {
+  display: flex;
+  gap: 3px;
+  flex-wrap: wrap;
+  margin-top: auto;
+}
+
+.mprc-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.mprc-green { background: var(--accent-green, #4caf50); }
+.mprc-pink { background: var(--accent-pink, #e91e90); }
+.mprc-gold { background: #f59e0b; }
+
+/* ── Day Detail Panel ── */
+.mprc-detail {
+  margin-top: 12px;
+  background: var(--bg-card, #122b1e);
+  border: 1.5px solid var(--border-soft, #1a3d28);
+  border-radius: 10px;
+  padding: 12px;
+  animation: mprc-fade 0.2s ease;
+}
+
+@keyframes mprc-fade {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mprc-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.mprc-detail-date {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary, #e8f5e9);
+}
+
+.mprc-btn-skip {
+  background: #f59e0b;
+  color: #000;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 10px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.mprc-btn-skip:hover { opacity: 0.85; }
+
+.mprc-badge-skipped {
+  font-size: 0.7rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #f59e0b22;
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.mprc-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-soft, #1a3d28);
+}
+
+.mprc-detail-item:last-child { border-bottom: none; }
+
+.mprc-detail-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary, #e8f5e9);
+  flex: 1;
+}
+
+.mprc-detail-freq {
+  font-size: 0.68rem;
+  color: var(--text-muted, #81c784);
+  text-transform: capitalize;
+}
+
+.mprc-detail-empty {
+  font-size: 0.82rem;
+  color: var(--text-muted, #81c784);
+  opacity: 0.6;
+  text-align: center;
+  padding: 8px;
+}
+
+/* ── Legend ── */
+.mprc-legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-soft, #1a3d28);
+  flex-wrap: wrap;
+}
+
+.mprc-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.72rem;
+  color: var(--text-muted, #81c784);
+}
+
+.mprc-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}

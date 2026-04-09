@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌸 MS Planner Deep Analysis — Feature Brainstorm Hub</title>
+<style>
+:root{--pink:#e91e90;--green:#4caf50;--gold:#eab308;--bg:#0d1f17;--card:#122b1e;--surface:#163224;--border:#1a3d28;--text:#e8f5e9;--muted:#5a8a60;--warn:#ef4444;--font:'Nunito','Calibri',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+/* Header */
+.hdr{background:linear-gradient(135deg,#1a0a12,var(--bg));border-bottom:2px solid var(--pink);padding:16px 24px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100}
+.hdr-icon{font-size:2rem}
+.hdr h1{font-size:1.2rem;font-weight:900;background:linear-gradient(90deg,var(--pink),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hdr-sub{font-size:.72rem;color:var(--muted);margin-top:2px}
+.hdr-badges{margin-left:auto;display:flex;gap:6px}
+.badge{padding:3px 10px;border-radius:12px;font-size:.65rem;font-weight:800}
+.badge-pink{background:rgba(233,30,144,.15);color:var(--pink);border:1px solid rgba(233,30,144,.3)}
+.badge-green{background:rgba(76,175,80,.15);color:var(--green);border:1px solid rgba(76,175,80,.3)}
+.badge-gold{background:rgba(234,179,8,.15);color:var(--gold);border:1px solid rgba(234,179,8,.3)}
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--border);padding:0 16px;background:var(--card);position:sticky;top:58px;z-index:99;overflow-x:auto}
+.tab{padding:10px 18px;font-size:.78rem;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:3px solid transparent;transition:.2s;white-space:nowrap}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--pink);border-bottom-color:var(--pink)}
+.tab .tc{background:var(--pink);color:#fff;font-size:.6rem;padding:1px 6px;border-radius:8px;margin-left:4px}
+/* Panels */
+.panel{display:none;padding:16px;max-width:1200px;margin:0 auto}
+.panel.active{display:block}
+/* Cards */
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px;transition:.2s}
+.card:hover{border-color:var(--pink);box-shadow:0 0 20px rgba(233,30,144,.08)}
+.card-h{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.card-h .emoji{font-size:1.3rem}
+.card-h .title{font-weight:800;font-size:.92rem}
+.card-h .status{margin-left:auto;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:10px}
+.st-has{background:rgba(76,175,80,.15);color:var(--green)}
+.st-miss{background:rgba(233,30,144,.15);color:var(--pink)}
+.st-partial{background:rgba(234,179,8,.15);color:var(--gold)}
+.st-new{background:rgba(76,175,80,.25);color:#7dffb3;border:1px solid rgba(76,175,80,.3)}
+.st-retired{background:rgba(239,68,68,.12);color:var(--warn)}
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+/* Stats */
+.stat-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 16px;flex:1;min-width:120px;text-align:center}
+.stat-num{font-size:1.8rem;font-weight:900}
+.stat-label{font-size:.68rem;color:var(--muted);margin-top:2px}
+/* Progress */
+.prog-wrap{margin:6px 0}
+.prog-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;transition:width .5s}
+/* Complaint */
+.complaint{background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--pink);border-radius:8px;padding:10px 12px;margin-bottom:6px;font-size:.8rem;display:flex;align-items:flex-start;gap:8px}
+.complaint .votes{background:var(--pink);color:#fff;padding:2px 8px;border-radius:10px;font-size:.65rem;font-weight:800;white-space:nowrap}
+/* Compare */
+.cmp-cell{padding:8px;font-size:.75rem;text-align:center}
+.cmp-yes{color:var(--green);font-weight:800}
+.cmp-no{color:var(--pink);font-weight:800}
+.cmp-partial{color:var(--gold);font-weight:800}
+table{width:100%;border-collapse:collapse}
+th{background:var(--surface);padding:8px;font-size:.72rem;color:var(--pink);font-weight:800;text-align:center;border:1px solid var(--border)}
+td{padding:8px;border:1px solid var(--border);text-align:center;font-size:.75rem}
+/* Checkbox */
+.chk{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:.8rem;cursor:pointer}
+.chk input{accent-color:var(--pink);width:16px;height:16px}
+.chk.done{opacity:.5;text-decoration:line-through}
+/* Popup */
+.popup-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center}
+.popup-overlay.show{display:flex}
+.popup{background:var(--card);border:2px solid var(--pink);border-radius:16px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;padding:20px}
+.popup-close{float:right;background:none;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer}
+/* Stars */
+.stars{display:flex;gap:2px}
+.star{cursor:pointer;font-size:1rem;transition:.15s}
+.star:hover,.star.active{transform:scale(1.3)}
+/* Section header */
+.sh{font-size:1rem;font-weight:900;margin:14px 0 10px;display:flex;align-items:center;gap:8px}
+.sh .dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+/* Filter pills */
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.pill{padding:4px 12px;border-radius:14px;font-size:.7rem;font-weight:700;cursor:pointer;border:1.5px solid var(--border);transition:.2s}
+.pill:hover,.pill.active{border-color:var(--pink);background:rgba(233,30,144,.1);color:var(--pink)}
+/* Scroll helper */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:var(--pink);border-radius:3px}
+::-webkit-scrollbar-track{background:var(--bg)}
+/* Sources */
+.sources{margin-top:20px;padding:12px;background:var(--surface);border-radius:10px;font-size:.7rem}
+.sources a{color:var(--green);text-decoration:none}
+.sources a:hover{text-decoration:underline}
+/* Responsive */
+@media(max-width:768px){.grid,.grid-2,.grid-3{grid-template-columns:1fr}.stat-row{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="hdr">
+  <span class="hdr-icon">🌸</span>
+  <div>
+    <h1>Microsoft Planner — Deep Analysis 2026</h1>
+    <div class="hdr-sub">What's in it • What's missing • User complaints • Competitor gaps • New modules</div>
+  </div>
+  <div class="hdr-badges">
+    <span class="badge badge-pink">🔍 Research</span>
+    <span class="badge badge-green">✅ 45 Modules Built</span>
+    <span class="badge badge-gold">⚡ 12 Gap Modules NEW</span>
+  </div>
+</div>
+
+<!-- ═══ TABS ═══ -->
+<div class="tabs" id="mainTabs">
+  <div class="tab active" onclick="go(0)">📊 Overview</div>
+  <div class="tab" onclick="go(1)">✅ What's In Planner</div>
+  <div class="tab" onclick="go(2)">❌ What's Missing <span class="tc">18</span></div>
+  <div class="tab" onclick="go(3)">😤 User Complaints <span class="tc">25+</span></div>
+  <div class="tab" onclick="go(4)">⚔️ vs Competitors</div>
+  <div class="tab" onclick="go(5)">🆕 New Modules <span class="tc">12</span></div>
+  <div class="tab" onclick="go(6)">📚 Sources</div>
+</div>
+
+<!-- ═══ PANEL 0: OVERVIEW ═══ -->
+<div class="panel active" id="p0">
+  <div class="stat-row">
+    <div class="stat"><div class="stat-num" style="color:var(--green)">24</div><div class="stat-label">✅ Features Planner HAS</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--pink)">18</div><div class="stat-label">❌ Features MISSING</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--gold)">25+</div><div class="stat-label">😤 User Complaints</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--green)">45</div><div class="stat-label">🧩 Modules Built</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--pink)">12</div><div class="stat-label">🆕 Gap Modules NEW</div></div>
+  </div>
+
+  <!-- Donut Chart -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-h"><span class="emoji">📊</span><span class="title">Feature Coverage</span></div>
+      <div style="display:flex;align-items:center;gap:20px;justify-content:center;padding:10px">
+        <div style="width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--green) 0% 57%,var(--pink) 57% 100%);display:flex;align-items:center;justify-content:center">
+          <div style="width:80px;height:80px;border-radius:50%;background:var(--card);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:900;color:var(--green)">57%</div>
+        </div>
+        <div>
+          <div style="font-size:.78rem;margin-bottom:4px"><span style="color:var(--green)">●</span> Has: 24 features</div>
+          <div style="font-size:.78rem;margin-bottom:4px"><span style="color:var(--pink)">●</span> Missing: 18 features</div>
+          <div style="font-size:.78rem"><span style="color:var(--gold)">●</span> Partial: 5 features</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-h"><span class="emoji">🔥</span><span class="title">Top 5 Pain Points</span></div>
+      <div class="complaint"><span>1.</span> No time tracking at all<span class="votes">🔥🔥🔥</span></div>
+      <div class="complaint"><span>2.</span> No task dependencies (basic plan)<span class="votes">🔥🔥🔥</span></div>
+      <div class="complaint"><span>3.</span> No custom fields<span class="votes">🔥🔥</span></div>
+      <div class="complaint"><span>4.</span> Notifications broken/delayed<span class="votes">🔥🔥</span></div>
+      <div class="complaint"><span>5.</span> No cross-plan search<span class="votes">🔥</span></div>
+    </div>
+  </div>
+
+  <!-- Quick Nav -->
+  <div class="sh"><span class="dot" style="background:var(--pink)"></span> Quick Navigation</div>
+  <div class="pills">
+    <span class="pill" onclick="go(1)">✅ What Planner Has</span>
+    <span class="pill" onclick="go(2)">❌ What's Missing</span>
+    <span class="pill" onclick="go(3)">😤 Complaints</span>
+    <span class="pill" onclick="go(4)">⚔️ vs Competitors</span>
+    <span class="pill" onclick="go(5)">🆕 New Modules</span>
+  </div>
+</div>
+
+<!-- ═══ PANEL 1: WHAT'S IN PLANNER ═══ -->
+<div class="panel" id="p1">
+  <div class="sh"><span class="dot" style="background:var(--green)"></span> Features Microsoft Planner HAS (2026)</div>
+  <div class="pills" id="catPills1">
+    <span class="pill active" onclick="filterCat(1,'all')">🌟 All</span>
+    <span class="pill" onclick="filterCat(1,'core')">⚡ Core</span>
+    <span class="pill" onclick="filterCat(1,'views')">👁️ Views</span>
+    <span class="pill" onclick="filterCat(1,'collab')">🤝 Collab</span>
+    <span class="pill" onclick="filterCat(1,'premium')">👑 Premium</span>
+    <span class="pill" onclick="filterCat(1,'new')">🆕 New 2026</span>
+  </div>
+  <div class="grid" id="hasGrid">
+    <!-- Core -->
+    <div class="card" data-cat="core"><div class="card-h"><span class="emoji">📋</span><span class="title">Task Creation</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Create tasks with title, description, dates, priority, labels, checklists</div></div>
+    <div class="card" data-cat="core"><div class="card-h"><span class="emoji">📦</span><span class="title">Buckets</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Organize tasks into customizable columns/groups</div></div>
+    <div class="card" data-cat="core"><div class="card-h"><span class="emoji">🏷️</span><span class="title">Labels (6 colors)</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Color-coded labels for categorization (25 in new version)</div></div>
+    <div class="card" data-cat="core"><div class="card-h"><span class="emoji">☑️</span><span class="title">Checklists</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Sub-task checklists within each task</div></div>
+    <div class="card" data-cat="core"><div class="card-h"><span class="emoji">👤</span><span class="title">Task Assignment</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Assign tasks to team members</div></div>
+    <div class="card" data-cat="core"><div class="card-h"><span class="emoji">📎</span><span class="title">Attachments</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">File attachments via OneDrive/SharePoint</div></div>
+    <div class="card" data-cat="core"><div class="card-h"><span class="emoji">🔔</span><span class="title">Notifications</span><span class="status st-partial">⚠️ PARTIAL</span></div><div style="font-size:.78rem;color:var(--muted)">Basic notifications (but delayed, limited control)</div></div>
+    <div class="card" data-cat="core"><div class="card-h"><span class="emoji">📊</span><span class="title">Progress States</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Not Started / In Progress / Completed</div></div>
+    <!-- Views -->
+    <div class="card" data-cat="views"><div class="card-h"><span class="emoji">📋</span><span class="title">Board View (Kanban)</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Drag-and-drop kanban board with buckets</div></div>
+    <div class="card" data-cat="views"><div class="card-h"><span class="emoji">📅</span><span class="title">Schedule View</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Calendar view of tasks by due date</div></div>
+    <div class="card" data-cat="views"><div class="card-h"><span class="emoji">📊</span><span class="title">Charts View</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Progress charts by status, member, bucket</div></div>
+    <div class="card" data-cat="views"><div class="card-h"><span class="emoji">📄</span><span class="title">Grid/List View</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Table view of tasks (newer addition)</div></div>
+    <div class="card" data-cat="views"><div class="card-h"><span class="emoji">📌</span><span class="title">My Tasks / My Day</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Personal task view across all plans</div></div>
+    <!-- Collab -->
+    <div class="card" data-cat="collab"><div class="card-h"><span class="emoji">💬</span><span class="title">Task Comments</span><span class="status st-partial">⚠️ CHANGING</span></div><div style="font-size:.78rem;color:var(--muted)">Being replaced by "Task Chat" with @mentions + rich text</div></div>
+    <div class="card" data-cat="collab"><div class="card-h"><span class="emoji">🔗</span><span class="title">Teams Integration</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Embedded in Microsoft Teams (but removed from desktop Mar 2026)</div></div>
+    <div class="card" data-cat="collab"><div class="card-h"><span class="emoji">📧</span><span class="title">Outlook Integration</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">Tasks sync with Outlook/To Do</div></div>
+    <div class="card" data-cat="collab"><div class="card-h"><span class="emoji">☁️</span><span class="title">OneDrive/SharePoint</span><span class="status st-has">✅ HAS</span></div><div style="font-size:.78rem;color:var(--muted)">File storage integration</div></div>
+    <!-- Premium -->
+    <div class="card" data-cat="premium"><div class="card-h"><span class="emoji">👑</span><span class="title">Task Dependencies</span><span class="status st-partial">👑 PREMIUM ONLY</span></div><div style="font-size:.78rem;color:var(--muted)">Only in Planner Plan 1 (paid) — not in basic</div></div>
+    <div class="card" data-cat="premium"><div class="card-h"><span class="emoji">👑</span><span class="title">Gantt Chart</span><span class="status st-partial">👑 PREMIUM ONLY</span></div><div style="font-size:.78rem;color:var(--muted)">Timeline view only in premium plans</div></div>
+    <div class="card" data-cat="premium"><div class="card-h"><span class="emoji">👑</span><span class="title">Sprint Planning</span><span class="status st-partial">👑 PREMIUM ONLY</span></div><div style="font-size:.78rem;color:var(--muted)">Agile sprint management in premium</div></div>
+    <div class="card" data-cat="premium"><div class="card-h"><span class="emoji">👑</span><span class="title">Custom Fields</span><span class="status st-partial">👑 PREMIUM ONLY</span></div><div style="font-size:.78rem;color:var(--muted)">Extra fields only in premium plans</div></div>
+    <div class="card" data-cat="premium"><div class="card-h"><span class="emoji">👑</span><span class="title">Goals Alignment</span><span class="status st-partial">👑 PREMIUM ONLY</span></div><div style="font-size:.78rem;color:var(--muted)">Link tasks to organizational goals</div></div>
+    <!-- New 2026 -->
+    <div class="card" data-cat="new"><div class="card-h"><span class="emoji">🆕</span><span class="title">Task Chat</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.78rem;color:var(--muted)">Rich text comments with @mentions, replaces old comments</div></div>
+    <div class="card" data-cat="new"><div class="card-h"><span class="emoji">🆕</span><span class="title">Custom Templates</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.78rem;color:var(--muted)">Reusable pre-designed plan layouts</div></div>
+    <div class="card" data-cat="new"><div class="card-h"><span class="emoji">🆕</span><span class="title">Bulk Editing</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.78rem;color:var(--muted)">Edit multiple tasks at once (finally!)</div></div>
+    <div class="card" data-cat="new"><div class="card-h"><span class="emoji">🆕</span><span class="title">AI Project Manager</span><span class="status st-new">🆕 COPILOT</span></div><div style="font-size:.78rem;color:var(--muted)">AI agent that helps manage tasks (Copilot license needed)</div></div>
+    <div class="card" data-cat="new"><div class="card-h"><span class="emoji">🆕</span><span class="title">Status Reports</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.78rem;color:var(--muted)">Auto-synthesize progress, risks, milestones</div></div>
+    <div class="card" data-cat="new"><div class="card-h"><span class="emoji">🆕</span><span class="title">Sensitivity Labels</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.78rem;color:var(--muted)">DLP protections on task content</div></div>
+  </div>
+
+  <!-- Retired -->
+  <div class="sh"><span class="dot" style="background:var(--warn)"></span> ⚠️ Features RETIRED in 2026</div>
+  <div class="grid">
+    <div class="card" style="border-color:rgba(239,68,68,.3)"><div class="card-h"><span class="emoji">📅</span><span class="title">iCalendar Feed</span><span class="status st-retired">🗑️ RETIRED</span></div><div style="font-size:.78rem;color:var(--warn)">No replacement announced. Tasks can no longer be viewed in Outlook calendar.</div></div>
+    <div class="card" style="border-color:rgba(239,68,68,.3)"><div class="card-h"><span class="emoji">🎨</span><span class="title">Whiteboard Tab</span><span class="status st-retired">🗑️ RETIRED</span></div><div style="font-size:.78rem;color:var(--warn)">Can't create tasks from Whiteboard sticky notes anymore.</div></div>
+    <div class="card" style="border-color:rgba(239,68,68,.3)"><div class="card-h"><span class="emoji">🔄</span><span class="title">Loop Components</span><span class="status st-retired">🗑️ RETIRED</span></div><div style="font-size:.78rem;color:var(--warn)">/planner command removed from Loop pages.</div></div>
+    <div class="card" style="border-color:rgba(239,68,68,.3)"><div class="card-h"><span class="emoji">🎯</span><span class="title">Viva Goals Link</span><span class="status st-retired">🗑️ RETIRED</span></div><div style="font-size:.78rem;color:var(--warn)">Planner integration in Viva Goals discontinued.</div></div>
+  </div>
+</div>
+
+<!-- ═══ PANEL 2: WHAT'S MISSING ═══ -->
+<div class="panel" id="p2">
+  <div class="sh"><span class="dot" style="background:var(--pink)"></span> Features MS Planner is MISSING</div>
+  <div class="pills">
+    <span class="pill active" onclick="filterCat(2,'all')">🌟 All</span>
+    <span class="pill" onclick="filterCat(2,'critical')">🔥 Critical</span>
+    <span class="pill" onclick="filterCat(2,'wanted')">💖 Most Wanted</span>
+    <span class="pill" onclick="filterCat(2,'competitors')">⚔️ Competitors Have</span>
+  </div>
+  <div class="grid" id="missGrid">
+    <div class="card" data-cat="critical competitors"><div class="card-h"><span class="emoji">⏱️</span><span class="title">Time Tracking</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">No built-in time tracking. Asana, ClickUp, Monday all have it. Users must use 3rd party tools.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥🔥🔥🔥</div></div></div>
+    <div class="card" data-cat="critical competitors"><div class="card-h"><span class="emoji">🔗</span><span class="title">Task Dependencies (Free)</span><span class="status st-miss">❌ PAYWALL</span></div><div style="font-size:.78rem;color:var(--muted)">Only in Premium. Competitors offer this in free/basic plans. Critical for project sequencing.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥🔥🔥🔥</div></div></div>
+    <div class="card" data-cat="critical wanted"><div class="card-h"><span class="emoji">🎛️</span><span class="title">Custom Fields (Free)</span><span class="status st-miss">❌ PAYWALL</span></div><div style="font-size:.78rem;color:var(--muted)">Premium only. Can't add custom data fields like budget, effort, tags in basic plan.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥🔥🔥</div></div></div>
+    <div class="card" data-cat="critical wanted"><div class="card-h"><span class="emoji">🔍</span><span class="title">Cross-Plan Search</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">Can't search tasks across multiple plans. No global search. Huge gap for multi-project teams.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥🔥🔥</div></div></div>
+    <div class="card" data-cat="critical"><div class="card-h"><span class="emoji">🔔</span><span class="title">Granular Notifications</span><span class="status st-miss">❌ BROKEN</span></div><div style="font-size:.78rem;color:var(--muted)">No control over notification types. Delays up to 30 min. Wrong recipients. No desktop preferences.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥🔥🔥</div></div></div>
+    <div class="card" data-cat="wanted competitors"><div class="card-h"><span class="emoji">🔄</span><span class="title">Recurring Tasks</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">No native recurring task support. Must recreate manually or use Power Automate workaround.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥🔥🔥</div></div></div>
+    <div class="card" data-cat="wanted"><div class="card-h"><span class="emoji">👁️</span><span class="title">Read-Only / Guest View</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">No read-only permission level. Anyone with access can edit everything. No stakeholder view.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥🔥</div></div></div>
+    <div class="card" data-cat="competitors"><div class="card-h"><span class="emoji">🤖</span><span class="title">Workflow Automation</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">No built-in automation rules. Must use Power Automate (separate tool). Asana/ClickUp have native rules.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥🔥</div></div></div>
+    <div class="card" data-cat="competitors"><div class="card-h"><span class="emoji">📊</span><span class="title">Advanced Reporting</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">No burndown, velocity, workload heatmaps, or custom reports. Basic charts only.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥🔥</div></div></div>
+    <div class="card" data-cat="wanted"><div class="card-h"><span class="emoji">📱</span><span class="title">Good Mobile Experience</span><span class="status st-miss">❌ POOR</span></div><div style="font-size:.78rem;color:var(--muted)">Limited mobile features. No widgets. Poor on-the-go usability. Desktop reloads when switching.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥🔥</div></div></div>
+    <div class="card" data-cat="competitors"><div class="card-h"><span class="emoji">🔌</span><span class="title">3rd Party Integrations</span><span class="status st-miss">❌ LIMITED</span></div><div style="font-size:.78rem;color:var(--muted)">Only MS ecosystem. No Slack, Google Drive, Salesforce, GitHub, Figma direct integrations.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥</div></div></div>
+    <div class="card" data-cat="wanted"><div class="card-h"><span class="emoji">🏷️</span><span class="title">Task Time Specifications</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">Only dates, no times. Can't schedule a task for 2pm. Only day-level granularity.</div><div class="prog-wrap"><div style="font-size:.65rem;color:var(--pink);font-weight:700">User demand: 🔥🔥</div></div></div>
+    <div class="card" data-cat="wanted"><div class="card-h"><span class="emoji">💾</span><span class="title">Save View/Filter Presets</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">Can't save filter configurations. Must re-filter every time you visit a plan.</div></div>
+    <div class="card" data-cat="competitors"><div class="card-h"><span class="emoji">📄</span><span class="title">Docs/Wiki per Plan</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">No built-in docs. ClickUp/Notion have native docs. Must use SharePoint separately.</div></div>
+    <div class="card" data-cat="competitors"><div class="card-h"><span class="emoji">📈</span><span class="title">Resource Management</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">No workload balancing, capacity planning, or resource allocation views.</div></div>
+    <div class="card" data-cat="wanted"><div class="card-h"><span class="emoji">📝</span><span class="title">Task Description Formatting</span><span class="status st-miss">❌ POOR</span></div><div style="font-size:.78rem;color:var(--muted)">Limited rich text in descriptions. No markdown, code blocks, or tables.</div></div>
+    <div class="card" data-cat="wanted"><div class="card-h"><span class="emoji">📜</span><span class="title">Task History / Audit Log</span><span class="status st-miss">❌ MISSING</span></div><div style="font-size:.78rem;color:var(--muted)">No record of who changed what and when. No activity history on tasks.</div></div>
+    <div class="card" data-cat="competitors"><div class="card-h"><span class="emoji">📥</span><span class="title">Import/Export</span><span class="status st-miss">❌ LIMITED</span></div><div style="font-size:.78rem;color:var(--muted)">No CSV/Excel import. iCalendar export just retired. Very limited data portability.</div></div>
+  </div>
+</div>
+
+<!-- ═══ PANEL 3: USER COMPLAINTS ═══ -->
+<div class="panel" id="p3">
+  <div class="sh"><span class="dot" style="background:var(--pink)"></span> 😤 Real User Complaints (from Microsoft Community, Capterra, Reddit)</div>
+
+  <div class="sh" style="font-size:.88rem"><span class="dot" style="background:var(--warn)"></span> 🔔 Notifications & Communication</div>
+  <div class="complaint"><span>😤</span><div>Assignees don't receive notifications about task comments — wrong person gets notified</div><span class="votes">HIGH</span></div>
+  <div class="complaint"><span>😤</span><div>Notification delays up to 30 minutes. Premature notifications sent before task details are added</div><span class="votes">HIGH</span></div>
+  <div class="complaint"><span>😤</span><div>No @-mentions in comments, no text formatting, can't edit comments, no attachments in comments</div><span class="votes">HIGH</span></div>
+  <div class="complaint"><span>😤</span><div>No notification when attachments added, descriptions changed, or settings modified</div><span class="votes">MED</span></div>
+
+  <div class="sh" style="font-size:.88rem"><span class="dot" style="background:var(--pink)"></span> 🎨 UI & UX Regressions (Feb 2026)</div>
+  <div class="complaint"><span>😤</span><div>New UI forces tabbing between Task Details, Attachments, Checklist — can't see all at once anymore</div><span class="votes">🔥 NEW</span></div>
+  <div class="complaint"><span>😤</span><div>Checklist items limited to 36 chars via Power Automate (was 100). Manual entry still works at 100+</div><span class="votes">🔥 NEW</span></div>
+  <div class="complaint"><span>😤</span><div>Desktop app reloads completely when switching tabs/teams — loses context</div><span class="votes">HIGH</span></div>
+  <div class="complaint"><span>😤</span><div>Planner removed from Teams desktop app entirely (March 25, 2026)</div><span class="votes">🔥 NEW</span></div>
+
+  <div class="sh" style="font-size:.88rem"><span class="dot" style="background:var(--gold)"></span> 📋 Task Management Gaps</div>
+  <div class="complaint"><span>😤</span><div>Tasks always sorted alphabetically — no manual sort across views, only in bucket view</div><span class="votes">HIGH</span></div>
+  <div class="complaint"><span>😤</span><div>Can't view all tasks assigned to another person across plans</div><span class="votes">HIGH</span></div>
+  <div class="complaint"><span>😤</span><div>Completed tasks accumulate and eventually prevent new input — no auto-archive</div><span class="votes">MED</span></div>
+  <div class="complaint"><span>😤</span><div>No read-only permission level — anyone with access can edit everything</div><span class="votes">HIGH</span></div>
+  <div class="complaint"><span>😤</span><div>No task time specifications — only dates, can't schedule for specific hours</div><span class="votes">MED</span></div>
+  <div class="complaint"><span>😤</span><div>Cannot convert Basic plan to Premium — must recreate from scratch and manually copy tasks</div><span class="votes">HIGH</span></div>
+
+  <div class="sh" style="font-size:.88rem"><span class="dot" style="background:var(--green)"></span> 📎 Attachments & Files</div>
+  <div class="complaint"><span>😤</span><div>Attachments auto-stored in OneDrive root folder, creating clutter. Deleting from root removes from task</div><span class="votes">MED</span></div>
+  <div class="complaint"><span>😤</span><div>No image preview. Opening attachments redirects to web browser instead of in-app</div><span class="votes">MED</span></div>
+
+  <div class="sh" style="font-size:.88rem"><span class="dot" style="background:var(--pink)"></span> 📱 Mobile & Performance</div>
+  <div class="complaint"><span>😤</span><div>Poor mobile experience — missing widgets, limited features, suboptimal on-the-go usability</div><span class="votes">HIGH</span></div>
+  <div class="complaint"><span>😤</span><div>"Doesn't have the capability to manage complex projects" — Capterra review, March 2026</div><span class="votes">HIGH</span></div>
+  <div class="complaint"><span>😤</span><div>Non-customizable status options — "too limited" for real workflows</div><span class="votes">MED</span></div>
+</div>
+
+<!-- ═══ PANEL 4: VS COMPETITORS ═══ -->
+<div class="panel" id="p4">
+  <div class="sh"><span class="dot" style="background:var(--gold)"></span> ⚔️ MS Planner vs Competitors (2026)</div>
+  <div style="overflow-x:auto">
+  <table>
+    <tr><th style="text-align:left;min-width:180px">Feature</th><th>MS Planner</th><th>Asana</th><th>Monday.com</th><th>ClickUp</th><th>Trello</th></tr>
+    <tr><td style="text-align:left;font-weight:700">💰 Free Plan</td><td class="cmp-yes">✅ Yes</td><td class="cmp-yes">✅ Yes</td><td class="cmp-yes">✅ Yes</td><td class="cmp-yes">✅ Yes</td><td class="cmp-yes">✅ Yes</td></tr>
+    <tr><td style="text-align:left;font-weight:700">📋 Kanban Board</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td></tr>
+    <tr><td style="text-align:left;font-weight:700">📄 List/Grid View</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-no">❌</td></tr>
+    <tr><td style="text-align:left;font-weight:700">📅 Calendar View</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-partial">⚠️ Power-Up</td></tr>
+    <tr><td style="text-align:left;font-weight:700">📊 Gantt/Timeline</td><td class="cmp-partial">👑 Premium</td><td class="cmp-yes">✅ Free</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅ Free</td><td class="cmp-no">❌</td></tr>
+    <tr><td style="text-align:left;font-weight:700">🔗 Dependencies</td><td class="cmp-partial">👑 Premium</td><td class="cmp-yes">✅ Free</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅ Free</td><td class="cmp-no">❌</td></tr>
+    <tr><td style="text-align:left;font-weight:700">⏱️ Time Tracking</td><td class="cmp-no">❌ None</td><td class="cmp-partial">⚠️ Paid</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅ Free</td><td class="cmp-no">❌</td></tr>
+    <tr><td style="text-align:left;font-weight:700">🎛️ Custom Fields</td><td class="cmp-partial">👑 Premium</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅ Free</td><td class="cmp-partial">⚠️ Power-Up</td></tr>
+    <tr><td style="text-align:left;font-weight:700">🔄 Recurring Tasks</td><td class="cmp-no">❌ None</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-partial">⚠️ Butler</td></tr>
+    <tr><td style="text-align:left;font-weight:700">🤖 Automation</td><td class="cmp-no">❌ Needs PA</td><td class="cmp-yes">✅ Native</td><td class="cmp-yes">✅ Native</td><td class="cmp-yes">✅ Native</td><td class="cmp-yes">✅ Butler</td></tr>
+    <tr><td style="text-align:left;font-weight:700">📊 Advanced Reports</td><td class="cmp-no">❌ Basic only</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-no">❌</td></tr>
+    <tr><td style="text-align:left;font-weight:700">📄 Docs/Wiki</td><td class="cmp-no">❌ None</td><td class="cmp-no">❌</td><td class="cmp-yes">✅ WorkDocs</td><td class="cmp-yes">✅ Docs</td><td class="cmp-no">❌</td></tr>
+    <tr><td style="text-align:left;font-weight:700">🔌 3rd Party Apps</td><td class="cmp-no">❌ MS only</td><td class="cmp-yes">✅ 200+</td><td class="cmp-yes">✅ 200+</td><td class="cmp-yes">✅ 1000+</td><td class="cmp-yes">✅ Power-Ups</td></tr>
+    <tr><td style="text-align:left;font-weight:700">🔍 Global Search</td><td class="cmp-no">❌ Limited</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td></tr>
+    <tr><td style="text-align:left;font-weight:700">👁️ Guest/Read-Only</td><td class="cmp-no">❌ None</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td><td class="cmp-yes">✅</td></tr>
+    <tr><td style="text-align:left;font-weight:700">📥 Import/Export</td><td class="cmp-no">❌ Limited</td><td class="cmp-yes">✅ CSV</td><td class="cmp-yes">✅ CSV/Excel</td><td class="cmp-yes">✅ Many</td><td class="cmp-partial">⚠️ JSON</td></tr>
+  </table>
+  </div>
+  <div style="margin-top:12px;padding:10px;background:rgba(233,30,144,.08);border:1px solid rgba(233,30,144,.2);border-radius:10px;font-size:.8rem;text-align:center">
+    <strong style="color:var(--pink)">Verdict:</strong> MS Planner is great for simple task boards within MS365 teams. For anything complex, <strong style="color:var(--green)">ClickUp wins</strong> on free features, <strong style="color:var(--gold)">Asana wins</strong> on polish.
+  </div>
+</div>
+
+<!-- ═══ PANEL 5: NEW GAP MODULES ═══ -->
+<div class="panel" id="p5">
+  <div class="sh"><span class="dot" style="background:var(--pink)"></span> 🆕 New Modules to Fill MS Planner Gaps</div>
+  <div style="font-size:.78rem;color:var(--muted);margin-bottom:12px">These modules fill the features MS Planner is missing. 3 modules per gap × 4 critical gaps = 12 new modules.</div>
+
+  <div class="sh" style="font-size:.88rem;color:var(--pink)">⏱️ Gap 1: Time Tracking (COMPLETELY MISSING)</div>
+  <div class="grid-3">
+    <div class="card"><div class="card-h"><span class="emoji">⏱️</span><span class="title">Stopwatch Timer</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Start/pause/stop per task. Running clock. Task switcher. Daily totals.</div></div>
+    <div class="card"><div class="card-h"><span class="emoji">📊</span><span class="title">Time Reports</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Weekly/monthly time breakdown by task, member, project. Exportable data.</div></div>
+    <div class="card"><div class="card-h"><span class="emoji">💰</span><span class="title">Time Budgets</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Set hour budgets per task/project. Track burn rate. Overbudget warnings.</div></div>
+  </div>
+
+  <div class="sh" style="font-size:.88rem;color:var(--pink)">🔄 Gap 2: Recurring Tasks (NO NATIVE SUPPORT)</div>
+  <div class="grid-3">
+    <div class="card"><div class="card-h"><span class="emoji">🔄</span><span class="title">Recurrence Engine</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Daily/weekly/monthly/custom patterns. Auto-create tasks on schedule. Skip/pause.</div></div>
+    <div class="card"><div class="card-h"><span class="emoji">📅</span><span class="title">Recurrence Calendar</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Visual calendar showing all recurring task instances. Manage exceptions.</div></div>
+    <div class="card"><div class="card-h"><span class="emoji">📋</span><span class="title">Recurrence Templates</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Pre-built patterns: Daily standup, Weekly review, Monthly report, Quarterly OKR.</div></div>
+  </div>
+
+  <div class="sh" style="font-size:.88rem;color:var(--pink)">🔍 Gap 3: Cross-Plan Search (CAN'T SEARCH ACROSS PLANS)</div>
+  <div class="grid-3">
+    <div class="card"><div class="card-h"><span class="emoji">🔍</span><span class="title">Global Search</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Search across ALL plans. Full-text in titles, descriptions, comments. Instant results.</div></div>
+    <div class="card"><div class="card-h"><span class="emoji">🏷️</span><span class="title">Search Filters</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Filter search by plan, assignee, date range, status, label. Save search queries.</div></div>
+    <div class="card"><div class="card-h"><span class="emoji">⭐</span><span class="title">Quick Access</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Pin frequent tasks, recent items, bookmarks. Jump to any task from anywhere.</div></div>
+  </div>
+
+  <div class="sh" style="font-size:.88rem;color:var(--pink)">📜 Gap 4: Task History & Audit (NO CHANGE TRACKING)</div>
+  <div class="grid-3">
+    <div class="card"><div class="card-h"><span class="emoji">📜</span><span class="title">Activity Log</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Full audit trail: who changed what, when. Filter by task, member, action type.</div></div>
+    <div class="card"><div class="card-h"><span class="emoji">⏪</span><span class="title">Version History</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">View previous versions of task details. Compare changes. Restore old versions.</div></div>
+    <div class="card"><div class="card-h"><span class="emoji">📊</span><span class="title">Change Analytics</span><span class="status st-new">🆕 NEW</span></div><div style="font-size:.75rem;color:var(--muted)">Visualize change patterns. Most active editors. Busiest hours. Change frequency.</div></div>
+  </div>
+</div>
+
+<!-- ═══ PANEL 6: SOURCES ═══ -->
+<div class="panel" id="p6">
+  <div class="sh"><span class="dot" style="background:var(--green)"></span> 📚 Research Sources</div>
+  <div class="sources">
+    <div style="margin-bottom:8px;font-weight:700;color:var(--pink)">Microsoft Official</div>
+    <div>• <a href="https://techcommunity.microsoft.com/discussions/planner/ms-planner-is-missing-basic-functionality-and-logic/3203053" target="_blank">MS Planner Missing Basic Functionality — Microsoft Community</a></div>
+    <div>• <a href="https://techcommunity.microsoft.com/discussions/planner/2026-02-20---planner-ui-update-is-worse/4496048" target="_blank">Planner UI Update is Worse (Feb 2026) — Microsoft Community</a></div>
+    <div>• <a href="https://blog-en.topedia.com/2025/12/microsoft-planner-upcoming-feature-retirements-and-new-capabilities/" target="_blank">Planner Feature Retirements & New Capabilities — Topedia</a></div>
+    <div>• <a href="https://its.wsu.edu/2025/12/19/microsoft-planner-update-january-2026/" target="_blank">Microsoft Planner Update January 2026 — WSU</a></div>
+    <div>• <a href="https://learn.microsoft.com/en-us/answers/questions/5389721/microsoft-planner-advanced-features-missing" target="_blank">MS Planner Advanced Features Missing — Microsoft Q&A</a></div>
+    <div style="margin:8px 0;font-weight:700;color:var(--pink)">Reviews & Comparisons</div>
+    <div>• <a href="https://www.capterra.com/p/227201/Microsoft-Planner/reviews/" target="_blank">Microsoft Planner Reviews 2026 — Capterra</a></div>
+    <div>• <a href="https://www.selecthub.com/project-management-software/clickup-vs-microsoft-planner/" target="_blank">ClickUp vs Microsoft Planner 2025 — SelectHub</a></div>
+    <div>• <a href="https://clickup.com/blog/microsoft-planner-vs-asana/" target="_blank">Asana vs Microsoft Planner — ClickUp Blog</a></div>
+    <div>• <a href="https://www.projectmanager.com/blog/microsoft-planner-vs-asana" target="_blank">MS Planner vs Asana In-Depth — ProjectManager</a></div>
+    <div style="margin:8px 0;font-weight:700;color:var(--pink)">News</div>
+    <div>• <a href="https://www.neowin.net/news/microsoft-confirms-major-2026-update-to-remove-several-planner-features-add-new-ones/" target="_blank">Major 2026 Update Removes Features — Neowin</a></div>
+    <div>• <a href="https://www.neowin.net/news/microsoft-refreshes-planner-with-new-design-and-features/" target="_blank">Planner Refresh: Users Found Issues — Neowin</a></div>
+    <div>• <a href="https://www.timeneye.com/blog/what-is-microsoft-planner" target="_blank">Microsoft Planner 2026 Features — Timeneye</a></div>
+    <div>• <a href="https://sourcepassmcoe.com/articles/microsoft-planner-2026-new-and-retiring-features-sourcepass-mcoe" target="_blank">Planner 2026 New & Retired — Sourcepass</a></div>
+  </div>
+</div>
+
+<!-- ═══ POPUP ═══ -->
+<div class="popup-overlay" id="popupOverlay" onclick="if(event.target===this)closePopup()">
+  <div class="popup" id="popupContent"></div>
+</div>
+
+<script>
+// Tab switching
+const panels=document.querySelectorAll('.panel');
+const tabs=document.querySelectorAll('.tab');
+function go(i){panels.forEach((p,j)=>{p.classList.toggle('active',j===i)});tabs.forEach((t,j)=>{t.classList.toggle('active',j===i)});window.scrollTo(0,0)}
+
+// Category filter
+function filterCat(panel,cat){
+  const grid=panel===1?document.getElementById('hasGrid'):document.getElementById('missGrid');
+  const pills=grid.previousElementSibling;
+  pills.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  grid.querySelectorAll('.card').forEach(c=>{
+    if(cat==='all')c.style.display='';
+    else c.style.display=c.dataset.cat&&c.dataset.cat.includes(cat)?'':'none';
+  });
+}
+
+// Popup
+function showPopup(html){document.getElementById('popupContent').innerHTML='<button class="popup-close" onclick="closePopup()">✕</button>'+html;document.getElementById('popupOverlay').classList.add('show')}
+function closePopup(){document.getElementById('popupOverlay').classList.remove('show')}
+
+// Checkbox interactivity
+document.addEventListener('change',e=>{if(e.target.type==='checkbox'){const chk=e.target.closest('.chk');if(chk)chk.classList.toggle('done',e.target.checked)}});
+</script>
+</body>
+</html>

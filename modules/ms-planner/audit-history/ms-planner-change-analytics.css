@@ -1,0 +1,183 @@
+/* ═══════════════════════════════════════════════
+   MS PLANNER: Change Analytics — CSS
+   ═══════════════════════════════════════════════ */
+
+.mpca-wrapper {
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  border-radius: 10px;
+  padding: 20px;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 400px;
+}
+
+.mpca-header { margin-bottom: 16px; }
+.mpca-title { font-size: 16px; font-weight: 600; }
+
+/* Summary stats row */
+.mpca-stats-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.mpca-stat {
+  flex: 1;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 14px 16px;
+  text-align: center;
+}
+
+.mpca-stat-value { font-size: 22px; font-weight: 700; color: var(--accent-pink); }
+.mpca-stat-label { font-size: 11px; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.4px; }
+
+/* Card grid */
+.mpca-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.mpca-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 16px;
+}
+.mpca-card--wide { grid-column: 1 / -1; }
+
+.mpca-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  margin-bottom: 12px;
+}
+
+/* Bar chart */
+.mpca-bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 120px;
+  padding-top: 10px;
+}
+
+.mpca-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.mpca-bar {
+  width: 100%;
+  max-width: 32px;
+  background: var(--accent-pink);
+  border-radius: 4px 4px 0 0;
+  min-height: 4px;
+  transition: height 0.3s;
+}
+
+.mpca-bar-val { font-size: 11px; font-weight: 600; margin-top: 4px; }
+.mpca-bar-label { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+
+/* Donut */
+.mpca-donut-area {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.mpca-donut {
+  width: 100px;
+  height: 100px;
+  flex-shrink: 0;
+}
+
+.mpca-donut-legend { flex: 1; }
+
+.mpca-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  margin-bottom: 4px;
+  text-transform: capitalize;
+}
+
+.mpca-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.mpca-legend-count { color: var(--text-muted); margin-left: auto; font-weight: 600; }
+
+/* Rank items */
+.mpca-rank-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.mpca-rank-num {
+  width: 18px;
+  height: 18px;
+  background: var(--bg-surface);
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.mpca-rank-name { width: 70px; font-size: 12px; font-weight: 500; flex-shrink: 0; }
+
+.mpca-rank-bar-bg {
+  flex: 1;
+  height: 8px;
+  background: var(--bg-surface);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mpca-rank-bar {
+  height: 100%;
+  background: var(--accent-pink);
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+.mpca-rank-bar--alt { background: var(--accent-green); }
+
+.mpca-rank-count { font-size: 12px; font-weight: 600; width: 28px; text-align: right; }
+
+/* Heatmap */
+.mpca-heatmap {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.mpca-heat-cell {
+  width: 32px;
+  height: 32px;
+  background: var(--accent-pink);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.mpca-heat-label { font-size: 10px; font-weight: 600; color: #fff; }

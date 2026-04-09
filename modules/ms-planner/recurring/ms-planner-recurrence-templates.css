@@ -1,0 +1,290 @@
+/* ═══════════════════════════════════════════════
+   MS PLANNER: Recurrence Templates — CSS Module
+   Companion to ms-planner-recurrence-templates.js
+   ═══════════════════════════════════════════════ */
+
+/* ── Wrapper ── */
+.mprt-wrap {
+  background: var(--bg-deep, #0d1f17);
+  border-radius: 14px;
+  border: 1.5px solid var(--border-soft, #1a3d28);
+  padding: 20px;
+  font-family: inherit;
+}
+
+.mprt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.mprt-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary, #e8f5e9);
+  margin: 0;
+}
+
+.mprt-btn-add {
+  background: var(--accent-pink, #e91e90);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.mprt-btn-add:hover { opacity: 0.85; }
+
+/* ── Form ── */
+.mprt-form {
+  background: var(--bg-card, #122b1e);
+  border: 1.5px solid var(--border-soft, #1a3d28);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: mprt-slide 0.25s ease;
+}
+
+@keyframes mprt-slide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.mprt-input, .mprt-select {
+  background: var(--bg-surface, #163224);
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 8px;
+  padding: 9px 12px;
+  color: var(--text-primary, #e8f5e9);
+  font-size: 0.85rem;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+
+.mprt-input:focus, .mprt-select:focus {
+  outline: none;
+  border-color: var(--accent-pink, #e91e90);
+}
+
+.mprt-input-sm { width: auto; min-width: 130px; }
+
+.mprt-form-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.mprt-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted, #81c784);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mprt-form-actions { display: flex; justify-content: flex-end; }
+
+.mprt-btn-save {
+  background: var(--accent-green, #4caf50);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.mprt-btn-save:hover { opacity: 0.85; }
+
+/* ── Template List ── */
+.mprt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mprt-card {
+  background: var(--bg-card, #122b1e);
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 10px;
+  padding: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.mprt-card:hover {
+  border-color: var(--accent-pink, #e91e90);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.mprt-card.mprt-applied {
+  border-color: var(--accent-green, #4caf50);
+}
+
+.mprt-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mprt-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mprt-card-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary, #e8f5e9);
+}
+
+.mprt-card-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted, #81c784);
+  line-height: 1.4;
+}
+
+.mprt-card-meta {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.mprt-badge {
+  font-size: 0.68rem;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: var(--bg-surface, #163224);
+  color: var(--text-muted, #81c784);
+  font-weight: 600;
+}
+
+.mprt-badge-freq { color: var(--accent-pink, #e91e90); text-transform: capitalize; }
+.mprt-badge-assign { color: var(--accent-green, #4caf50); }
+
+.mprt-badge-applied {
+  font-size: 0.68rem;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: rgba(76, 175, 80, 0.15);
+  color: var(--accent-green, #4caf50);
+  font-weight: 600;
+}
+
+/* ── Card Actions ── */
+.mprt-card-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.mprt-btn-apply {
+  background: var(--accent-green, #4caf50);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.mprt-btn-apply:hover { opacity: 0.85; }
+
+.mprt-btn-preview {
+  background: transparent;
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 6px;
+  color: var(--text-muted, #81c784);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 3px 7px;
+  transition: all 0.2s;
+}
+
+.mprt-btn-preview:hover { border-color: var(--accent-pink, #e91e90); color: var(--accent-pink, #e91e90); }
+
+.mprt-btn-icon {
+  background: transparent;
+  border: 1px solid var(--border-soft, #1a3d28);
+  border-radius: 6px;
+  color: var(--text-muted, #81c784);
+  cursor: pointer;
+  font-size: 0.8rem;
+  padding: 3px 7px;
+  transition: all 0.2s;
+}
+
+.mprt-btn-icon:hover { border-color: var(--accent-green, #4caf50); color: var(--accent-green, #4caf50); }
+.mprt-btn-del:hover { border-color: #ef4444; color: #ef4444; }
+
+/* ── Preview Panel ── */
+.mprt-preview {
+  margin-top: 12px;
+  background: var(--bg-card, #122b1e);
+  border: 1.5px solid var(--border-soft, #1a3d28);
+  border-radius: 10px;
+  padding: 12px;
+  animation: mprt-slide 0.2s ease;
+}
+
+.mprt-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.mprt-preview-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary, #e8f5e9);
+}
+
+.mprt-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mprt-preview-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: var(--bg-surface, #163224);
+  border-radius: 8px;
+  font-size: 0.8rem;
+}
+
+.mprt-preview-num {
+  font-weight: 700;
+  color: var(--accent-pink, #e91e90);
+  min-width: 24px;
+}
+
+.mprt-preview-date {
+  color: var(--text-primary, #e8f5e9);
+  font-weight: 500;
+}
