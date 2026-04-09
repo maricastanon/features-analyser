@@ -18,11 +18,13 @@ const MockupManager = {
 
   async init() {
     this._renderImportZone();
+    await this._ensureWorkspaceSeed();
     await this._renderBundledLibrary();
     await this._renderModuleTabs();
     if (this._initialized) return;
     this._setupMessageListener();
     EventBus.on('project:switched', async () => {
+      await this._ensureWorkspaceSeed();
       await this._renderBundledLibrary();
       await this._renderModuleTabs();
       DOM.setHTML('mockupContent', '');
@@ -63,9 +65,10 @@ const MockupManager = {
       <input type="file" id="importFileInput" multiple accept=".js,.css,.html,.htm,.py,.md,.markdown,.mmd,.txt,.csv,.json,.svg,.png,.jpg,.jpeg,.webp,.gif" style="display:none" onchange="MockupManager.handleFileInput(this.files)">
     </div>
     <div class="btn-row" style="margin-bottom:var(--sp-4)">
+      <button class="btn btn-pink" onclick="MockupManager.loadAceTemplatePack()">🧠 Load ACE Template Pack</button>
       <button class="btn btn-pink" onclick="MockupManager.loadStarterSet()">🚀 Load 17 Universal Mockups</button>
-      <button class="btn btn-outline" onclick="MockupManager.loadBundledSet('company-x1')">🏢 Company X1 Set</button>
-      <button class="btn btn-outline" onclick="MockupManager.loadBundledSet('marex-dynamic')">🌱 Marex Dynamic Set</button>
+      <button class="btn btn-outline" onclick="MockupManager.loadBundledSet('company-x1')">🏢 Example: Company X1</button>
+      <button class="btn btn-outline" onclick="MockupManager.loadBundledSet('marex-dynamic')">🌱 Example: Marex Dynamic</button>
       <button class="btn btn-outline" onclick="MockupManager.loadAllBundled()">📚 Load Full Catalog</button>
       <button class="btn btn-outline" onclick="MockupManager.exportProjectList()">📝 Export Project List</button>
     </div>
@@ -147,6 +150,20 @@ const MockupManager = {
   },
 
   filterByTag(tag) { this._bundledTagFilter = tag; this._renderBundledLibrary(); },
+
+  async _ensureWorkspaceSeed() {
+    const project = App.currentProject;
+    if (!project || project.presetId !== 'feature-lab-workspace') return;
+
+    const modules = await ModuleRegistry.getAll(project.id);
+    if (modules.length) return;
+
+    const seedKey = 'ace-template-pack-seeded:' + project.id;
+    if (localStorage.getItem(seedKey) === '1') return;
+
+    await this.loadAceTemplatePack({ navigate: false, toast: false });
+    localStorage.setItem(seedKey, '1');
+  },
 
   async loadFilteredBundled() {
     let items = this._bundledTagFilter === 'all' ? BundledModules.getAll() : BundledModules.getByTag(this._bundledTagFilter);
@@ -255,7 +272,11 @@ const MockupManager = {
     return analyzed;
   },
 
-  async loadBundledSet(appType) {
+  async loadAceTemplatePack(options = {}) {
+    await this.loadBundledSet('feature-lab-workspace', options);
+  },
+
+  async loadBundledSet(appType, options = {}) {
     if (!App.currentProject) {
       Toast.show('Create or choose a project first.', 'warning');
       return;
@@ -268,11 +289,14 @@ const MockupManager = {
     }
     await this._renderBundledLibrary();
     await this._renderModuleTabs();
-    if (loaded[0]) {
+    if (loaded[0] && options.navigate !== false) {
       await this.showModule(loaded[0].id);
       App.go('mockups');
     }
-    Toast.show(`Recommended set processed for ${appType}.`);
+    if (options.toast !== false) {
+      const label = appType === 'feature-lab-workspace' ? 'ACE template pack' : appType;
+      Toast.show(`Recommended set processed for ${label}.`);
+    }
   },
 
   async loadStarterSet() {

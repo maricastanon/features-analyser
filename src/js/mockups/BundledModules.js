@@ -178,6 +178,15 @@ const BundledModules = {
 
     // ── Universal Modules ──
     {
+      id: 'ace-template-lab',
+      name: 'ACE Template Lab',
+      description: 'Reusable feature mapping, complaints, gaps, and mockup queue cockpit. Seeded with Microsoft Planner, adaptable to any app.',
+      tags: ['ace', 'template', 'research', 'planning', 'universal'],
+      appFit: ['universal', 'pm-toolkit', 'sight-reading-trainer', 'feature-lab-workspace'],
+      jsPath: '../modules/feature-modules-universal/js/feature-ace-template-lab.js',
+      cssPath: '../modules/feature-modules-universal/css/feature-ace-template-lab.css'
+    },
+    {
       id: 'mindmap',
       name: 'Mindmap',
       description: 'Interactive node map with drag, status cycling, tree list, and text export.',
@@ -352,6 +361,14 @@ const BundledModules = {
     const normalized = aliases[appType] || appType;
 
     const curated = {
+      'feature-lab-workspace': [
+        'ace-template-lab',
+        'mindmap',
+        'dependency-graph',
+        'user-stories',
+        'workflow-builder',
+        'feedback-board'
+      ],
       'pm-toolkit': [
         'kanban-board',
         'risk-matrix',
