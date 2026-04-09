@@ -1,0 +1,27 @@
+/* ═══ Planner My Day Styles ═══ */
+.pmd-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.pmd-header { display:flex; justify-content:space-between; align-items:center; padding:8px 0 12px; }
+.pmd-title { color:#e91e90; margin:0; font-size:1rem; }
+.pmd-date { font-size:0.75rem; color:#5a8a60; }
+.pmd-ring-wrap { width:80px; height:80px; }
+.pmd-ring { width:100%; height:100%; }
+.pmd-section { margin-bottom:14px; }
+.pmd-section-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:6px; }
+.pmd-section-title { font-weight:800; font-size:0.82rem; }
+.pmd-section-count { font-size:0.68rem; color:#5a8a60; font-weight:700; }
+.pmd-task-list { display:flex; flex-direction:column; gap:6px; }
+.pmd-task { display:flex; align-items:center; gap:10px; background:#163224; border:1px solid #1a3d28; border-radius:8px; padding:10px; transition:all .2s; }
+.pmd-task:hover { border-color:#1a3d2888; }
+.pmd-task-done { opacity:0.6; }
+.pmd-task-done .pmd-task-title { text-decoration:line-through; }
+.pmd-check { width:22px; height:22px; border-radius:50%; border:2px solid #5a8a60; background:none; color:#22c55e; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:0.7rem; flex-shrink:0; }
+.pmd-checked { background:#22c55e22; border-color:#22c55e; }
+.pmd-task-info { flex:1; display:flex; flex-direction:column; }
+.pmd-task-title { font-weight:700; font-size:0.78rem; }
+.pmd-task-plan { font-size:0.62rem; color:#5a8a60; }
+.pmd-task-pri { font-size:0.62rem; font-weight:700; text-transform:capitalize; }
+.pmd-remove { background:none; border:none; color:#5a8a60; cursor:pointer; font-size:0.75rem; padding:2px 6px; }
+.pmd-remove:hover { color:#ef4444; }
+.pmd-suggested { border-style:dashed; }
+.pmd-add-btn { background:#22c55e22; border:1px solid #22c55e; color:#22c55e; font-size:0.65rem; font-weight:700; padding:3px 10px; border-radius:4px; cursor:pointer; white-space:nowrap; }
+.pmd-add-btn:hover { background:#22c55e33; }

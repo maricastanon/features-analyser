@@ -1,0 +1,43 @@
+/* ═══ Planner Approvals Styles ═══ */
+.pap-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.pap-header { display:flex; align-items:center; gap:10px; padding:8px 0; flex-wrap:wrap; }
+.pap-title { color:#e91e90; margin:0; font-size:1rem; }
+.pap-missing-badge { background:#ef444422; color:#ef4444; font-size:0.6rem; font-weight:800; padding:3px 10px; border-radius:6px; letter-spacing:0.5px; }
+.pap-btn { padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all .2s; }
+.pap-btn-pink { background:#e91e90; color:#fff; margin-left:auto; }
+.pap-btn:hover { transform:scale(1.05); }
+
+.pap-filters { display:flex; gap:4px; margin-bottom:10px; flex-wrap:wrap; }
+.pap-filter { padding:4px 10px; border:1px solid #1a3d28; border-radius:6px; background:transparent; color:#e8f5e9; font-size:0.7rem; font-weight:700; cursor:pointer; }
+.pap-filter.active { background:#e91e9011; }
+
+.pap-list { display:flex; flex-direction:column; gap:8px; }
+.pap-card { background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:14px; }
+.pap-card-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+.pap-card-title { font-weight:800; font-size:0.85rem; }
+.pap-card-meta { font-size:0.62rem; color:#5a8a60; }
+.pap-status-badge { font-size:0.62rem; font-weight:700; padding:3px 10px; border-radius:6px; white-space:nowrap; }
+
+.pap-reviewers { margin-bottom:10px; }
+.pap-rev-label { font-size:0.62rem; color:#5a8a60; font-weight:700; display:block; margin-bottom:4px; }
+.pap-reviewer { display:flex; align-items:center; gap:6px; padding:3px 0; font-size:0.72rem; flex-wrap:wrap; }
+.pap-rev-icon { font-size:0.8rem; }
+.pap-rev-name { font-weight:700; }
+.pap-rev-role { font-size:0.62rem; color:#5a8a60; }
+.pap-rev-comment { font-size:0.62rem; color:#5a8a60; font-style:italic; }
+
+.pap-actions { display:flex; gap:6px; margin-bottom:10px; }
+.pap-act-btn { padding:5px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.72rem; cursor:pointer; transition:all .2s; }
+.pap-approve { background:#22c55e22; color:#22c55e; border:1px solid #22c55e; }
+.pap-reject { background:#ef444422; color:#ef4444; border:1px solid #ef4444; }
+.pap-changes { background:#f9731622; color:#f97316; border:1px solid #f97316; }
+.pap-act-btn:hover { transform:scale(1.05); }
+
+.pap-history-toggle { margin-top:6px; }
+.pap-hist-summary { font-size:0.65rem; color:#5a8a60; cursor:pointer; font-weight:700; }
+.pap-history { padding:6px 0; }
+.pap-hist-item { display:flex; gap:8px; align-items:center; font-size:0.62rem; padding:3px 0; border-bottom:1px solid #1a3d2844; flex-wrap:wrap; }
+.pap-hist-action { font-weight:700; color:#e91e90; }
+.pap-hist-by { color:#e8f5e9; }
+.pap-hist-date { color:#5a8a60; }
+.pap-hist-note { color:#5a8a60; font-style:italic; }

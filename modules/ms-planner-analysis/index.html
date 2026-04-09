@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microsoft Planner - Feature Map & Gap Analysis</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0d1f17;--card:#163224;--card-hover:#1a3d2b;--pink:#e91e90;--green:#22c55e;
+--yellow:#eab308;--red:#ef4444;--text:#e8f5e9;--muted:#5a8a60;--border:#1e4a32;
+--pink-dim:rgba(233,30,144,.15);--green-dim:rgba(34,197,94,.15);--yellow-dim:rgba(234,179,8,.12);
+}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{color:var(--pink);text-decoration:none}a:hover{text-decoration:underline}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#0d1f17 0%,#163224 50%,#1a2e20 100%);border-bottom:2px solid var(--pink);padding:28px 24px 18px;text-align:center;position:relative;overflow:hidden}
+.header::before{content:'';position:absolute;top:-40%;left:-10%;width:120%;height:180%;background:radial-gradient(ellipse at 30% 50%,rgba(233,30,144,.06),transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(34,197,94,.06),transparent 60%);pointer-events:none}
+.header h1{font-size:1.8rem;font-weight:800;position:relative}
+.header h1 .pink{color:var(--pink)}.header h1 .green{color:var(--green)}
+.header p{color:var(--muted);margin-top:6px;font-size:.92rem;position:relative}
+.progress-wrap{max-width:400px;margin:14px auto 0;position:relative}
+.progress-bar{height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--green),var(--pink));transition:width .6s ease}
+.progress-label{font-size:.75rem;color:var(--muted);margin-top:4px;text-align:right}
+
+/* TABS */
+.tab-nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:2px solid var(--border);display:flex;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{flex:none;padding:12px 20px;background:none;border:none;color:var(--muted);font-size:.85rem;font-weight:600;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s}
+.tab-btn:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.tab-btn.active{color:var(--pink);border-bottom-color:var(--pink)}
+.tab-btn .badge{display:inline-block;background:var(--pink-dim);color:var(--pink);font-size:.7rem;padding:1px 7px;border-radius:10px;margin-left:6px}
+
+/* CONTENT */
+.tab-content{display:none;padding:20px;max-width:1200px;margin:0 auto}
+.tab-content.active{display:block}
+
+/* CATEGORY CARDS */
+.category{background:var(--card);border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden;transition:border-color .2s}
+.category:hover{border-color:var(--green)}
+.cat-header{display:flex;align-items:center;gap:10px;padding:14px 18px;cursor:pointer;user-select:none}
+.cat-header .emoji{font-size:1.3rem}
+.cat-header .title{flex:1;font-weight:700;font-size:1rem}
+.cat-header .count{font-size:.75rem;color:var(--muted);background:var(--bg);padding:2px 10px;border-radius:10px}
+.cat-header .chevron{color:var(--muted);transition:transform .2s;font-size:.8rem}
+.category.open .chevron{transform:rotate(90deg)}
+.cat-body{display:none;padding:0 18px 14px}
+.category.open .cat-body{display:block}
+
+/* FEATURE ROWS */
+.feat{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.feat:last-child{border-bottom:none}
+.feat input[type=checkbox]{appearance:none;width:18px;height:18px;border:2px solid var(--muted);border-radius:4px;cursor:pointer;flex-shrink:0;position:relative;transition:all .2s}
+.feat input[type=checkbox]:checked{background:var(--green);border-color:var(--green)}
+.feat input[type=checkbox]:checked::after{content:'✓';position:absolute;top:-1px;left:2px;color:#fff;font-size:13px;font-weight:700}
+.feat .tier{font-size:.65rem;padding:2px 7px;border-radius:6px;font-weight:700;flex-shrink:0}
+.tier.basic{background:var(--green-dim);color:var(--green)}
+.tier.premium{background:var(--pink-dim);color:var(--pink)}
+.feat .name{flex:1;font-size:.88rem}
+.feat .info{color:var(--muted);font-size:.75rem;max-width:260px}
+
+/* MISSING FEATURES */
+.impact-section{margin-bottom:24px}
+.impact-label{display:inline-flex;align-items:center;gap:6px;padding:4px 14px;border-radius:8px;font-weight:700;font-size:.85rem;margin-bottom:12px}
+.impact-label.critical{background:rgba(239,68,68,.15);color:#ef4444}
+.impact-label.high{background:var(--yellow-dim);color:var(--yellow)}
+.impact-label.medium{background:var(--pink-dim);color:var(--pink)}
+.missing-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;transition:all .2s}
+.missing-card:hover{border-color:var(--pink);transform:translateX(4px)}
+.missing-card .stars{display:flex;gap:2px;flex-shrink:0}
+.missing-card .stars .star{color:var(--yellow);font-size:.8rem}
+.missing-card .stars .star.off{color:var(--border)}
+.missing-card .mc-name{flex:1;font-weight:600;font-size:.9rem}
+.missing-card .mc-desc{color:var(--muted);font-size:.78rem;margin-top:2px;font-weight:400}
+.build-btn{background:linear-gradient(135deg,var(--pink),#c21675);color:#fff;border:none;padding:5px 14px;border-radius:8px;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:all .2s}
+.build-btn:hover{transform:scale(1.05);box-shadow:0 0 12px rgba(233,30,144,.4)}
+
+/* COMPLAINTS */
+.complaint-group{margin-bottom:20px}
+.complaint-group-title{font-weight:700;font-size:1rem;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.complaint{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:8px;display:flex;align-items:flex-start;gap:12px;transition:border-color .2s}
+.complaint:hover{border-color:var(--yellow)}
+.complaint .sev{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:7px}
+.sev.s-critical{background:var(--red);box-shadow:0 0 8px rgba(239,68,68,.5);animation:pulse 2s infinite}
+.sev.s-high{background:var(--yellow)}
+.sev.s-medium{background:var(--pink)}
+.complaint .c-text{flex:1;font-size:.88rem}
+.complaint .c-text .c-detail{color:var(--muted);font-size:.78rem;margin-top:2px}
+.upvote-btn{display:flex;align-items:center;gap:4px;background:var(--bg);border:1px solid var(--border);color:var(--muted);padding:4px 10px;border-radius:8px;font-size:.78rem;cursor:pointer;transition:all .2s;flex-shrink:0}
+.upvote-btn:hover,.upvote-btn.voted{border-color:var(--pink);color:var(--pink);background:var(--pink-dim)}
+
+/* COMPARISON TABLE */
+.comp-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.comp-filter{background:var(--card);border:1px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:8px;font-size:.78rem;cursor:pointer;transition:all .2s;border:1px solid var(--border)}
+.comp-filter:hover{color:var(--text)}
+.comp-filter.active{background:var(--pink-dim);color:var(--pink);border-color:var(--pink)}
+.comp-table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border)}
+table.comp{width:100%;border-collapse:collapse;font-size:.82rem}
+table.comp th{background:#0f2a1c;padding:10px 12px;text-align:left;font-weight:700;position:sticky;top:0;border-bottom:2px solid var(--border)}
+table.comp td{padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.04)}
+table.comp tr:hover td{background:rgba(255,255,255,.02)}
+table.comp .c-yes{color:var(--green);font-weight:700}
+table.comp .c-partial{color:var(--pink);font-weight:600}
+table.comp .c-no{color:#4a6450}
+.comp-legend{display:flex;gap:16px;margin-top:10px;font-size:.75rem;color:var(--muted)}
+.comp-legend span{display:flex;align-items:center;gap:4px}
+.comp-legend .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+/* MODULES */
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.mod-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;transition:all .2s;position:relative;overflow:hidden}
+.mod-card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.3)}
+.mod-card .mod-num{position:absolute;top:10px;right:14px;font-size:2rem;font-weight:900;color:rgba(255,255,255,.04)}
+.mod-card .mod-emoji{font-size:1.5rem;margin-bottom:6px}
+.mod-card .mod-title{font-weight:700;font-size:.95rem;margin-bottom:4px}
+.mod-card .mod-desc{color:var(--muted);font-size:.82rem;margin-bottom:10px}
+.mod-card .mod-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.mod-card .mod-tag{font-size:.65rem;padding:2px 8px;border-radius:6px;background:var(--green-dim);color:var(--green)}
+.mod-card .mod-tag.fills{background:var(--pink-dim);color:var(--pink)}
+.load-btn{background:linear-gradient(135deg,var(--green),#16a34a);color:#fff;border:none;padding:6px 16px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .2s}
+.load-btn:hover{transform:scale(1.05);box-shadow:0 0 12px rgba(34,197,94,.4)}
+
+/* ANIMATIONS */
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.category,.missing-card,.complaint,.mod-card{animation:fadeIn .3s ease}
+
+/* SEARCH */
+.search-bar{display:flex;gap:10px;margin-bottom:18px}
+.search-bar input{flex:1;background:var(--card);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:10px;font-size:.88rem;outline:none;transition:border-color .2s}
+.search-bar input:focus{border-color:var(--pink)}
+.search-bar input::placeholder{color:var(--muted)}
+
+/* SPROUT */
+.sprout{display:inline-block;font-size:1.1rem}
+.growing{animation:grow 3s ease infinite}
+@keyframes grow{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+.tab-btn{padding:10px 14px;font-size:.78rem}
+.header h1{font-size:1.3rem}
+.module-grid{grid-template-columns:1fr}
+.missing-card{flex-wrap:wrap}
+.feat .info{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+<h1><span class="sprout growing">🌱</span> <span class="pink">Microsoft Planner</span> <span style="color:var(--muted)">—</span> <span class="green">Complete Feature Map</span> & <span class="pink">Gap Analysis</span></h1>
+<p>🔍 Interactive research dashboard &bull; Check off features as you review &bull; Find every gap &bull; Plan what to build</p>
+<div class="progress-wrap">
+<div class="progress-bar"><div class="progress-fill" id="globalProgress" style="width:0%"></div></div>
+<div class="progress-label" id="globalLabel">0 / 0 features reviewed</div>
+</div>
+</div>
+
+<nav class="tab-nav" id="tabNav"></nav>
+
+<!-- TAB 1: WHAT PLANNER HAS -->
+<div class="tab-content" id="tab-has">
+<div class="search-bar"><input type="text" placeholder="🔍 Search features..." oninput="filterFeatures(this.value)"></div>
+<div id="featureCategories"></div>
+</div>
+
+<!-- TAB 2: WHAT'S MISSING -->
+<div class="tab-content" id="tab-missing">
+<div id="missingFeatures"></div>
+</div>
+
+<!-- TAB 3: COMPLAINTS -->
+<div class="tab-content" id="tab-complaints">
+<div id="complaintsList"></div>
+</div>
+
+<!-- TAB 4: COMPARISON -->
+<div class="tab-content" id="tab-compare">
+<div class="comp-filters" id="compFilters"></div>
+<div class="comp-table-wrap"><table class="comp" id="compTable"></table></div>
+<div class="comp-legend">
+<span><span class="dot" style="background:var(--green)"></span> Full support</span>
+<span><span class="dot" style="background:var(--pink)"></span> Partial / add-on</span>
+<span><span class="dot" style="background:#4a6450"></span> Not available</span>
+</div>
+</div>
+
+<!-- TAB 5: OUR MODULES -->
+<div class="tab-content" id="tab-modules">
+<div class="module-grid" id="moduleGrid"></div>
+</div>
+
+<script>
+/* ═══════════════════ DATA ═══════════════════ */
+const TABS = [
+  {id:'tab-has',label:'🗂️ What Planner HAS',badge:null},
+  {id:'tab-missing',label:'🚧 What\'s MISSING',badge:null},
+  {id:'tab-complaints',label:'😤 User Complaints',badge:null},
+  {id:'tab-compare',label:'⚔️ Competitor Comparison',badge:null},
+  {id:'tab-modules',label:'🧩 Our Modules',badge:'15'},
+];
+
+const FEATURES = [
+  {cat:'Task Management',emoji:'✅',features:[
+    {name:'Task creation & editing',tier:'basic',info:'Create tasks with title, description, dates'},
+    {name:'Priority levels (Urgent/Important/Medium/Low)',tier:'basic',info:'4-level priority system'},
+    {name:'Progress tracking (Not started/In progress/Completed)',tier:'basic',info:'3 fixed statuses only'},
+    {name:'Notes / rich text descriptions',tier:'basic',info:'Basic rich text editor on tasks'},
+    {name:'File attachments',tier:'basic',info:'Attach files from device, SharePoint, or links'},
+    {name:'Checklists (subtasks)',tier:'basic',info:'Single-level checklist items only'},
+    {name:'Labels / tags (25 color labels)',tier:'basic',info:'Up to 25 color-coded labels per plan'},
+    {name:'Bulk edit tasks',tier:'basic',info:'Multi-select and edit in Grid view'},
+    {name:'Recurring tasks',tier:'basic',info:'Daily, weekly, monthly, yearly recurrence'},
+    {name:'Task conversations / comments',tier:'basic',info:'Threaded comments on tasks (now chat-based)'},
+    {name:'Assign to multiple people',tier:'basic',info:'Up to 11 assignees per task'},
+    {name:'Copy / move tasks across plans',tier:'basic',info:'Copy or move tasks between plans'},
+    {name:'Task history / activity log',tier:'premium',info:'See who changed what and when'},
+    {name:'Custom fields (Text, Number, Date, Dropdown, Yes/No)',tier:'premium',info:'Up to 28 custom fields per plan'},
+    {name:'Critical path analysis',tier:'premium',info:'Identify the longest task chain'},
+    {name:'Task dependencies (Finish-to-Start)',tier:'premium',info:'FS dependency type only'},
+  ]},
+  {cat:'Views',emoji:'👁️',features:[
+    {name:'Board / Kanban view',tier:'basic',info:'Default drag-and-drop board'},
+    {name:'Grid / List view',tier:'basic',info:'Spreadsheet-style task list'},
+    {name:'Charts / Analytics view',tier:'basic',info:'Pie and bar charts for status'},
+    {name:'Schedule / Calendar view',tier:'basic',info:'Calendar with task date ranges'},
+    {name:'My Day (daily planner)',tier:'basic',info:'Personal daily task view in To Do'},
+    {name:'My Tasks (cross-plan)',tier:'basic',info:'All your tasks across plans'},
+    {name:'Filter & Group by any field',tier:'basic',info:'Filter by label, bucket, date, priority, etc.'},
+    {name:'Timeline / Gantt chart',tier:'premium',info:'Interactive Gantt with dependencies'},
+    {name:'People / Workload view',tier:'premium',info:'See who is over/under-allocated'},
+    {name:'Sprint planning view',tier:'premium',info:'Agile sprint board and backlog'},
+  ]},
+  {cat:'Organization',emoji:'📁',features:[
+    {name:'Plans (project containers)',tier:'basic',info:'Each plan = one project'},
+    {name:'Buckets (column grouping)',tier:'basic',info:'Custom columns to organize tasks'},
+    {name:'Copy entire plan (template)',tier:'basic',info:'Duplicate a plan as template'},
+    {name:'Export to Excel',tier:'basic',info:'Export task list to .xlsx'},
+    {name:'Custom plan backgrounds',tier:'basic',info:'Choose background images'},
+    {name:'Plan-level settings & privacy',tier:'basic',info:'Public or private to M365 group'},
+    {name:'Goals / OKR tracking',tier:'premium',info:'Set and track project goals'},
+    {name:'Sprints & backlog management',tier:'premium',info:'Create sprints, manage backlog'},
+    {name:'Baselines (snapshot comparison)',tier:'premium',info:'Compare current vs. original plan'},
+    {name:'Portfolio / program view',tier:'premium',info:'Aggregate view across plans'},
+  ]},
+  {cat:'AI & Copilot',emoji:'🤖',features:[
+    {name:'Copilot PM Agent (auto task creation)',tier:'premium',info:'Describe project, AI creates tasks'},
+    {name:'Auto-generate plans from prompts',tier:'premium',info:'Natural language to full plan'},
+    {name:'AI status reports',tier:'premium',info:'Auto-generated progress summaries'},
+    {name:'Risk identification',tier:'premium',info:'AI flags at-risk tasks and delays'},
+    {name:'Smart suggestions for task assignment',tier:'premium',info:'AI recommends assignees'},
+  ]},
+  {cat:'Integrations',emoji:'🔗',features:[
+    {name:'Microsoft Teams (tabs & notifications)',tier:'basic',info:'Embed plans in Teams channels'},
+    {name:'Microsoft To Do (synced tasks)',tier:'basic',info:'Tasks appear in To Do automatically'},
+    {name:'Outlook (task creation from email)',tier:'basic',info:'Flag emails to create tasks'},
+    {name:'Power Automate (basic triggers)',tier:'basic',info:'Trigger flows on task changes'},
+    {name:'SharePoint (file storage backend)',tier:'basic',info:'Attachments stored in SharePoint'},
+    {name:'Microsoft Graph API',tier:'basic',info:'REST API for programmatic access'},
+    {name:'Loop components',tier:'basic',info:'Embed Planner in Loop pages'},
+    {name:'Viva Goals integration',tier:'premium',info:'Connect tasks to organizational goals'},
+    {name:'Power BI connector',tier:'premium',info:'Advanced reporting via Power BI'},
+  ]},
+  {cat:'Security & Admin',emoji:'🔒',features:[
+    {name:'SSO via Microsoft Entra ID',tier:'basic',info:'Single sign-on with M365 account'},
+    {name:'MFA support',tier:'basic',info:'Multi-factor authentication'},
+    {name:'Plan-level privacy (public/private)',tier:'basic',info:'Control who sees the plan'},
+    {name:'Data residency compliance',tier:'basic',info:'Data stored per M365 tenant geo'},
+    {name:'Sensitivity labels',tier:'premium',info:'Apply Microsoft Purview labels'},
+    {name:'Audit logs',tier:'premium',info:'Track plan & task changes'},
+  ]},
+];
+
+const MISSING = {
+  critical:[
+    {name:'Time tracking',desc:'No built-in time logging or timesheet capability',stars:5},
+    {name:'Automation rules / triggers',desc:'No if-this-then-that rules like "when status changes, assign to X"',stars:5},
+    {name:'Custom statuses',desc:'Stuck with 3 fixed statuses (Not started / In progress / Completed)',stars:5},
+    {name:'Multi-level subtasks',desc:'Only single-level checklists, no nested task hierarchy',stars:5},
+    {name:'Cross-plan dependencies',desc:'Dependencies only work within a single plan, not across plans',stars:4},
+    {name:'Burndown / burnup charts',desc:'No sprint burndown, velocity, or cumulative flow diagrams',stars:5},
+    {name:'Budget & cost tracking',desc:'No way to track project budgets, costs, or financial data',stars:4},
+    {name:'Resource leveling',desc:'No automatic workload balancing or capacity planning',stars:4},
+    {name:'Advanced dashboards',desc:'No customizable executive dashboards or widgets',stars:5},
+    {name:'Paste images in comments',desc:'Cannot paste screenshots into task comments/descriptions',stars:4},
+  ],
+  high:[
+    {name:'External guest access',desc:'Guests can only view, not fully collaborate on tasks',stars:4},
+    {name:'Bidirectional calendar sync',desc:'Changes in Outlook calendar don\'t flow back to Planner',stars:4},
+    {name:'Global search across all plans',desc:'Cannot search tasks across all plans at once',stars:5},
+    {name:'Portfolio dashboards',desc:'No aggregate view of project health across the org',stars:4},
+    {name:'Project archiving',desc:'Cannot archive completed plans, only delete or leave them',stars:3},
+    {name:'Waterfall / phase-gate support',desc:'No traditional waterfall methodology templates or views',stars:3},
+  ],
+  medium:[
+    {name:'Skill-based task routing',desc:'No automatic assignment based on team member skills',stars:2},
+    {name:'Utilization / capacity reports',desc:'No reports showing team utilization over time',stars:3},
+    {name:'Multi-select custom fields',desc:'Custom dropdown is single-select only',stars:3},
+    {name:'Person-type custom fields',desc:'Cannot create custom fields that reference people',stars:3},
+    {name:'Forms / intake requests',desc:'No built-in request forms to create tasks from submissions',stars:3},
+    {name:'Approval workflows',desc:'No native task approval process (needs Power Automate)',stars:3},
+    {name:'Voting / polls on tasks',desc:'No way to vote or prioritize tasks democratically',stars:2},
+    {name:'Public / anonymous boards',desc:'All plans require M365 authentication',stars:2},
+  ]
+};
+
+const COMPLAINTS = [
+  {group:'UI/UX Regressions',emoji:'😡',items:[
+    {text:'Task details compartmentalized into separate tabs',detail:'Users must click through multiple tabs to see info that used to be on one panel. Slows review significantly.',sev:'critical',votes:847},
+    {text:'"Assigned To Me" view gutted in new Planner',detail:'Lost filtering, sorting, and grouping options that existed in classic Planner. Basic functionality removed.',sev:'critical',votes:1203},
+    {text:'Schedule/Calendar view removed then poorly re-added',detail:'Calendar view was removed in the redesign, re-added later with fewer capabilities.',sev:'high',votes:634},
+    {text:'Checklist items truncated, can\'t see full text',detail:'Long checklist items get cut off with no way to expand without editing.',sev:'high',votes:412},
+    {text:'No drag-and-drop dates on calendar',detail:'Cannot drag tasks to reschedule on the calendar view like before.',sev:'medium',votes:289},
+    {text:'Label names not visible on board cards',detail:'Only color dots shown on cards, must hover to see label name.',sev:'medium',votes:356},
+    {text:'Filters reset when switching views',detail:'Applied filters don\'t persist across view changes.',sev:'high',votes:478},
+  ]},
+  {group:'Comments & Chat System',emoji:'💬',items:[
+    {text:'Editable comments destroy audit trail',detail:'Comments can be edited/deleted after posting. No version history. Audit nightmare for compliance.',sev:'critical',votes:567},
+    {text:'No email notifications for task comments',detail:'Team members don\'t get email alerts when someone comments on their tasks.',sev:'critical',votes:892},
+    {text:'Cannot paste images in comments',detail:'Have to upload as attachment separately, can\'t paste screenshots inline.',sev:'high',votes:723},
+    {text:'Comments moved to Teams chat, losing context',detail:'Task conversations now route through Teams, fragmenting discussion from the task.',sev:'high',votes:445},
+  ]},
+  {group:'Performance Issues',emoji:'🐌',items:[
+    {text:'Significant lag when loading plans with 100+ tasks',detail:'Plans with many tasks take 5-10+ seconds to render. Board view especially slow.',sev:'critical',votes:534},
+    {text:'Task title reverts after quick edits',detail:'Editing a task title and clicking away too fast causes the title to revert to old text.',sev:'high',votes:267},
+    {text:'Slowdown with many custom fields',detail:'Performance degrades noticeably when using multiple custom fields on Premium.',sev:'medium',votes:189},
+  ]},
+  {group:'Fragmentation Across M365',emoji:'🧩',items:[
+    {text:'Outlook / Planner / To Do / Loop don\'t sync properly',detail:'Tasks created in one app don\'t reliably appear or update in others. Constant sync issues.',sev:'critical',votes:1456},
+    {text:'Flagged emails create orphaned tasks',detail:'Email-flagged tasks in To Do don\'t connect to any Planner plan.',sev:'high',votes:312},
+    {text:'Loop task components out of sync with Planner',detail:'Tasks in Loop pages and Planner can show different states.',sev:'high',votes:198},
+  ]},
+  {group:'Copy & Template Problems',emoji:'📋',items:[
+    {text:'Labels/tags not retained when copying plans',detail:'Copying a plan drops all label customizations, reverting to default colors.',sev:'high',votes:623},
+    {text:'Attachments not copied with tasks',detail:'Copy plan doesn\'t include file attachments, only links.',sev:'high',votes:445},
+    {text:'Assignees not preserved in templates',detail:'Saving as template removes all task assignments.',sev:'medium',votes:234},
+    {text:'Checklist state resets on copy',detail:'Completed checklist items become unchecked when plan is copied.',sev:'medium',votes:178},
+  ]},
+  {group:'Premium vs Basic Issues',emoji:'💎',items:[
+    {text:'Premium plans lose features Basic plans have',detail:'Some features in classic/Basic Planner are missing or broken in Premium plans.',sev:'critical',votes:789},
+    {text:'No clear upgrade path from Basic to Premium',detail:'Converting a Basic plan to Premium requires recreation, losing history.',sev:'high',votes:345},
+    {text:'Premium price ($10/user/mo) hard to justify with gaps',detail:'At $10/user/month, Premium is compared to Asana/Monday which offer more.',sev:'high',votes:567},
+  ]},
+];
+
+const COMPARISON = [
+  {cat:'Task Management',feature:'Task creation & assignment',planner:'yes',asana:'yes',trello:'yes',monday:'yes',clickup:'yes'},
+  {cat:'Task Management',feature:'Custom statuses',planner:'no',asana:'yes',trello:'partial',monday:'yes',clickup:'yes'},
+  {cat:'Task Management',feature:'Multi-level subtasks',planner:'no',asana:'yes',trello:'no',monday:'partial',clickup:'yes'},
+  {cat:'Task Management',feature:'Task dependencies',planner:'partial',asana:'yes',trello:'partial',monday:'yes',clickup:'yes'},
+  {cat:'Task Management',feature:'Time tracking',planner:'no',asana:'yes',trello:'partial',monday:'yes',clickup:'yes'},
+  {cat:'Task Management',feature:'Recurring tasks',planner:'yes',asana:'yes',trello:'partial',monday:'yes',clickup:'yes'},
+  {cat:'Task Management',feature:'Custom fields',planner:'partial',asana:'yes',trello:'partial',monday:'yes',clickup:'yes'},
+  {cat:'Views',feature:'Kanban board',planner:'yes',asana:'yes',trello:'yes',monday:'yes',clickup:'yes'},
+  {cat:'Views',feature:'Gantt / Timeline',planner:'partial',asana:'yes',trello:'partial',monday:'yes',clickup:'yes'},
+  {cat:'Views',feature:'Calendar view',planner:'yes',asana:'yes',trello:'partial',monday:'yes',clickup:'yes'},
+  {cat:'Views',feature:'Workload / People view',planner:'partial',asana:'yes',trello:'no',monday:'yes',clickup:'yes'},
+  {cat:'Views',feature:'Dashboard / Reporting',planner:'partial',asana:'yes',trello:'partial',monday:'yes',clickup:'yes'},
+  {cat:'Automation',feature:'Built-in automation rules',planner:'no',asana:'yes',trello:'yes',monday:'yes',clickup:'yes'},
+  {cat:'Automation',feature:'Custom workflows',planner:'no',asana:'yes',trello:'partial',monday:'yes',clickup:'yes'},
+  {cat:'Automation',feature:'Approval workflows',planner:'no',asana:'yes',trello:'no',monday:'yes',clickup:'partial'},
+  {cat:'Collaboration',feature:'Comments with @mentions',planner:'yes',asana:'yes',trello:'yes',monday:'yes',clickup:'yes'},
+  {cat:'Collaboration',feature:'Proofing / markup',planner:'no',asana:'yes',trello:'no',monday:'no',clickup:'yes'},
+  {cat:'Collaboration',feature:'Guest / external access',planner:'partial',asana:'yes',trello:'yes',monday:'yes',clickup:'yes'},
+  {cat:'Collaboration',feature:'Forms / intake',planner:'no',asana:'yes',trello:'no',monday:'yes',clickup:'yes'},
+  {cat:'Reporting',feature:'Burndown charts',planner:'no',asana:'yes',trello:'no',monday:'yes',clickup:'yes'},
+  {cat:'Reporting',feature:'Portfolio / program view',planner:'partial',asana:'yes',trello:'no',monday:'yes',clickup:'yes'},
+  {cat:'Reporting',feature:'Custom dashboards',planner:'no',asana:'yes',trello:'no',monday:'yes',clickup:'yes'},
+  {cat:'Reporting',feature:'Budget tracking',planner:'no',asana:'partial',trello:'no',monday:'yes',clickup:'partial'},
+  {cat:'Integration',feature:'Native email integration',planner:'partial',asana:'yes',trello:'partial',monday:'yes',clickup:'yes'},
+  {cat:'Integration',feature:'API / webhooks',planner:'yes',asana:'yes',trello:'yes',monday:'yes',clickup:'yes'},
+  {cat:'Integration',feature:'Slack integration',planner:'no',asana:'yes',trello:'yes',monday:'yes',clickup:'yes'},
+  {cat:'Pricing',feature:'Free tier available',planner:'partial',asana:'yes',trello:'yes',monday:'partial',clickup:'yes'},
+  {cat:'Pricing',feature:'Price (per user/month)',planner:'partial',asana:'partial',trello:'partial',monday:'partial',clickup:'partial'},
+];
+
+const MODULES = [
+  {emoji:'⏱️',title:'Time Tracker Pro',desc:'Full time tracking with timesheets, reports, and billing rates. Fills the #1 most requested gap.',tags:['Time Tracking'],fills:['time-tracking','billing']},
+  {emoji:'⚡',title:'Automation Engine',desc:'If-this-then-that rules for Planner. Auto-assign, auto-move, status triggers, notifications.',tags:['Automation'],fills:['automation-rules','workflows']},
+  {emoji:'🏷️',title:'Custom Status Manager',desc:'Break free from 3 fixed statuses. Define unlimited custom statuses with colors and workflow rules.',tags:['Customization'],fills:['custom-statuses']},
+  {emoji:'🌳',title:'Subtask Hierarchy',desc:'Multi-level nested subtasks with progress rollup, inherited dates, and tree views.',tags:['Task Management'],fills:['multi-level-subtasks']},
+  {emoji:'📊',title:'Burndown & Velocity',desc:'Sprint burndown, burnup, velocity charts, and cumulative flow diagrams for agile teams.',tags:['Reporting','Agile'],fills:['burndown-charts']},
+  {emoji:'💰',title:'Budget Tracker',desc:'Project budget management with cost tracking, forecasting, and expense categories.',tags:['Financial'],fills:['budget-tracking']},
+  {emoji:'🔍',title:'Global Search Hub',desc:'Search across ALL plans, tasks, comments, and attachments. Instant results with filters.',tags:['Search'],fills:['global-search']},
+  {emoji:'📈',title:'Executive Dashboard',desc:'Customizable portfolio dashboards with drag-and-drop widgets, KPIs, and real-time data.',tags:['Reporting','Dashboard'],fills:['advanced-dashboards','portfolio']},
+  {emoji:'🔗',title:'Cross-Plan Linker',desc:'Create dependencies across plans. See a unified critical path spanning multiple projects.',tags:['Dependencies'],fills:['cross-plan-dependencies']},
+  {emoji:'📥',title:'Intake Forms',desc:'Create request forms that auto-generate Planner tasks. Public or internal submission.',tags:['Forms'],fills:['forms-intake']},
+  {emoji:'✅',title:'Approval Flow',desc:'Multi-stage approval workflows with escalation, delegation, and audit trail.',tags:['Workflow'],fills:['approval-workflow']},
+  {emoji:'📦',title:'Archive Manager',desc:'Archive completed plans with full data preservation and easy restoration.',tags:['Organization'],fills:['project-archiving']},
+  {emoji:'⚖️',title:'Resource Leveler',desc:'Automatic workload balancing with capacity planning, utilization reports, and conflict alerts.',tags:['Resource Mgmt'],fills:['resource-leveling','utilization']},
+  {emoji:'🔔',title:'Notification Hub',desc:'Configurable email, Teams, and push notifications. Never miss a comment or change again.',tags:['Notifications'],fills:['email-notifications']},
+  {emoji:'📸',title:'Screenshot Paster',desc:'Paste images directly into comments and descriptions. Clipboard support, drag-and-drop.',tags:['UX'],fills:['image-paste']},
+];
+
+/* ═══════════════════ RENDER ═══════════════════ */
+
+// TABS
+function renderTabs(){
+  const nav=document.getElementById('tabNav');
+  let totalFeats=0;FEATURES.forEach(c=>totalFeats+=c.features.length);
+  TABS[0].badge=String(totalFeats);
+  let totalMissing=0;Object.values(MISSING).forEach(a=>totalMissing+=a.length);
+  TABS[1].badge=String(totalMissing);
+  let totalComplaints=0;COMPLAINTS.forEach(g=>totalComplaints+=g.items.length);
+  TABS[2].badge=String(totalComplaints);
+  nav.innerHTML=TABS.map((t,i)=>`<button class="tab-btn${i===0?' active':''}" onclick="switchTab('${t.id}',this)">${t.label}${t.badge?`<span class="badge">${t.badge}</span>`:''}</button>`).join('');
+}
+
+function switchTab(id,btn){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// TAB 1
+function renderFeatures(){
+  const el=document.getElementById('featureCategories');
+  el.innerHTML=FEATURES.map((cat,ci)=>{
+    const rows=cat.features.map((f,fi)=>`
+      <div class="feat" data-name="${f.name.toLowerCase()}">
+        <input type="checkbox" onchange="updateProgress()" title="Mark as reviewed">
+        <span class="tier ${f.tier}">${f.tier==='basic'?'✅ Basic':'💎 Premium'}</span>
+        <span class="name">${f.name}</span>
+        <span class="info">${f.info}</span>
+      </div>`).join('');
+    return `<div class="category${ci===0?' open':''}" data-cat="${cat.cat.toLowerCase()}">
+      <div class="cat-header" onclick="this.parentElement.classList.toggle('open')">
+        <span class="emoji">${cat.emoji}</span>
+        <span class="title">${cat.cat}</span>
+        <span class="count">${cat.features.length} features</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="cat-body">${rows}</div>
+    </div>`;
+  }).join('');
+}
+
+function filterFeatures(q){
+  q=q.toLowerCase();
+  document.querySelectorAll('.feat').forEach(f=>{
+    f.style.display=f.dataset.name.includes(q)?'':'none';
+  });
+  if(q){document.querySelectorAll('.category').forEach(c=>c.classList.add('open'));}
+}
+
+function updateProgress(){
+  const all=document.querySelectorAll('#tab-has .feat input[type=checkbox]');
+  const checked=[...all].filter(c=>c.checked).length;
+  const pct=Math.round(checked/all.length*100);
+  document.getElementById('globalProgress').style.width=pct+'%';
+  document.getElementById('globalLabel').textContent=`${checked} / ${all.length} features reviewed 🌱`;
+}
+
+// TAB 2
+function renderMissing(){
+  const el=document.getElementById('missingFeatures');
+  const levels=[{key:'critical',label:'🔴 CRITICAL — Blocks adoption',cls:'critical'},
+    {key:'high',label:'🟡 HIGH — Major user pain',cls:'high'},
+    {key:'medium',label:'🩷 MEDIUM — Nice to have',cls:'medium'}];
+  el.innerHTML=levels.map(lv=>{
+    const items=MISSING[lv.key];
+    return `<div class="impact-section">
+      <div class="impact-label ${lv.cls}">${lv.label} (${items.length})</div>
+      ${items.map(m=>`<div class="missing-card">
+        <div class="stars">${Array.from({length:5},(_, i)=>`<span class="star${i<m.stars?'':' off'}">★</span>`).join('')}</div>
+        <div class="mc-name">${m.name}<div class="mc-desc">${m.desc}</div></div>
+        <button class="build-btn" onclick="this.textContent=this.textContent==='🚀 Queued!'?'🔧 Build This':'🚀 Queued!'">🔧 Build This</button>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+}
+
+// TAB 3
+function renderComplaints(){
+  const el=document.getElementById('complaintsList');
+  el.innerHTML=COMPLAINTS.map(g=>`
+    <div class="complaint-group">
+      <div class="complaint-group-title">${g.emoji} ${g.group} <span class="badge" style="background:var(--yellow-dim);color:var(--yellow)">${g.items.length}</span></div>
+      ${g.items.map(c=>`<div class="complaint">
+        <span class="sev s-${c.sev}"></span>
+        <div class="c-text">${c.text}<div class="c-detail">${c.detail}</div></div>
+        <button class="upvote-btn" onclick="upvote(this,${c.votes})">👆 <span>${c.votes}</span></button>
+      </div>`).join('')}
+    </div>`).join('');
+}
+
+function upvote(btn,base){
+  btn.classList.toggle('voted');
+  const span=btn.querySelector('span');
+  span.textContent=btn.classList.contains('voted')?base+1:base;
+}
+
+// TAB 4
+function renderComparison(){
+  const cats=[...new Set(COMPARISON.map(r=>r.cat))];
+  const filtersEl=document.getElementById('compFilters');
+  filtersEl.innerHTML=`<button class="comp-filter active" onclick="filterComp('all',this)">All</button>`+
+    cats.map(c=>`<button class="comp-filter" onclick="filterComp('${c}',this)">${c}</button>`).join('');
+
+  buildCompTable('all');
+}
+
+function filterComp(cat,btn){
+  document.querySelectorAll('.comp-filter').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildCompTable(cat);
+}
+
+function buildCompTable(cat){
+  const rows=cat==='all'?COMPARISON:COMPARISON.filter(r=>r.cat===cat);
+  const cell=v=>v==='yes'?'<td class="c-yes">✅ Yes</td>':v==='partial'?'<td class="c-partial">🩷 Partial</td>':'<td class="c-no">— No</td>';
+  document.getElementById('compTable').innerHTML=`
+    <thead><tr><th>Category</th><th>Feature</th><th>🟦 Planner</th><th>🟧 Asana</th><th>🟪 Trello</th><th>🟥 Monday</th><th>🟩 ClickUp</th></tr></thead>
+    <tbody>${rows.map(r=>`<tr><td style="color:var(--muted)">${r.cat}</td><td>${r.feature}</td>${cell(r.planner)}${cell(r.asana)}${cell(r.trello)}${cell(r.monday)}${cell(r.clickup)}</tr>`).join('')}</tbody>`;
+}
+
+// TAB 5
+function renderModules(){
+  const el=document.getElementById('moduleGrid');
+  el.innerHTML=MODULES.map((m,i)=>`
+    <div class="mod-card">
+      <div class="mod-num">${String(i+1).padStart(2,'0')}</div>
+      <div class="mod-emoji">${m.emoji}</div>
+      <div class="mod-title">${m.title}</div>
+      <div class="mod-desc">${m.desc}</div>
+      <div class="mod-tags">
+        ${m.tags.map(t=>`<span class="mod-tag">${t}</span>`).join('')}
+        ${m.fills.map(f=>`<span class="mod-tag fills">Fills: ${f}</span>`).join('')}
+      </div>
+      <button class="load-btn" onclick="this.textContent=this.textContent==='✅ Loaded!'?'🚀 Load in Hub':'✅ Loaded!'">🚀 Load in Hub</button>
+    </div>`).join('');
+}
+
+/* ═══════════════════ INIT ═══════════════════ */
+renderTabs();
+renderFeatures();
+renderMissing();
+renderComplaints();
+renderComparison();
+renderModules();
+document.getElementById('tab-has').classList.add('active');
+updateProgress();
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+/* ═══ Planner Schedule Styles ═══ */
+.ps-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.ps-header { display:flex; align-items:center; gap:10px; padding:8px 0; flex-wrap:wrap; }
+.ps-title { color:#e91e90; margin:0; font-size:1rem; }
+.ps-nav { display:flex; align-items:center; gap:8px; margin-left:auto; }
+.ps-nav-btn { background:none; border:1px solid #1a3d28; color:#e8f5e9; width:28px; height:28px; border-radius:6px; cursor:pointer; font-size:0.8rem; }
+.ps-nav-btn:hover { border-color:#e91e90; color:#e91e90; }
+.ps-month-label { font-weight:800; font-size:0.85rem; min-width:120px; text-align:center; }
+.ps-btn { padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all .2s; }
+.ps-btn-pink { background:#e91e90; color:#fff; }
+.ps-btn:hover { transform:scale(1.05); }
+.ps-calendar { margin-top:4px; }
+.ps-day-names { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; margin-bottom:4px; }
+.ps-day-name { text-align:center; font-size:0.65rem; font-weight:700; color:#5a8a60; padding:4px; }
+.ps-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.ps-cell { background:#163224; border:1px solid #1a3d28; border-radius:6px; min-height:70px; padding:4px; transition:all .2s; }
+.ps-cell-empty { background:transparent; border-color:transparent; }
+.ps-cell-today { border-color:#e91e90; }
+.ps-cell-hover { border-color:#22c55e; background:#1a3d2844; }
+.ps-cell-day { font-size:0.68rem; font-weight:700; color:#5a8a60; display:block; margin-bottom:2px; }
+.ps-today-badge { color:#e91e90; }
+.ps-cell-tasks { display:flex; flex-direction:column; gap:2px; }
+.ps-task-chip { font-size:0.58rem; padding:2px 4px; background:#0d1f17; border-radius:3px; cursor:grab; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; transition:all .15s; }
+.ps-task-chip:hover { background:#1a3d28; }

@@ -1,0 +1,40 @@
+/* ═══ Planner Resource Leveling Styles ═══ */
+.prl-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.prl-header { display:flex; align-items:center; gap:10px; padding:8px 0; flex-wrap:wrap; }
+.prl-title { color:#e91e90; margin:0; font-size:1rem; }
+.prl-missing-badge { background:#ef444422; color:#ef4444; font-size:0.6rem; font-weight:800; padding:3px 10px; border-radius:6px; letter-spacing:0.5px; }
+.prl-alerts { display:flex; gap:6px; margin-left:auto; }
+.prl-alert { font-size:0.65rem; font-weight:700; padding:3px 10px; border-radius:6px; }
+.prl-alert-red { background:#ef444422; color:#ef4444; }
+.prl-alert-blue { background:#3b82f622; color:#3b82f6; }
+
+.prl-summary { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px; }
+.prl-sum-item { background:#163224; border:1px solid #1a3d28; border-radius:8px; padding:10px; text-align:center; }
+.prl-sum-val { display:block; font-size:1.1rem; font-weight:800; }
+.prl-sum-label { font-size:0.62rem; color:#5a8a60; }
+
+.prl-members { display:flex; flex-direction:column; gap:8px; }
+.prl-member { background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:12px; transition:all .2s; }
+.prl-over { border-color:#ef444444; }
+.prl-under { border-color:#3b82f644; }
+.prl-member-head { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.prl-avatar { width:32px; height:32px; border-radius:50%; background:#e91e9033; color:#e91e90; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.8rem; flex-shrink:0; }
+.prl-member-info { flex:1; }
+.prl-member-name { display:block; font-weight:700; font-size:0.8rem; }
+.prl-member-role { font-size:0.65rem; color:#5a8a60; }
+.prl-member-nums { text-align:right; }
+.prl-hrs { font-weight:800; font-size:0.85rem; display:block; }
+.prl-status { font-size:0.6rem; font-weight:700; }
+
+.prl-cap-bar { height:8px; background:#0d1f17; border-radius:4px; overflow:hidden; display:flex; margin-bottom:8px; }
+.prl-cap-fill { height:100%; transition:width .3s; border-radius:4px; }
+.prl-cap-excess { height:100%; }
+
+.prl-tasks { display:flex; flex-direction:column; gap:3px; }
+.prl-task-item { display:flex; align-items:center; gap:8px; font-size:0.7rem; padding:3px 0; }
+.prl-task-name { flex:1; color:#5a8a60; }
+.prl-task-hrs { font-weight:700; font-size:0.68rem; }
+.prl-task-adjust { background:none; border:none; color:#5a8a60; cursor:pointer; font-size:0.7rem; padding:0 2px; }
+.prl-task-adjust:hover { color:#e91e90; }
+.prl-add-task { background:none; border:none; color:#5a8a60; font-size:0.62rem; cursor:pointer; padding:4px 0; text-align:left; }
+.prl-add-task:hover { color:#e91e90; }

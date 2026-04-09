@@ -1,0 +1,52 @@
+/* ═══ Planner Time Tracking Styles ═══ */
+.ptt-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.ptt-header { display:flex; align-items:center; gap:10px; padding:8px 0; flex-wrap:wrap; }
+.ptt-title { color:#e91e90; margin:0; font-size:1rem; }
+.ptt-missing-badge { background:#ef444422; color:#ef4444; font-size:0.6rem; font-weight:800; padding:3px 10px; border-radius:6px; letter-spacing:0.5px; }
+.ptt-btn { padding:6px 14px; border:none; border-radius:6px; font-weight:700; font-size:0.8rem; cursor:pointer; transition:all .2s; }
+.ptt-btn-pink { background:#e91e90; color:#fff; margin-left:auto; }
+.ptt-btn:hover { transform:scale(1.05); }
+
+.ptt-timer-bar { display:flex; align-items:center; gap:10px; background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:10px 14px; margin-bottom:12px; }
+.ptt-timer-display { font-family:'Courier New',monospace; font-size:1.3rem; font-weight:700; color:#22c55e; min-width:100px; }
+.ptt-timer-input { flex:1; background:transparent; border:1px solid #1a3d28; border-radius:6px; color:#e8f5e9; padding:6px 10px; font-size:0.78rem; outline:none; }
+.ptt-timer-input:focus { border-color:#e91e90; }
+.ptt-timer-btn { padding:6px 18px; border:none; border-radius:6px; font-weight:700; font-size:0.78rem; cursor:pointer; }
+.ptt-start { background:#22c55e; color:#0d1f17; }
+.ptt-stop { background:#ef4444; color:#fff; }
+
+.ptt-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:12px; }
+.ptt-stat { background:#163224; border:1px solid #1a3d28; border-radius:8px; padding:10px; text-align:center; }
+.ptt-stat-val { display:block; font-size:1.1rem; font-weight:800; }
+.ptt-stat-label { font-size:0.62rem; color:#5a8a60; }
+
+.ptt-view-toggle { display:flex; gap:4px; margin-bottom:10px; }
+.ptt-vbtn { padding:5px 14px; background:transparent; border:1px solid #1a3d28; border-radius:6px; color:#e8f5e9; font-size:0.72rem; font-weight:700; cursor:pointer; }
+.ptt-vbtn.active { border-color:#e91e90; color:#e91e90; background:#e91e9011; }
+
+.ptt-entries { display:flex; flex-direction:column; gap:6px; }
+.ptt-entry { display:flex; justify-content:space-between; align-items:center; background:#163224; border:1px solid #1a3d28; border-radius:8px; padding:10px; }
+.ptt-entry-task { font-weight:700; font-size:0.78rem; }
+.ptt-entry-meta { font-size:0.62rem; color:#5a8a60; }
+.ptt-entry-right { display:flex; align-items:center; gap:8px; }
+.ptt-entry-hours { font-weight:800; font-size:0.9rem; }
+.ptt-billable-tag { font-size:0.6rem; font-weight:700; padding:2px 8px; border-radius:4px; cursor:pointer; }
+.ptt-bill { background:#22c55e22; color:#22c55e; }
+.ptt-nonbill { background:#5a8a6022; color:#5a8a60; }
+
+.ptt-timesheet { background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:14px; }
+.ptt-ts-header { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:8px; }
+.ptt-ts-day { text-align:center; }
+.ptt-ts-day-name { display:block; font-size:0.68rem; font-weight:700; color:#5a8a60; }
+.ptt-ts-day-total { display:block; font-size:0.75rem; font-weight:800; }
+.ptt-ts-bars { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; height:120px; }
+.ptt-ts-col { display:flex; align-items:flex-end; justify-content:center; }
+.ptt-ts-bar { width:70%; background:#e91e90; border-radius:4px 4px 0 0; position:relative; min-height:2px; transition:height .3s; }
+.ptt-ts-bar-val { position:absolute; top:-16px; left:50%; transform:translateX(-50%); font-size:0.6rem; font-weight:700; white-space:nowrap; }
+
+.ptt-team { display:flex; flex-direction:column; gap:8px; }
+.ptt-team-row { display:flex; align-items:center; gap:10px; }
+.ptt-team-name { font-size:0.72rem; font-weight:600; min-width:80px; }
+.ptt-team-bar { flex:1; height:16px; background:#0d1f17; border-radius:8px; overflow:hidden; }
+.ptt-team-fill { height:100%; background:#22c55e; border-radius:8px; transition:width .3s; }
+.ptt-team-hrs { font-size:0.75rem; font-weight:700; min-width:40px; text-align:right; }
