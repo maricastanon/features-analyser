@@ -1,0 +1,21 @@
+/* ═══ Planner Charts Styles ═══ */
+.pc-wrap { font-family:'Segoe UI',sans-serif; color:#e8f5e9; }
+.pc-header { display:flex; align-items:center; gap:10px; padding:8px 0; flex-wrap:wrap; }
+.pc-title { color:#e91e90; margin:0; font-size:1rem; }
+.pc-subtitle { font-size:0.72rem; color:#5a8a60; }
+.pc-overdue-alert { background:#ef444422; color:#ef4444; font-size:0.7rem; font-weight:700; padding:3px 10px; border-radius:6px; margin-left:auto; }
+.pc-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; }
+.pc-card { background:#163224; border:1px solid #1a3d28; border-radius:10px; padding:14px; }
+.pc-card-title { font-weight:800; font-size:0.8rem; margin-bottom:12px; color:#e8f5e9; }
+.pc-donut-wrap { display:flex; align-items:center; gap:16px; }
+.pc-donut { width:100px; height:100px; flex-shrink:0; }
+.pc-donut-seg { transition:stroke-dasharray .3s; }
+.pc-legend { display:flex; flex-direction:column; gap:4px; }
+.pc-legend-item { font-size:0.7rem; display:flex; align-items:center; gap:6px; }
+.pc-legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+.pc-bars { display:flex; flex-direction:column; gap:8px; }
+.pc-bar-row { display:flex; align-items:center; gap:8px; }
+.pc-bar-label { font-size:0.68rem; min-width:70px; text-align:right; color:#5a8a60; font-weight:600; }
+.pc-bar-track { flex:1; height:14px; background:#0d1f17; border-radius:7px; overflow:hidden; }
+.pc-bar-fill { height:100%; border-radius:7px; transition:width .4s ease; }
+.pc-bar-val { font-size:0.7rem; font-weight:700; min-width:24px; }
