@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive Microsoft Planner deep map, complaint research, and feature module lab.">
+  <title>Microsoft Planner Deep Map + Cute Gap Lab</title>
+  <link rel="stylesheet" href="./css/main.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-card">
+        <div class="brand-emoji">🩷</div>
+        <div>
+          <div class="eyebrow">COMPLETE NAME OF STRATEGY</div>
+          <h1>Microsoft Planner Deep Map + Cute Gap Lab</h1>
+          <p>ADHD-friendly research + functional module playground.</p>
+        </div>
+      </div>
+
+      <nav class="nav-stack" id="navStack"></nav>
+      <div class="sidebar-card" id="quickState"></div>
+    </aside>
+
+    <main class="main-panel">
+      <header class="hero-card" id="heroCard"></header>
+      <section class="section-panel active" id="section-overview"></section>
+      <section class="section-panel" id="section-map"></section>
+      <section class="section-panel" id="section-complaints"></section>
+      <section class="section-panel" id="section-missing"></section>
+      <section class="section-panel" id="section-modules"></section>
+      <section class="section-panel" id="section-sources"></section>
+    </main>
+  </div>
+
+  <dialog class="modal-shell" id="modalShell">
+    <div class="modal-head">
+      <div id="modalTitle">Details</div>
+      <button class="ghost-btn" id="modalCloseBtn" type="button">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </dialog>
+
+  <script type="module" src="./js/app.js"></script>
+</body>
+</html>
