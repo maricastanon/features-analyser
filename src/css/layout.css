@@ -117,8 +117,8 @@ html.light .hdr {
 
 html.light .hdr-title {
   background: none;
-  color: #245a38;
-  -webkit-text-fill-color: #245a38;
+  color: var(--text-primary);
+  -webkit-text-fill-color: var(--text-primary);
 }
 
 html.light .hdr-sub {
@@ -133,11 +133,11 @@ html.light .side-nav {
 }
 
 html.light .prog-bar {
-  background: #d7e3d9;
+  background: var(--border-soft);
 }
 
 html.light .prog-txt {
-  color: #245a38;
+  color: var(--accent-green-dk);
 }
 
 /* ── Main Tabs ── */
@@ -193,12 +193,12 @@ html.light .tabs {
 }
 
 html.light .tab-btn {
-  color: #48644b;
+  color: var(--text-muted);
 }
 
 html.light .tab-btn:hover {
-  color: #245a38;
-  background: rgba(76, 175, 80, .12);
+  color: var(--text-primary);
+  background: var(--accent-green-bg);
 }
 
 html.light .tab-btn.active {

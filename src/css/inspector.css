@@ -66,6 +66,20 @@
 .tv-fn { color: #fb923c; font-style: italic; }
 .tv-null { color: #999; font-style: italic; }
 
+/* Light theme — darken type tag text for readability on light bg */
+html.light .tv-tag-str { background: rgba(37,99,235,.12); color: #2563eb; }
+html.light .tv-tag-num { background: rgba(161,98,7,.12); color: #a16207; }
+html.light .tv-tag-bool { background: rgba(126,34,206,.12); color: #7e22ce; }
+html.light .tv-tag-arr { background: rgba(22,101,52,.12); color: #166534; }
+html.light .tv-tag-obj { background: rgba(190,24,93,.12); color: #be185d; }
+html.light .tv-tag-fn { background: rgba(194,65,12,.12); color: #c2410c; }
+html.light .tv-tag-null { background: rgba(75,85,99,.1); color: #6b7280; }
+html.light .tv-str { color: #2563eb; }
+html.light .tv-num { color: #a16207; }
+html.light .tv-bool { color: #7e22ce; }
+html.light .tv-fn { color: #c2410c; }
+html.light .tv-null { color: #6b7280; }
+
 /* Change highlight animation */
 @keyframes changeFlash {
   0% { background: rgba(233,30,144,.2); }

@@ -57,7 +57,16 @@ const Theme = {
     if (t.fontFamily) root.setProperty('--font-main', t.fontFamily);
     if (t.fontSize) root.setProperty('--font-size-md', t.fontSize);
 
-    if (!isLight) {
+    if (isLight) {
+      // In light mode, derive light variants from project colors
+      if (t.primary) {
+        root.setProperty('--accent-pink-dk', this._darken(t.primary, 20));
+      }
+      if (t.secondary) {
+        root.setProperty('--accent-green-dk', this._darken(t.secondary, 20));
+      }
+      // Light mode keeps its own bg/text vars from vars.css
+    } else {
       if (t.bgDeep) root.setProperty('--bg-deep', t.bgDeep);
       if (t.bgMain) root.setProperty('--bg-main', t.bgMain);
       if (t.bgCard) root.setProperty('--bg-card', t.bgCard);
@@ -99,5 +108,14 @@ const Theme = {
     meta.setAttribute('content', color);
   },
 
-  getMode() { return this._mode; }
+  getMode() { return this._mode; },
+
+  _darken(hex, pct) {
+    hex = hex.replace('#', '');
+    if (hex.length === 3) hex = hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    const r = Math.max(0, parseInt(hex.slice(0,2),16) - Math.round(255*pct/100));
+    const g = Math.max(0, parseInt(hex.slice(2,4),16) - Math.round(255*pct/100));
+    const b = Math.max(0, parseInt(hex.slice(4,6),16) - Math.round(255*pct/100));
+    return '#' + [r,g,b].map(c => c.toString(16).padStart(2,'0')).join('');
+  }
 };
