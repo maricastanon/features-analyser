@@ -257,6 +257,7 @@ const MockupManager = {
       summary: bundle.description,
       jsSource: bundle.jsSource,
       cssSource: bundle.cssSource,
+      htmlSource: bundle.htmlSource || '',
       jsFileNames: [bundle.jsPath.split('/').pop()],
       cssFileNames: [bundle.cssPath.split('/').pop()],
       sourceFiles: [bundle.jsPath.split('/').pop(), bundle.cssPath.split('/').pop()]
