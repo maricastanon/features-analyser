@@ -371,104 +371,107 @@ const MockupManager = {
       <option value="${cat.id}" ${cat.id === mod.category ? 'selected' : ''}>${cat.emoji} ${DOM.esc(cat.name)}</option>
     `).join('');
 
+    // ── Focus Mode: Left sidebar (23%) + Right mockup (77%) ──
     content.innerHTML = `
-    <div style="margin-top:14px">
-      <div class="card" style="margin-bottom:var(--sp-4)">
-        <div class="card-body">
-          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px">
-            <div>
-              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-                <h3 style="font-size:1rem;font-weight:800;color:var(--accent-pink)">${this._itemIcon(mod)} ${DOM.esc(mod.name)}</h3>
-                <span class="badge ${status.className}">${status.label}</span>
-                <span class="badge badge-p5">${mod.kind === 'artifact' ? 'Reference' : 'Mockup'}</span>
-                ${mod.origin === 'bundled' ? '<span class="badge badge-gold">Bundled</span>' : ''}
-              </div>
-              <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:6px">${this._fileSummary(mod)}</div>
-            </div>
-            <div class="btn-row">
-              ${mod.kind === 'code' ? `<button class="btn btn-sm btn-green" onclick="MockupManager.openAlgorithmEditor('${moduleId}')">⚡ Code</button>` : ''}
-              ${mod.kind === 'code' ? `<button class="btn btn-sm btn-pink" onclick="MockupManager.openCSSEditor('${moduleId}')">🎨 CSS</button>` : ''}
-              ${mod.kind === 'code' ? `<button class="btn btn-sm btn-outline" onclick="MockupManager.openIntegration('${moduleId}')">🔧 Integrate</button>` : ''}
-              <button class="btn btn-sm btn-outline" onclick="MockupManager.downloadModule('${moduleId}')">⬇️ Export</button>
-              <button class="btn btn-sm btn-outline btn-danger" onclick="MockupManager.removeModule('${moduleId}')">🗑️</button>
-            </div>
+    <div style="display:grid;grid-template-columns:23% 1fr;gap:0;margin-top:10px;min-height:calc(100vh - 200px)">
+      <!-- LEFT SIDEBAR: Details & Controls -->
+      <div style="background:var(--bg-card);border:1.5px solid var(--border-soft);border-radius:var(--radius-lg) 0 0 var(--radius-lg);overflow-y:auto;max-height:calc(100vh - 200px);padding:12px">
+        <!-- Title + Badges -->
+        <div style="margin-bottom:10px">
+          <h3 style="font-size:.95rem;font-weight:900;color:var(--accent-pink);margin-bottom:6px">${this._itemIcon(mod)} ${DOM.esc(mod.name)}</h3>
+          <div style="display:flex;gap:4px;flex-wrap:wrap">
+            <span class="badge ${status.className}">${status.label}</span>
+            <span class="badge badge-p5">${mod.kind === 'artifact' ? 'Ref' : 'Mock'}</span>
+            ${mod.origin === 'bundled' ? '<span class="badge badge-gold">Bundled</span>' : ''}
           </div>
+          <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:4px">${this._fileSummary(mod)}</div>
+        </div>
 
-          <div class="grid-2" style="margin-bottom:12px">
-            <div>
-              <div class="field-label"><span class="dot"></span> Summary</div>
-              <textarea class="textarea" rows="3" placeholder="What is this item and why does it matter?"
-                        onchange="MockupManager.updateMeta('${moduleId}','summary',this.value)">${DOM.esc(mod.summary || '')}</textarea>
-            </div>
-            <div>
-              <div class="field-label pink"><span class="dot"></span> Improvement Notes</div>
-              <textarea class="textarea" rows="3" placeholder="How should this evolve or integrate?"
-                        onchange="MockupManager.updateMeta('${moduleId}','notes',this.value)">${DOM.esc(mod.notes || '')}</textarea>
-            </div>
+        <!-- Quick Actions -->
+        <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border-soft)">
+          ${mod.kind === 'code' ? `<button class="btn btn-sm btn-green" style="width:100%" onclick="MockupManager.openAlgorithmEditor('${moduleId}')">⚡ Code Editor</button>` : ''}
+          ${mod.kind === 'code' ? `<button class="btn btn-sm btn-pink" style="width:100%" onclick="MockupManager.openCSSEditor('${moduleId}')">🎨 CSS Editor</button>` : ''}
+          ${mod.kind === 'code' ? `<button class="btn btn-sm btn-outline" style="width:100%" onclick="MockupManager.openIntegration('${moduleId}')">🔧 Integration Guide</button>` : ''}
+          <button class="btn btn-sm btn-outline" style="width:100%" onclick="MockupManager.downloadModule('${moduleId}')">⬇️ Export Files</button>
+        </div>
+
+        <!-- Meta Fields -->
+        <div style="margin-bottom:8px">
+          <div class="field-label" style="font-size:.65rem"><span class="dot"></span> Status</div>
+          <select class="select" style="width:100%;padding:4px 6px;font-size:var(--font-size-xs)" onchange="MockupManager.setStatus('${moduleId}', this.value)">
+            ${Object.entries(this.STATUS_META).map(([key, meta]) => `
+              <option value="${key}" ${key === mod.status ? 'selected' : ''}>${meta.label}</option>
+            `).join('')}
+          </select>
+        </div>
+        <div style="margin-bottom:8px">
+          <div class="field-label" style="font-size:.65rem"><span class="dot"></span> Category</div>
+          <select class="select" style="width:100%;padding:4px 6px;font-size:var(--font-size-xs)" onchange="MockupManager.updateMeta('${moduleId}','category',this.value)">
+            ${categoryOptions}
+          </select>
+        </div>
+        <div style="margin-bottom:10px">
+          <div class="field-label" style="font-size:.65rem"><span class="dot"></span> Priority</div>
+          <div class="priority-balls" style="padding-top:4px">
+            ${[1, 2, 3, 4, 5].map(level => `
+              <div class="p-ball ${level <= (mod.priority || 3) ? 'active' : ''}" data-level="${level}"
+                   onclick="MockupManager.setPriority('${moduleId}', ${level})"></div>
+            `).join('')}
           </div>
+        </div>
 
-          <div class="work-item-meta">
-            <div>
-              <div class="field-label"><span class="dot"></span> Category</div>
-              <select class="select" style="width:100%" onchange="MockupManager.updateMeta('${moduleId}','category',this.value)">
-                ${categoryOptions}
-              </select>
-            </div>
-            <div>
-              <div class="field-label pink"><span class="dot"></span> Priority</div>
-              <div class="priority-balls" style="padding-top:6px">
-                ${[1, 2, 3, 4, 5].map(level => `
-                  <div class="p-ball ${level <= (mod.priority || 3) ? 'active' : ''}" data-level="${level}"
-                       onclick="MockupManager.setPriority('${moduleId}', ${level})"></div>
-                `).join('')}
-              </div>
-            </div>
-            <div>
-              <div class="field-label"><span class="dot"></span> Status</div>
-              <select class="select" style="width:100%" onchange="MockupManager.setStatus('${moduleId}', this.value)">
-                ${Object.entries(this.STATUS_META).map(([key, meta]) => `
-                  <option value="${key}" ${key === mod.status ? 'selected' : ''}>${meta.label}</option>
-                `).join('')}
-              </select>
-            </div>
-          </div>
+        <!-- Summary -->
+        <div style="margin-bottom:8px">
+          <div class="field-label" style="font-size:.65rem"><span class="dot"></span> Summary</div>
+          <textarea class="textarea" rows="2" style="font-size:var(--font-size-xs)" placeholder="What does this do?"
+                    onchange="MockupManager.updateMeta('${moduleId}','summary',this.value)">${DOM.esc(mod.summary || '')}</textarea>
+        </div>
+        <div style="margin-bottom:10px">
+          <div class="field-label pink" style="font-size:.65rem"><span class="dot"></span> Notes</div>
+          <textarea class="textarea" rows="2" style="font-size:var(--font-size-xs)" placeholder="Improvements?"
+                    onchange="MockupManager.updateMeta('${moduleId}','notes',this.value)">${DOM.esc(mod.notes || '')}</textarea>
+        </div>
 
-          ${this._renderModuleIntelligence(mod)}
-
-          <div class="btn-row" style="margin-top:12px">
-            <button class="btn btn-green" onclick="MockupManager.promote('${moduleId}','feature')">💡 Promote To Feature</button>
-            <button class="btn btn-outline" onclick="MockupManager.promote('${moduleId}','improvement')">🔧 Promote To Improve</button>
-            <button class="btn btn-outline" onclick="MockupManager.promote('${moduleId}','implementation')">🎯 Send To Implementation</button>
-            ${mod.kind === 'code' ? `<button class="btn btn-outline" onclick="MockupManager.copyChecklist('${moduleId}')">📋 Copy List</button>` : ''}
-            <button class="btn btn-outline" onclick="MockupManager.setStatus('${moduleId}','done')">✅ Mark Done</button>
-            <button class="btn btn-outline" onclick="MockupManager.setStatus('${moduleId}','archived')">🗄️ Archive</button>
+        <!-- Promote Actions -->
+        <div style="display:flex;flex-direction:column;gap:4px;padding-top:8px;border-top:1px solid var(--border-soft)">
+          <button class="btn btn-sm btn-green" style="width:100%;font-size:.68rem" onclick="MockupManager.promote('${moduleId}','feature')">💡 → Feature</button>
+          <button class="btn btn-sm btn-outline" style="width:100%;font-size:.68rem" onclick="MockupManager.promote('${moduleId}','improvement')">🔧 → Improve</button>
+          <button class="btn btn-sm btn-outline" style="width:100%;font-size:.68rem" onclick="MockupManager.promote('${moduleId}','implementation')">🎯 → Implement</button>
+          <button class="btn btn-sm btn-outline" style="width:100%;font-size:.68rem" onclick="MockupManager.setStatus('${moduleId}','done')">✅ Done</button>
+          <div style="display:flex;gap:4px;margin-top:4px">
+            <button class="btn btn-sm btn-outline" style="flex:1;font-size:.65rem" onclick="MockupManager.setStatus('${moduleId}','archived')">🗄️</button>
+            <button class="btn btn-sm btn-outline btn-danger" style="flex:1;font-size:.65rem" onclick="MockupManager.removeModule('${moduleId}')">🗑️</button>
           </div>
         </div>
       </div>
 
-      <div id="mockupPreviewShell"></div>
+      <!-- RIGHT AREA: Live Mockup (77%) -->
+      <div style="border:1.5px solid var(--border-soft);border-left:none;border-radius:0 var(--radius-lg) var(--radius-lg) 0;overflow:hidden;position:relative;background:var(--bg-deep)">
+        <div style="background:var(--bg-surface);padding:4px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border-soft)">
+          <span style="font-size:var(--font-size-xs);font-weight:800;color:var(--accent-green);text-transform:uppercase;letter-spacing:1px">🟢 Live Mockup</span>
+          <span style="font-size:var(--font-size-xs);color:var(--text-muted);margin-left:auto">${DOM.esc(mod.name)}</span>
+        </div>
+        <div id="mockupPreviewShell" style="height:calc(100% - 30px)"></div>
+      </div>
     </div>`;
 
     const shell = document.getElementById('mockupPreviewShell');
     if (!shell) return;
 
     if (mod.kind === 'artifact') {
-      shell.innerHTML = this._renderArtifactPreview(mod);
+      shell.innerHTML = `<div style="padding:14px;overflow-y:auto;height:100%">${this._renderArtifactPreview(mod)}</div>`;
       return;
     }
 
-    shell.innerHTML = `
-    <div style="position:relative">
-      <span style="position:absolute;top:-10px;left:14px;background:var(--bg-deep);padding:2px 10px;font-size:var(--font-size-xs);font-weight:800;color:var(--accent-green);text-transform:uppercase;letter-spacing:1px;border:1px solid var(--border-soft);border-radius:5px;z-index:1">
-        Live Mockup
-      </span>
-      <div id="sandboxContainer-${moduleId}" style="position:relative"></div>
-    </div>`;
-
-    const sandboxContainer = document.getElementById('sandboxContainer-' + moduleId);
+    const sandboxContainer = shell;
     if (sandboxContainer) {
       Sandbox.destroy(moduleId);
       Sandbox.create(moduleId, sandboxContainer, mod.jsSource, mod.cssSource, mod.htmlSource || '');
+      // Make iframe fill the container
+      const iframe = sandboxContainer.querySelector('iframe');
+      if (iframe) {
+        iframe.style.cssText = 'width:100%;height:100%;min-height:500px;border:none;border-radius:0';
+      }
     }
   },
 
