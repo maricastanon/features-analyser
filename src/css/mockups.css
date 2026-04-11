@@ -649,7 +649,6 @@
 .mockup-nav-main {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
   background:
     radial-gradient(circle at top right, color-mix(in srgb, var(--accent-pink) 8%, transparent), transparent 35%),
     linear-gradient(180deg, color-mix(in srgb, var(--bg-surface) 70%, var(--bg-deep) 30%), var(--bg-deep));
@@ -659,7 +658,6 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
 }
 
 .mockup-nav-preview-wrap .mockup-preview-header {
@@ -668,17 +666,15 @@
 
 .mockup-nav-preview-wrap .mockup-preview-shell {
   flex: 1;
-  position: relative;
-  min-height: 0;
-  overflow: hidden;
+  min-height: clamp(420px, 64vh, 860px);
+  overflow: auto;
 }
 
 .mockup-nav-preview-wrap .mockup-preview-shell iframe {
-  position: absolute;
-  inset: 0;
   width: 100% !important;
   height: 100% !important;
-  min-height: 0 !important;
+  border: none !important;
+  display: block;
 }
 
 /* ── Collapsible Import/Catalog ── */
@@ -712,4 +708,72 @@
 
 .mockup-tools-collapse > div {
   padding: 14px;
+}
+
+/* ═══ Light Mode ═══ */
+
+html.light .mockup-nav-layout {
+  border-color: var(--border-medium);
+  box-shadow: 0 4px 20px rgba(18, 49, 29, .08);
+}
+
+html.light .mockup-nav-sidebar {
+  background: rgba(255, 255, 255, .92);
+  border-right-color: var(--border-medium);
+}
+
+html.light .mockup-nav-header {
+  border-bottom-color: var(--border-medium);
+}
+
+html.light .mockup-nav-item:hover {
+  background: rgba(46, 125, 50, .06);
+}
+
+html.light .mockup-nav-item.active {
+  background: rgba(233, 30, 144, .08);
+  border-color: var(--accent-pink);
+}
+
+html.light .mockup-nav-detail {
+  border-top-color: var(--border-medium);
+}
+
+html.light .mockup-nav-footer {
+  border-top-color: var(--border-medium);
+}
+
+html.light .mockup-nav-section {
+  border-color: var(--border-medium);
+}
+
+html.light .mockup-nav-section summary {
+  background: rgba(230, 239, 231, .6);
+}
+
+html.light .mockup-nav-section summary:hover {
+  background: rgba(46, 125, 50, .06);
+}
+
+html.light .mockup-nav-main {
+  background:
+    radial-gradient(circle at top right, rgba(233, 30, 144, .04), transparent 35%),
+    linear-gradient(180deg, rgba(238, 245, 239, .8), var(--bg-deep));
+}
+
+html.light .mockup-preview-header {
+  background: rgba(255, 255, 255, .7);
+  border-bottom-color: var(--border-medium);
+}
+
+html.light .mockup-tools-collapse {
+  border-color: var(--border-medium);
+}
+
+html.light .mockup-tools-summary {
+  background: rgba(255, 255, 255, .82);
+}
+
+html.light .mockup-tools-summary:hover {
+  background: rgba(233, 30, 144, .05);
 }
