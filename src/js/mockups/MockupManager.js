@@ -557,10 +557,6 @@ const MockupManager = {
     if (shell) {
       Sandbox.destroy(moduleId);
       Sandbox.create(moduleId, shell, mod.jsSource, mod.cssSource, mod.htmlSource || '');
-      const iframe = shell.querySelector('iframe');
-      if (iframe) {
-        iframe.style.cssText = 'width:100%;min-height:100%;border:none;border-radius:0;display:block;background:transparent';
-      }
     }
   },
 

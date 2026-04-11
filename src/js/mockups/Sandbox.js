@@ -169,23 +169,10 @@ try {
 
     // Create iframe
     const iframe = document.createElement('iframe');
-    iframe.style.cssText = 'width:100%;min-height:300px;border:2px solid var(--border-soft);border-radius:var(--radius-lg);background:var(--bg-deep)';
+    iframe.style.cssText = 'width:100%;height:100%;border:none;display:block;background:var(--bg-deep)';
     iframe.sandbox = 'allow-scripts allow-same-origin';
     iframe.srcdoc = srcdoc;
     containerEl.appendChild(iframe);
-
-    // Auto-resize iframe to content height
-    iframe.onload = () => {
-      try {
-        const resizeObserver = new ResizeObserver(() => {
-          const h = iframe.contentDocument?.body?.scrollHeight;
-          if (h) iframe.style.height = Math.max(300, h + 30) + 'px';
-        });
-        if (iframe.contentDocument?.body) {
-          resizeObserver.observe(iframe.contentDocument.body);
-        }
-      } catch (e) {}
-    };
 
     this._instances[moduleId] = { iframe, container: containerEl };
     return iframe;

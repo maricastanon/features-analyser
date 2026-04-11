@@ -659,7 +659,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  min-height: 0;
 }
 
 .mockup-nav-preview-wrap .mockup-preview-header {
@@ -668,8 +668,17 @@
 
 .mockup-nav-preview-wrap .mockup-preview-shell {
   flex: 1;
+  position: relative;
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
+}
+
+.mockup-nav-preview-wrap .mockup-preview-shell iframe {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
 }
 
 /* ── Collapsible Import/Catalog ── */
