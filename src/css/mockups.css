@@ -139,6 +139,283 @@
   height: auto;
 }
 
+.mockup-workspace {
+  display: grid;
+  grid-template-columns: minmax(300px, 360px) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 12px;
+  align-items: start;
+}
+
+.mockup-sidebar {
+  position: sticky;
+  top: 12px;
+  align-self: start;
+}
+
+.mockup-sidebar-scroll {
+  display: grid;
+  gap: 12px;
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.mockup-sidebar-card,
+.mockup-preview-panel {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.mockup-sidebar-card {
+  background: var(--bg-card);
+  padding: 14px;
+}
+
+.mockup-sidebar-head {
+  display: grid;
+  gap: 10px;
+}
+
+.mockup-title {
+  margin: 0;
+  font-size: var(--font-size-lg);
+  font-weight: 900;
+  color: var(--accent-pink);
+}
+
+.mockup-file-summary {
+  margin-top: 6px;
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+.mockup-badge-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mockup-action-stack,
+.mockup-promote-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.mockup-action-stack .btn,
+.mockup-promote-grid .btn {
+  width: 100%;
+}
+
+.mockup-sidebar-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mockup-field {
+  min-width: 0;
+}
+
+.mockup-field .select,
+.mockup-field .textarea {
+  width: 100%;
+}
+
+.mockup-field-span {
+  grid-column: 1 / -1;
+}
+
+.mockup-preview-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: clamp(540px, 74vh, 980px);
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-pink) 10%, transparent), transparent 35%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-surface) 70%, var(--bg-deep) 30%), var(--bg-deep));
+}
+
+.mockup-preview-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  background: color-mix(in srgb, var(--bg-surface) 86%, transparent);
+}
+
+.mockup-preview-kicker {
+  font-size: var(--font-size-xs);
+  font-weight: 800;
+  color: var(--accent-green);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.mockup-preview-title {
+  margin-left: auto;
+  min-width: 0;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mockup-preview-shell {
+  flex: 1;
+  min-height: clamp(500px, 68vh, 920px);
+  overflow: auto;
+}
+
+.mockup-artifact-shell {
+  height: 100%;
+  padding: 14px;
+  overflow: auto;
+}
+
+.mockup-panel-intro,
+.mockup-tools-shell,
+.mockup-browser {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.mockup-panel-intro {
+  margin-bottom: 14px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent-green) 8%, var(--bg-card)), var(--bg-card));
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.mockup-tools-shell {
+  margin-top: 20px;
+  padding: 14px;
+  background: color-mix(in srgb, var(--bg-card) 88%, var(--bg-surface));
+}
+
+.mockup-browser {
+  margin-bottom: 16px;
+  padding: 14px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-surface) 58%, var(--bg-card)), var(--bg-card));
+}
+
+.mockup-browser-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.mockup-browser-copy {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.mockup-browser-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.mockup-browser-search {
+  margin-bottom: 12px;
+}
+
+.mockup-group-filter-row {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.mockup-group-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.mockup-group-block {
+  padding: 12px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--bg-card) 90%, var(--bg-surface));
+}
+
+.mockup-group-head {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.mockup-group-copy {
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.mockup-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
+}
+
+.mockup-chip {
+  width: 100%;
+  padding: 12px 13px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--tr-fast);
+}
+
+.mockup-chip:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent-green);
+  box-shadow: var(--shadow-green);
+}
+
+.mockup-chip.active {
+  background: color-mix(in srgb, var(--accent-green) 14%, var(--bg-card));
+  border-color: var(--accent-green);
+}
+
+.mockup-chip-title,
+.mockup-chip-meta {
+  display: block;
+}
+
+.mockup-chip-title {
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.mockup-chip-meta {
+  margin-top: 5px;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.mockup-browser-empty {
+  padding: 16px;
+  border: 1px dashed var(--border-soft);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
 /* ═══ Tag Filter System ═══ */
 .tag-filter-btn {
   padding: 5px 14px;
@@ -185,3 +462,245 @@
 
 .bundled-loaded { opacity: 0.6; }
 .bundled-loaded:hover { opacity: 1; }
+
+/* ═══ Navigator Sidebar Layout ═══ */
+
+.mockup-nav-layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 0;
+  min-height: clamp(500px, 72vh, 920px);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.mockup-nav-sidebar {
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mockup-nav-header {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-soft);
+  display: grid;
+  gap: 8px;
+}
+
+.mockup-nav-search-input {
+  padding: 6px 10px !important;
+  font-size: var(--font-size-xs) !important;
+}
+
+.mockup-nav-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 6px;
+  scrollbar-width: thin;
+}
+
+.mockup-nav-group {
+  margin-bottom: 4px;
+}
+
+.mockup-nav-group-label {
+  padding: 6px 8px 4px;
+  font-size: .65rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mockup-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-family: var(--font-main);
+  transition: all .15s;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.mockup-nav-item:hover {
+  background: var(--accent-green-bg);
+  border-color: var(--border-soft);
+  color: var(--text-primary);
+}
+
+.mockup-nav-item.active {
+  background: color-mix(in srgb, var(--accent-pink) 14%, var(--bg-surface));
+  border-color: var(--accent-pink);
+  color: var(--accent-pink);
+  font-weight: 700;
+}
+
+.mockup-nav-icon {
+  flex-shrink: 0;
+  font-size: .85rem;
+}
+
+.mockup-nav-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mockup-nav-empty {
+  padding: 20px 12px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--font-size-sm);
+}
+
+.mockup-nav-footer {
+  padding: 8px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ── Nav Controls (selected module) ── */
+
+.mockup-nav-detail {
+  padding: 10px;
+  border-top: 1px solid var(--border-soft);
+  display: grid;
+  gap: 8px;
+}
+
+.mockup-nav-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.mockup-nav-detail-title {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: var(--accent-pink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mockup-nav-detail-meta {
+  font-size: .65rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+.mockup-nav-actions {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.mockup-nav-section {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.mockup-nav-section summary {
+  padding: 6px 10px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: var(--bg-surface);
+  user-select: none;
+}
+
+.mockup-nav-section summary:hover {
+  color: var(--text-primary);
+  background: var(--accent-green-bg);
+}
+
+.mockup-nav-fields,
+.mockup-nav-workflow {
+  padding: 8px;
+}
+
+.mockup-nav-workflow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+}
+
+/* ── Preview Area ── */
+
+.mockup-nav-main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--accent-pink) 8%, transparent), transparent 35%),
+    linear-gradient(180deg, color-mix(in srgb, var(--bg-surface) 70%, var(--bg-deep) 30%), var(--bg-deep));
+}
+
+.mockup-nav-preview-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mockup-nav-preview-wrap .mockup-preview-header {
+  flex-shrink: 0;
+}
+
+.mockup-nav-preview-wrap .mockup-preview-shell {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+/* ── Collapsible Import/Catalog ── */
+
+.mockup-tools-collapse {
+  margin-top: 16px;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.mockup-tools-summary {
+  padding: 12px 16px;
+  font-size: var(--font-size-sm);
+  font-weight: 800;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background: var(--bg-card);
+  user-select: none;
+  transition: all .2s;
+}
+
+.mockup-tools-summary:hover {
+  color: var(--accent-pink);
+  background: var(--accent-pink-bg);
+}
+
+.mockup-tools-collapse[open] .mockup-tools-summary {
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.mockup-tools-collapse > div {
+  padding: 14px;
+}

@@ -20,27 +20,33 @@ const MockupManager = {
     this._renderImportZone();
     await this._ensureWorkspaceSeed();
     await this._renderBundledLibrary();
-    await this._renderModuleTabs();
+    await this._renderNavSidebar();
+    await this._ensureVisibleModule();
     if (this._initialized) return;
     this._setupMessageListener();
     EventBus.on('project:switched', async () => {
       await this._ensureWorkspaceSeed();
       await this._renderBundledLibrary();
-      await this._renderModuleTabs();
-      DOM.setHTML('mockupContent', '');
+      await this._renderNavSidebar();
       this._activeModuleId = null;
+      DOM.setHTML('mockupContent', '');
+      await this._ensureVisibleModule();
     });
     EventBus.on('module:imported', async () => {
       await this._renderBundledLibrary();
-      await this._renderModuleTabs();
+      await this._renderNavSidebar();
+      await App.updateCounts();
+      await this._ensureVisibleModule();
     });
     EventBus.on('module:removed', async () => {
       await this._renderBundledLibrary();
-      await this._renderModuleTabs();
+      await this._renderNavSidebar();
+      await App.updateCounts();
+      await this._ensureVisibleModule();
     });
     EventBus.on('module:updated', async () => {
       await this._renderBundledLibrary();
-      await this._renderModuleTabs();
+      await this._renderNavSidebar();
       if (this._activeModuleId) {
         await this.showModule(this._activeModuleId);
       }
@@ -60,7 +66,7 @@ const MockupManager = {
         Drop JS, CSS, HTML, Python, markdown, JSON, SVG, or images
       </div>
       <div style="font-size:var(--font-size-xs);color:var(--accent-pink);margin-top:6px;font-weight:700">
-        Code bundles become live mockups. Mindmaps and notes become reviewable references.
+        Built-in functional mockups are already loaded. Use local import only for your own files.
       </div>
       <input type="file" id="importFileInput" multiple accept=".js,.css,.html,.htm,.py,.md,.markdown,.mmd,.txt,.csv,.json,.svg,.png,.jpg,.jpeg,.webp,.gif" style="display:none" onchange="MockupManager.handleFileInput(this.files)">
     </div>
@@ -90,11 +96,13 @@ const MockupManager = {
 
   _bundledTagFilter: 'all',
   _bundledSearch: '',
+  _moduleSearch: '',
 
   async _renderBundledLibrary() {
     const container = DOM.el('bundledLibrary');
     if (!container) return;
     const existing = await ModuleRegistry.getAll();
+    const loadedByBundle = new Map(existing.filter(item => item.bundleId).map(item => [item.bundleId, item]));
     const loadedIds = new Set(existing.map(item => item.bundleId).filter(Boolean));
     const allItems = BundledModules.getAll();
     const allTags = BundledModules.getAllTags();
@@ -137,7 +145,10 @@ const MockupManager = {
                 ${(item.tags||[]).map(tag=>'<span class="bundled-tag '+(this._bundledTagFilter===tag?'bundled-tag-active':'')+'" onclick="event.stopPropagation();MockupManager.filterByTag(\''+tag+'\')" style="cursor:pointer">'+DOM.esc(tag)+'</span>').join('')}
               </div>
               <div class="btn-row" style="margin-top:10px">
-                <button class="btn btn-sm ${loadedIds.has(item.id)?'btn-outline':'btn-green'}" onclick="MockupManager.importBundled('${item.id}')" ${loadedIds.has(item.id)?'disabled':''}>${loadedIds.has(item.id)?'Loaded':'Load'}</button>
+                <button class="btn btn-sm ${loadedIds.has(item.id)?'btn-outline':'btn-green'}"
+                        onclick="${loadedIds.has(item.id) ? `MockupManager.showModule('${loadedByBundle.get(item.id)?.id || ''}')` : `MockupManager.importBundled('${item.id}')`}">
+                  ${loadedIds.has(item.id)?'Open':'Load'}
+                </button>
               </div>
             </div>`).join(''):'<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--text-muted)">No modules match filter</div>'}
         </div>
@@ -153,23 +164,49 @@ const MockupManager = {
 
   async _ensureWorkspaceSeed() {
     const project = App.currentProject;
-    if (!project || project.presetId !== 'feature-lab-workspace') return;
+    if (!project) return;
 
     const modules = await ModuleRegistry.getAll(project.id);
-    if (modules.length) return;
+    const bundleItems = BundledModules.getAll();
+    const loadedBundleIds = new Set(modules.map(item => item.bundleId).filter(Boolean));
+    const missing = bundleItems.filter(item => !loadedBundleIds.has(item.id));
+    const seedKey = 'bundled-catalog-seeded:' + project.id;
+    const seedVersion = String(bundleItems.length);
 
-    const seedKey = 'ace-template-pack-seeded:' + project.id;
-    if (localStorage.getItem(seedKey) === '1') return;
+    if (!missing.length) {
+      localStorage.setItem(seedKey, seedVersion);
+      return;
+    }
 
-    await this.loadAceTemplatePack({ navigate: false, toast: false });
-    localStorage.setItem(seedKey, '1');
+    if (localStorage.getItem(seedKey) === seedVersion) return;
+
+    for (const item of missing) {
+      await this.importBundled(item.id, { silent: true });
+    }
+    localStorage.setItem(seedKey, seedVersion);
+  },
+
+  async _ensureVisibleModule() {
+    const modules = await ModuleRegistry.getAll();
+    if (!modules.length) {
+      this._activeModuleId = null;
+      DOM.setHTML('mockupContent', '');
+      return;
+    }
+
+    const active = this._activeModuleId
+      ? modules.find(item => item.id === this._activeModuleId)
+      : null;
+
+    if (active) return;
+    await this.showModule(modules[0].id);
   },
 
   async loadFilteredBundled() {
     let items = this._bundledTagFilter === 'all' ? BundledModules.getAll() : BundledModules.getByTag(this._bundledTagFilter);
     if (this._bundledSearch) { const q = this._bundledSearch.toLowerCase(); items = items.filter(i => i.name.toLowerCase().includes(q) || i.description.toLowerCase().includes(q)); }
     for (const item of items) { await this.importBundled(item.id, { silent: true }); }
-    await this._renderBundledLibrary(); await this._renderModuleTabs();
+    await this._renderBundledLibrary(); await this._renderNavSidebar();
     Toast.show('Loaded ' + items.length + ' modules.');
   },
 
@@ -188,7 +225,7 @@ const MockupManager = {
 
     if (hasCodeBundle) {
       const name = this._deriveWorkItemName(files);
-      const mod = await ModuleRegistry.registerModule({
+      let mod = await ModuleRegistry.registerModule({
         name,
         origin: 'imported',
         status: 'review',
@@ -205,6 +242,12 @@ const MockupManager = {
           ...files.html.map(file => file.name)
         ],
         pythonScripts: files.py.map(file => ({ name: file.name, source: file.content }))
+      });
+      mod = await ModuleRegistry.updateMeta(mod.id, {
+        status: 'review',
+        linkedFeatureId: '',
+        linkedImprovementId: '',
+        linkedImplementationId: ''
       });
       created.push(await this._analyseAndLinkModule(mod));
     }
@@ -228,7 +271,7 @@ const MockupManager = {
     }
 
     await this._renderBundledLibrary();
-    await this._renderModuleTabs();
+    await this._renderNavSidebar();
     await this.showModule(created[0].id);
 
     const ignoredCount = files.other.length;
@@ -246,9 +289,16 @@ const MockupManager = {
     }
     const existing = await ModuleRegistry.getAll();
     const already = existing.find(item => item.bundleId === itemId);
+    if (already && !options.refresh) {
+      if (!options.silent) {
+        await this.showModule(already.id);
+        Toast.show(`"${already.name}" already loaded.`);
+      }
+      return already;
+    }
 
     const bundle = await BundledModules.load(itemId);
-    const mod = await ModuleRegistry.registerModule({
+    let mod = await ModuleRegistry.registerModule({
       name: bundle.name,
       origin: 'bundled',
       projectId: App.currentProject?.id,
@@ -262,10 +312,16 @@ const MockupManager = {
       cssFileNames: [bundle.cssPath.split('/').pop()],
       sourceFiles: [bundle.jsPath.split('/').pop(), bundle.cssPath.split('/').pop()]
     });
+    mod = await ModuleRegistry.updateMeta(mod.id, {
+      status: 'review',
+      linkedFeatureId: '',
+      linkedImprovementId: '',
+      linkedImplementationId: ''
+    });
     const analyzed = await this._analyseAndLinkModule(mod);
 
     await this._renderBundledLibrary();
-    await this._renderModuleTabs();
+    await this._renderNavSidebar();
     if (!options.silent) {
       await this.showModule(analyzed.id);
       Toast.show(`${already ? 'Refreshed' : 'Loaded'} "${bundle.name}"`);
@@ -289,7 +345,7 @@ const MockupManager = {
       if (result?.bundleId === item.id) loaded.push(result);
     }
     await this._renderBundledLibrary();
-    await this._renderModuleTabs();
+    await this._renderNavSidebar();
     if (loaded[0] && options.navigate !== false) {
       await this.showModule(loaded[0].id);
       App.go('mockups');
@@ -312,7 +368,7 @@ const MockupManager = {
       if (result?.bundleId === item.id) loaded.push(result);
     }
     await this._renderBundledLibrary();
-    await this._renderModuleTabs();
+    await this._renderNavSidebar();
     if (loaded[0]) {
       await this.showModule(loaded[0].id);
       App.go('mockups');
@@ -320,7 +376,7 @@ const MockupManager = {
     Toast.show('17 starter mockups loaded.');
   },
 
-  async loadAllBundled() {
+  async loadAllBundled(options = {}) {
     if (!App.currentProject) {
       Toast.show('Create or choose a project first.', 'warning');
       return;
@@ -331,30 +387,145 @@ const MockupManager = {
       if (!first && result) first = result;
     }
     await this._renderBundledLibrary();
-    await this._renderModuleTabs();
-    if (first) {
+    await this._renderNavSidebar();
+    if (first && options.navigate !== false) {
       await this.showModule(first.id);
       App.go('mockups');
     }
-    Toast.show('Bundled catalog loaded.');
+    if (options.toast !== false) {
+      Toast.show('Bundled catalog loaded.');
+    }
   },
 
-  async _renderModuleTabs() {
-    const container = DOM.el('mockupTabs');
+  async _renderNavSidebar() {
+    const container = DOM.el('mockupNavSidebar');
     if (!container) return;
 
     const modules = await ModuleRegistry.getAll();
-    container.innerHTML = modules.map(item => `
-      <button class="sub-tab ${item.id === this._activeModuleId ? 'active' : ''}"
-              onclick="MockupManager.showModule('${item.id}')">
-        ${this._itemIcon(item)} ${DOM.esc(item.name)}${item.status === 'done' ? ' ✅' : item.status === 'archived' ? ' 🗂️' : item.status === 'implementation' ? ' 🎯' : item.status === 'improvement' ? ' 🔧' : ''}
-      </button>
-    `).join('') || '<span style="font-size:var(--font-size-sm);color:var(--text-muted)">No work items imported yet</span>';
+    const query = this._moduleSearch.toLowerCase();
+    const filtered = query
+      ? modules.filter(item =>
+          item.name.toLowerCase().includes(query) ||
+          (item.summary || '').toLowerCase().includes(query) ||
+          (item.bundleId || '').toLowerCase().includes(query)
+        )
+      : modules;
+
+    const groups = this._groupModules(filtered);
+
+    container.innerHTML = `
+      <div class="mockup-nav-header">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <div class="field-label pink" style="margin:0"><span class="dot"></span> Modules</div>
+          <span class="badge badge-green" style="font-size:.6rem">${modules.length}</span>
+        </div>
+        <input class="input mockup-nav-search-input" type="text" placeholder="Search modules..."
+               value="${DOM.esc(this._moduleSearch)}"
+               oninput="MockupManager._moduleSearch=this.value;MockupManager._renderNavSidebar()">
+      </div>
+      <div class="mockup-nav-list">
+        ${modules.length ? groups.map(group => `
+          <div class="mockup-nav-group">
+            <div class="mockup-nav-group-label">${DOM.esc(group.label)} <span style="opacity:.4;font-weight:400">${group.items.length}</span></div>
+            ${group.items.map(item => `
+              <button class="mockup-nav-item ${item.id === this._activeModuleId ? 'active' : ''}"
+                      onclick="MockupManager.showModule('${item.id}')" title="${DOM.esc(item.summary || item.name)}">
+                <span class="mockup-nav-icon">${this._itemIcon(item)}</span>
+                <span class="mockup-nav-name">${DOM.esc(item.name)}</span>
+              </button>
+            `).join('')}
+          </div>
+        `).join('') : `
+          <div class="mockup-nav-empty">
+            No modules loaded yet.
+            <button class="btn btn-sm btn-green" style="margin-top:8px" onclick="MockupManager.scrollToImportTools()">📦 Load Modules</button>
+          </div>
+        `}
+      </div>
+      <div id="mockupNavControls"></div>
+      <div class="mockup-nav-footer">
+        <button class="btn btn-sm btn-outline" style="width:100%" onclick="MockupManager.scrollToImportTools()">📦 Import / Catalog</button>
+      </div>
+    `;
+
+    if (this._activeModuleId) {
+      const mod = await ModuleRegistry.get(this._activeModuleId);
+      if (mod) this._renderNavControls(mod);
+    }
+  },
+
+  _renderNavControls(mod) {
+    const controls = DOM.el('mockupNavControls');
+    if (!controls || !mod) { if (controls) controls.innerHTML = ''; return; }
+
+    const moduleId = mod.id;
+    const status = this.STATUS_META[mod.status] || this.STATUS_META.review;
+
+    controls.innerHTML = `
+      <div class="mockup-nav-detail">
+        <div class="mockup-nav-detail-header">
+          <h4 class="mockup-nav-detail-title">${this._itemIcon(mod)} ${DOM.esc(mod.name)}</h4>
+          <span class="badge ${status.className}" style="font-size:.6rem">${status.label}</span>
+        </div>
+        <div class="mockup-nav-detail-meta">${this._fileSummary(mod)}</div>
+
+        <div class="mockup-nav-actions">
+          ${mod.kind === 'code' ? `<button class="btn btn-sm btn-green" onclick="MockupManager.openAlgorithmEditor('${moduleId}')">⚡ Code</button>` : ''}
+          ${mod.kind === 'code' ? `<button class="btn btn-sm btn-pink" onclick="MockupManager.openCSSEditor('${moduleId}')">🎨 CSS</button>` : ''}
+          ${mod.kind === 'code' ? `<button class="btn btn-sm btn-outline" onclick="MockupManager.openIntegration('${moduleId}')">🔧 Integrate</button>` : ''}
+          <button class="btn btn-sm btn-outline" onclick="MockupManager.downloadModule('${moduleId}')">⬇️</button>
+        </div>
+
+        <details class="mockup-nav-section">
+          <summary>Status & Details</summary>
+          <div class="mockup-nav-fields">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+              <div>
+                <div class="field-label" style="font-size:.62rem"><span class="dot"></span> Status</div>
+                <select class="select" style="font-size:.75rem" onchange="MockupManager.setStatus('${moduleId}', this.value)">
+                  ${Object.entries(this.STATUS_META).map(([key, meta]) => `
+                    <option value="${key}" ${key === mod.status ? 'selected' : ''}>${meta.label}</option>
+                  `).join('')}
+                </select>
+              </div>
+              <div>
+                <div class="field-label" style="font-size:.62rem"><span class="dot"></span> Priority</div>
+                <div class="priority-balls" style="padding-top:6px">
+                  ${[1, 2, 3, 4, 5].map(level => `
+                    <div class="p-ball ${level <= (mod.priority || 3) ? 'active' : ''}" data-level="${level}"
+                         onclick="MockupManager.setPriority('${moduleId}', ${level})"></div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+            <textarea class="textarea" rows="2" placeholder="Notes..." style="font-size:.75rem;margin-top:6px"
+                      onchange="MockupManager.updateMeta('${moduleId}','notes',this.value)">${DOM.esc(mod.notes || '')}</textarea>
+          </div>
+        </details>
+
+        <details class="mockup-nav-section">
+          <summary>Workflow</summary>
+          <div class="mockup-nav-workflow">
+            <button class="btn btn-sm btn-green" onclick="MockupManager.promote('${moduleId}','feature')">💡 Feature</button>
+            <button class="btn btn-sm btn-outline" onclick="MockupManager.promote('${moduleId}','improvement')">🔧 Improve</button>
+            <button class="btn btn-sm btn-outline" onclick="MockupManager.promote('${moduleId}','implementation')">🎯 Implement</button>
+            <button class="btn btn-sm btn-outline" onclick="MockupManager.setStatus('${moduleId}','done')">✅ Done</button>
+            <button class="btn btn-sm btn-outline btn-danger" onclick="MockupManager.removeModule('${moduleId}')">🗑️</button>
+          </div>
+        </details>
+      </div>
+    `;
+  },
+
+  scrollToImportTools() {
+    const details = document.getElementById('mockupToolsCollapse');
+    if (details) details.open = true;
+    document.getElementById('importZone')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   },
 
   async showModule(moduleId) {
     this._activeModuleId = moduleId;
-    await this._renderModuleTabs();
+    await this._renderNavSidebar();
 
     const content = DOM.el('mockupContent');
     if (!content) return;
@@ -365,112 +536,30 @@ const MockupManager = {
       return;
     }
 
-    const status = this.STATUS_META[mod.status] || this.STATUS_META.review;
-    const categories = Categories.getAll();
-    const categoryOptions = categories.map(cat => `
-      <option value="${cat.id}" ${cat.id === mod.category ? 'selected' : ''}>${cat.emoji} ${DOM.esc(cat.name)}</option>
-    `).join('');
-
-    // ── Focus Mode: Left sidebar (23%) + Right mockup (77%) ──
-    content.innerHTML = `
-    <div style="display:grid;grid-template-columns:23% 1fr;gap:0;margin-top:10px;min-height:calc(100vh - 200px)">
-      <!-- LEFT SIDEBAR: Details & Controls -->
-      <div style="background:var(--bg-card);border:1.5px solid var(--border-soft);border-radius:var(--radius-lg) 0 0 var(--radius-lg);overflow-y:auto;max-height:calc(100vh - 200px);padding:12px">
-        <!-- Title + Badges -->
-        <div style="margin-bottom:10px">
-          <h3 style="font-size:.95rem;font-weight:900;color:var(--accent-pink);margin-bottom:6px">${this._itemIcon(mod)} ${DOM.esc(mod.name)}</h3>
-          <div style="display:flex;gap:4px;flex-wrap:wrap">
-            <span class="badge ${status.className}">${status.label}</span>
-            <span class="badge badge-p5">${mod.kind === 'artifact' ? 'Ref' : 'Mock'}</span>
-            ${mod.origin === 'bundled' ? '<span class="badge badge-gold">Bundled</span>' : ''}
-          </div>
-          <div style="font-size:var(--font-size-xs);color:var(--text-muted);margin-top:4px">${this._fileSummary(mod)}</div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border-soft)">
-          ${mod.kind === 'code' ? `<button class="btn btn-sm btn-green" style="width:100%" onclick="MockupManager.openAlgorithmEditor('${moduleId}')">⚡ Code Editor</button>` : ''}
-          ${mod.kind === 'code' ? `<button class="btn btn-sm btn-pink" style="width:100%" onclick="MockupManager.openCSSEditor('${moduleId}')">🎨 CSS Editor</button>` : ''}
-          ${mod.kind === 'code' ? `<button class="btn btn-sm btn-outline" style="width:100%" onclick="MockupManager.openIntegration('${moduleId}')">🔧 Integration Guide</button>` : ''}
-          <button class="btn btn-sm btn-outline" style="width:100%" onclick="MockupManager.downloadModule('${moduleId}')">⬇️ Export Files</button>
-        </div>
-
-        <!-- Meta Fields -->
-        <div style="margin-bottom:8px">
-          <div class="field-label" style="font-size:.65rem"><span class="dot"></span> Status</div>
-          <select class="select" style="width:100%;padding:4px 6px;font-size:var(--font-size-xs)" onchange="MockupManager.setStatus('${moduleId}', this.value)">
-            ${Object.entries(this.STATUS_META).map(([key, meta]) => `
-              <option value="${key}" ${key === mod.status ? 'selected' : ''}>${meta.label}</option>
-            `).join('')}
-          </select>
-        </div>
-        <div style="margin-bottom:8px">
-          <div class="field-label" style="font-size:.65rem"><span class="dot"></span> Category</div>
-          <select class="select" style="width:100%;padding:4px 6px;font-size:var(--font-size-xs)" onchange="MockupManager.updateMeta('${moduleId}','category',this.value)">
-            ${categoryOptions}
-          </select>
-        </div>
-        <div style="margin-bottom:10px">
-          <div class="field-label" style="font-size:.65rem"><span class="dot"></span> Priority</div>
-          <div class="priority-balls" style="padding-top:4px">
-            ${[1, 2, 3, 4, 5].map(level => `
-              <div class="p-ball ${level <= (mod.priority || 3) ? 'active' : ''}" data-level="${level}"
-                   onclick="MockupManager.setPriority('${moduleId}', ${level})"></div>
-            `).join('')}
-          </div>
-        </div>
-
-        <!-- Summary -->
-        <div style="margin-bottom:8px">
-          <div class="field-label" style="font-size:.65rem"><span class="dot"></span> Summary</div>
-          <textarea class="textarea" rows="2" style="font-size:var(--font-size-xs)" placeholder="What does this do?"
-                    onchange="MockupManager.updateMeta('${moduleId}','summary',this.value)">${DOM.esc(mod.summary || '')}</textarea>
-        </div>
-        <div style="margin-bottom:10px">
-          <div class="field-label pink" style="font-size:.65rem"><span class="dot"></span> Notes</div>
-          <textarea class="textarea" rows="2" style="font-size:var(--font-size-xs)" placeholder="Improvements?"
-                    onchange="MockupManager.updateMeta('${moduleId}','notes',this.value)">${DOM.esc(mod.notes || '')}</textarea>
-        </div>
-
-        <!-- Promote Actions -->
-        <div style="display:flex;flex-direction:column;gap:4px;padding-top:8px;border-top:1px solid var(--border-soft)">
-          <button class="btn btn-sm btn-green" style="width:100%;font-size:.68rem" onclick="MockupManager.promote('${moduleId}','feature')">💡 → Feature</button>
-          <button class="btn btn-sm btn-outline" style="width:100%;font-size:.68rem" onclick="MockupManager.promote('${moduleId}','improvement')">🔧 → Improve</button>
-          <button class="btn btn-sm btn-outline" style="width:100%;font-size:.68rem" onclick="MockupManager.promote('${moduleId}','implementation')">🎯 → Implement</button>
-          <button class="btn btn-sm btn-outline" style="width:100%;font-size:.68rem" onclick="MockupManager.setStatus('${moduleId}','done')">✅ Done</button>
-          <div style="display:flex;gap:4px;margin-top:4px">
-            <button class="btn btn-sm btn-outline" style="flex:1;font-size:.65rem" onclick="MockupManager.setStatus('${moduleId}','archived')">🗄️</button>
-            <button class="btn btn-sm btn-outline btn-danger" style="flex:1;font-size:.65rem" onclick="MockupManager.removeModule('${moduleId}')">🗑️</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT AREA: Live Mockup (77%) -->
-      <div style="border:1.5px solid var(--border-soft);border-left:none;border-radius:0 var(--radius-lg) var(--radius-lg) 0;overflow:hidden;position:relative;background:var(--bg-deep)">
-        <div style="background:var(--bg-surface);padding:4px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border-soft)">
-          <span style="font-size:var(--font-size-xs);font-weight:800;color:var(--accent-green);text-transform:uppercase;letter-spacing:1px">🟢 Live Mockup</span>
-          <span style="font-size:var(--font-size-xs);color:var(--text-muted);margin-left:auto">${DOM.esc(mod.name)}</span>
-        </div>
-        <div id="mockupPreviewShell" style="height:calc(100% - 30px)"></div>
-      </div>
-    </div>`;
-
-    const shell = document.getElementById('mockupPreviewShell');
-    if (!shell) return;
-
     if (mod.kind === 'artifact') {
-      shell.innerHTML = `<div style="padding:14px;overflow-y:auto;height:100%">${this._renderArtifactPreview(mod)}</div>`;
+      content.innerHTML = `
+        <div class="mockup-preview-header">
+          <span class="mockup-preview-kicker">Reference Preview</span>
+          <span class="mockup-preview-title">${DOM.esc(mod.name)}</span>
+        </div>
+        <div class="mockup-artifact-shell">${this._renderArtifactPreview(mod)}</div>`;
       return;
     }
 
-    const sandboxContainer = shell;
-    if (sandboxContainer) {
+    content.innerHTML = `
+      <div class="mockup-preview-header">
+        <span class="mockup-preview-kicker">Live Mockup</span>
+        <span class="mockup-preview-title">${DOM.esc(mod.name)}</span>
+      </div>
+      <div id="mockupPreviewShell" class="mockup-preview-shell"></div>`;
+
+    const shell = document.getElementById('mockupPreviewShell');
+    if (shell) {
       Sandbox.destroy(moduleId);
-      Sandbox.create(moduleId, sandboxContainer, mod.jsSource, mod.cssSource, mod.htmlSource || '');
-      // Make iframe fill the container
-      const iframe = sandboxContainer.querySelector('iframe');
+      Sandbox.create(moduleId, shell, mod.jsSource, mod.cssSource, mod.htmlSource || '');
+      const iframe = shell.querySelector('iframe');
       if (iframe) {
-        iframe.style.cssText = 'width:100%;height:100%;min-height:500px;border:none;border-radius:0';
+        iframe.style.cssText = 'width:100%;min-height:100%;border:none;border-radius:0;display:block;background:transparent';
       }
     }
   },
@@ -605,7 +694,7 @@ const MockupManager = {
     this._activeModuleId = null;
     DOM.setHTML('mockupContent', '');
     await this._renderBundledLibrary();
-    await this._renderModuleTabs();
+    await this._renderNavSidebar();
     Toast.show('Work item removed');
   },
 
@@ -697,6 +786,111 @@ const MockupManager = {
     if (mod.htmlFileName) parts.push('HTML: ' + mod.htmlFileName);
     if (mod.pythonScripts?.length) parts.push('Python: ' + mod.pythonScripts.map(py => py.name).join(', '));
     return parts.join(' • ');
+  },
+
+  _groupModules(items) {
+    const groups = new Map();
+    items.forEach(item => {
+      const meta = this._getModuleGroup(item);
+      if (!groups.has(meta.key)) {
+        groups.set(meta.key, { ...meta, items: [] });
+      }
+      groups.get(meta.key).items.push(item);
+    });
+
+    return [...groups.values()].sort((a, b) => {
+      const delta = this._moduleGroupRank(a.key) - this._moduleGroupRank(b.key);
+      if (delta !== 0) return delta;
+      return a.label.localeCompare(b.label);
+    });
+  },
+
+  _getModuleGroup(item) {
+    const bundle = item.bundleId ? BundledModules.getById(item.bundleId) : null;
+
+    if (bundle?.id === 'ace-template-lab') {
+      return {
+        key: 'ace-strategy',
+        label: 'ACE Strategy Cockpit',
+        note: 'Reusable feature mapping, complaint synthesis, and build-queue control.',
+        tone: 'pink',
+        badgeClass: 'badge-pink'
+      };
+    }
+
+    if (bundle?.packId === 'ace-template' && bundle?.moduleConfig?.familyId) {
+      const isGap = bundle.moduleConfig.familyId === 'missing';
+      return {
+        key: 'ace:' + bundle.moduleConfig.familyId,
+        label: 'ACE • ' + bundle.moduleConfig.familyLabel,
+        note: isGap
+          ? 'Evidence-backed missing-feature concepts and build targets.'
+          : 'Individual ACE mockups for this feature family.',
+        tone: isGap ? 'pink' : 'green',
+        badgeClass: isGap ? 'badge-gold' : 'badge-green'
+      };
+    }
+
+    if (item.kind === 'artifact') {
+      return {
+        key: 'artifact',
+        label: 'Imported References',
+        note: 'Mindmaps, notes, JSON, images, and other reference items.',
+        tone: 'pink',
+        badgeClass: 'badge-gold'
+      };
+    }
+
+    if (item.origin !== 'bundled') {
+      return {
+        key: 'imported-custom',
+        label: 'Imported / Custom Mockups',
+        note: 'Your own local JS, CSS, HTML, or Python bundles.',
+        tone: 'pink',
+        badgeClass: 'badge-pink'
+      };
+    }
+
+    if (bundle?.appFit?.includes('feature-lab-workspace')) {
+      return {
+        key: 'workspace-helper',
+        label: 'Workspace Helper Mockups',
+        note: 'Helper modules loaded with the ACE workspace pack.',
+        tone: 'green',
+        badgeClass: 'badge-green'
+      };
+    }
+
+    return {
+      key: 'bundled-other',
+      label: 'Other Bundled Mockups',
+      note: 'General bundled modules loaded outside the ACE workspace pack.',
+      tone: 'green',
+      badgeClass: 'badge-p5'
+    };
+  },
+
+  _moduleGroupRank(key) {
+    const order = [
+      'ace-strategy',
+      'ace:hub',
+      'ace:setup',
+      'ace:task-card',
+      'ace:views',
+      'ace:collab',
+      'ace:reporting',
+      'ace:premium-scheduling',
+      'ace:agile-goals',
+      'ace:integrations',
+      'ace:admin-portfolio',
+      'ace:missing',
+      'workspace-helper',
+      'imported-custom',
+      'artifact',
+      'bundled-other'
+    ];
+    const index = order.indexOf(key);
+    return index === -1 ? order.length + 1 : index;
   },
 
   _buildImportSummary(files) {
@@ -839,32 +1033,13 @@ const MockupManager = {
       existingImprovements: improvements
     });
 
-    let updated = await ModuleRegistry.updateMeta(mod.id, {
+    return ModuleRegistry.updateMeta(mod.id, {
       analysis,
       summary: mod.summary || analysis.summary,
       priority: mod.priority && mod.priority !== 3 ? mod.priority : analysis.recommendedPriority,
       category: !mod.category || mod.category === 'custom' ? analysis.categoryId : mod.category,
       checklist: analysis.checklist
     });
-
-    if (analysis.recommendedTrack === 'improvement') {
-      const improvement = await this._ensureImprovementLink(updated, analysis);
-      const linkedFeatureId = updated.linkedFeatureId || analysis.featureMatchId || '';
-      updated = await ModuleRegistry.updateMeta(updated.id, {
-        status: 'improvement',
-        linkedImprovementId: improvement.id,
-        linkedFeatureId
-      });
-    } else {
-      const feature = await this._ensureFeatureLink(updated, analysis);
-      updated = await ModuleRegistry.updateMeta(updated.id, {
-        status: updated.status === 'done' ? 'done' : 'feature',
-        linkedFeatureId: feature.id
-      });
-    }
-
-    await this._syncLinkedRecords(updated);
-    return updated;
   },
 
   async _ensureFeatureLink(mod, analysis) {

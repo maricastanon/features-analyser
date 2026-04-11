@@ -6,11 +6,17 @@ const App = {
   currentTab: 'features',
   currentProject: null,
 
+  TAB_GROUPS: [
+    { id: 'features', label: 'Features', emoji: '💡', tabs: ['features', 'improvements', 'implementation'] },
+    { id: 'lab',      label: 'Lab',      emoji: '🧪', tabs: ['mockups', 'integration'] },
+    { id: 'tools',    label: 'Tools',    emoji: '🔬', tabs: ['inspector', 'guide'] }
+  ],
+
   TAB_MAP: {
-    features:       { label: 'Features',      emoji: '💡', count: 'featCount' },
+    features:       { label: 'Ideas',         emoji: '💡', count: 'featCount' },
     improvements:   { label: 'Improve',       emoji: '🔧', count: 'impCount' },
     implementation: { label: 'Implement',     emoji: '🎯', count: 'implCount' },
-    mockups:        { label: 'Mockups',        emoji: '🧪' },
+    mockups:        { label: 'Mockups',       emoji: '🧪', count: 'mockCount' },
     integration:    { label: 'Integration',   emoji: '🔧' },
     inspector:      { label: 'Inspector',     emoji: '🔬' },
     guide:          { label: 'Guide',         emoji: '📘' }
@@ -38,6 +44,9 @@ const App = {
 
     // 5. Init feature modules (Sprint 2+)
     await this._initModules();
+
+    // 5.5. Land on the tab that actually has the active workspace
+    await this._pickInitialTab();
 
     // 6. Keyboard shortcuts
     this._shortcuts();
@@ -127,29 +136,78 @@ const App = {
     if (typeof GuidePanel !== 'undefined') GuidePanel.init();
   },
 
+  async _pickInitialTab() {
+    if (!this.currentProject) return;
+    const [features, improvements, implementation, modules] = await Promise.all([
+      Store.getAll('features', 'projectId', this.currentProject.id),
+      Store.getAll('improvements', 'projectId', this.currentProject.id),
+      Store.getAll('implementation', 'projectId', this.currentProject.id),
+      Store.getAll('modules', 'projectId', this.currentProject.id)
+    ]);
+
+    if (!features.length && !improvements.length && !implementation.length && modules.length) {
+      this.currentTab = 'mockups';
+    } else if (this.currentTab === 'mockups' && !modules.length) {
+      this.currentTab = 'features';
+    }
+  },
+
   _renderTabs() {
     const container = DOM.el('mainTabs');
     if (!container) return;
 
-    container.innerHTML = Object.entries(this.TAB_MAP).map(([id, cfg]) => {
+    const activeGroup = this.TAB_GROUPS.find(g => g.tabs.includes(this.currentTab));
+
+    container.innerHTML = this.TAB_GROUPS.map(group => {
+      const isActive = group === activeGroup;
+      return `<button class="tab-btn${isActive ? ' active' : ''}"
+                data-group="${group.id}" onclick="App.goGroup('${group.id}')">
+                ${group.emoji} ${group.label}
+              </button>`;
+    }).join('');
+
+    this._renderGroupSubTabs();
+  },
+
+  _renderGroupSubTabs() {
+    const container = DOM.el('groupSubTabs');
+    if (!container) return;
+
+    const group = this.TAB_GROUPS.find(g => g.tabs.includes(this.currentTab));
+    if (!group) return;
+
+    container.innerHTML = group.tabs.map(tabId => {
+      const cfg = this.TAB_MAP[tabId];
       const countHtml = cfg.count
         ? `<span class="tab-count" id="${cfg.count}">0</span>`
         : '';
-      return `<button class="tab-btn${id === this.currentTab ? ' active' : ''}"
-                data-tab="${id}" onclick="App.go('${id}')">
+      return `<button class="sub-tab${tabId === this.currentTab ? ' active' : ''}"
+                data-tab="${tabId}" onclick="App.go('${tabId}')">
                 ${cfg.emoji} ${cfg.label} ${countHtml}
               </button>`;
     }).join('');
+  },
+
+  goGroup(groupId) {
+    const group = this.TAB_GROUPS.find(g => g.id === groupId);
+    if (!group) return;
+    const alreadyInGroup = group.tabs.includes(this.currentTab);
+    this.go(alreadyInGroup ? this.currentTab : group.tabs[0]);
   },
 
   go(tabId) {
     if (!this.TAB_MAP[tabId]) return;
     this.currentTab = tabId;
 
-    // Update tab buttons
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.tab === tabId);
+    const activeGroup = this.TAB_GROUPS.find(g => g.tabs.includes(tabId));
+
+    // Update group buttons
+    document.querySelectorAll('#mainTabs .tab-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.group === activeGroup?.id);
     });
+
+    // Update sub-tabs
+    this._renderGroupSubTabs();
 
     // Update panels
     document.querySelectorAll('.panel').forEach(p => {
@@ -185,10 +243,12 @@ const App = {
     const fc = await Store.getAll('features', 'projectId', pid);
     const ic = await Store.getAll('improvements', 'projectId', pid);
     const mc = await Store.getAll('implementation', 'projectId', pid);
+    const mocks = await Store.getAll('modules', 'projectId', pid);
 
     DOM.setHTML('featCount', fc.length);
     DOM.setHTML('impCount', ic.length);
     DOM.setHTML('implCount', mc.length);
+    DOM.setHTML('mockCount', mocks.length);
     DOM.setHTML('headerFeatCount', fc.length);
     DOM.setHTML('headerImplCount', mc.length);
   },

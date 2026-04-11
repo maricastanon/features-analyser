@@ -48,6 +48,7 @@
 
 <!-- ═══ TABS ═══ -->
 <nav class="tabs" id="mainTabs"></nav>
+<nav class="group-sub-tabs" id="groupSubTabs"></nav>
 
 <!-- ═══ CONTENT PANELS ═══ -->
 <main class="wrap">
@@ -81,13 +82,16 @@
 
   <!-- Mockups Panel -->
   <div id="panel-mockups" class="panel">
-    <div class="section-header">
-      <h2 class="section-title" style="color:var(--accent-green)">🧪 Functional Mockups</h2>
-      <span style="font-size:var(--font-size-sm);color:var(--text-muted)">Import mockups and references • Test live • Promote the keepers</span>
+    <div class="mockup-nav-layout">
+      <aside class="mockup-nav-sidebar" id="mockupNavSidebar"></aside>
+      <section class="mockup-nav-main">
+        <div id="mockupContent" class="mockup-nav-preview-wrap"></div>
+      </section>
     </div>
-    <div id="importZone"></div>
-    <div id="mockupTabs" class="sub-tabs"></div>
-    <div id="mockupContent"></div>
+    <details class="mockup-tools-collapse" id="mockupToolsCollapse">
+      <summary class="mockup-tools-summary">📦 Import &amp; Module Catalog</summary>
+      <div id="importZone" style="margin-top:14px"></div>
+    </details>
   </div>
 
   <!-- Integration Guide Panel -->

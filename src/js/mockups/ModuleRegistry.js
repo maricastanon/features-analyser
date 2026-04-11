@@ -8,8 +8,6 @@ const ModuleRegistry = {
     if (!pid) return [];
     const items = await Store.getAll('modules', 'projectId', pid);
     return items.sort((a, b) => {
-      const archivedDelta = Number(Boolean(a.status === 'archived')) - Number(Boolean(b.status === 'archived'));
-      if (archivedDelta !== 0) return archivedDelta;
       const ta = new Date(a.updated || a.imported || 0).getTime();
       const tb = new Date(b.updated || b.imported || 0).getTime();
       return tb - ta;

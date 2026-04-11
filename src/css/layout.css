@@ -217,6 +217,27 @@ html.light .tab-btn.active {
 }
 .panel.active { display: block; }
 
+/* ── Group Sub-tabs (below main tabs) ── */
+.group-sub-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 6px 14px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-soft);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: sticky;
+  top: 110px;
+  z-index: calc(var(--z-tabs) - 1);
+  backdrop-filter: blur(12px);
+}
+.group-sub-tabs::-webkit-scrollbar { display: none; }
+
+html.light .group-sub-tabs {
+  background: rgba(248, 252, 248, .92);
+  border-bottom-color: var(--border-medium);
+}
+
 /* ── Sub-tabs ── */
 .sub-tabs {
   display: flex;

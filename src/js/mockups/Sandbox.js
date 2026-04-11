@@ -9,6 +9,37 @@ const Sandbox = {
   create(moduleId, containerEl, jsSource, cssSource, htmlSource = '') {
     // Build iframe srcdoc with the module's CSS and JS
     const theme = App.currentProject?.theme || {};
+    const appendModuleExports = (source) => {
+      const text = String(source || '');
+      if (!text.trim()) return text;
+
+      const candidates = new Set();
+      const patterns = [
+        /(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*\{/g,
+        /window\.([A-Za-z_$][\w$]*)\s*=\s*\{/g,
+        /globalThis\.([A-Za-z_$][\w$]*)\s*=\s*\{/g
+      ];
+
+      patterns.forEach(pattern => {
+        for (const match of text.matchAll(pattern)) {
+          if (match[1]) candidates.add(match[1]);
+        }
+      });
+
+      if (!candidates.size) return text;
+
+      const bridge = [...candidates].map(name => `
+try {
+  window.__ACE_MODULE_EXPORTS__ = window.__ACE_MODULE_EXPORTS__ || [];
+  if (typeof ${name} !== 'undefined' && ${name} && typeof ${name}.init === 'function' && !window.__ACE_MODULE_EXPORTS__.includes(${name})) {
+    window.__ACE_MODULE_EXPORTS__.push(${name});
+  }
+} catch (e) {}
+`).join('\n');
+
+      return `${text}\n${bridge}`;
+    };
+
     const esc = (value, { escapeScriptClose = false } = {}) => {
       let text = String(value || '')
         .replace(/\\/g, '\\\\')
@@ -19,7 +50,7 @@ const Sandbox = {
       }
       return text;
     };
-    const safeJS = esc(jsSource, { escapeScriptClose: true });
+    const safeJS = esc(appendModuleExports(jsSource), { escapeScriptClose: true });
     const safeCSS = esc(cssSource);
     const safeHTML = esc(htmlSource);
     const srcdoc = `<!DOCTYPE html>
@@ -55,6 +86,29 @@ body {
 <body>
 <div id="moduleRoot">${safeHTML}</div>
 <script>
+window.__ACE_MODULE_EXPORTS__ = window.__ACE_MODULE_EXPORTS__ || [];
+window.__ACE_getModules = function() {
+  const globals = Object.keys(window)
+    .map(key => window[key])
+    .filter(value => typeof value === 'object' && value !== null && typeof value.init === 'function');
+  const unique = [];
+  [...window.__ACE_MODULE_EXPORTS__, ...globals].forEach(value => {
+    if (value && typeof value.init === 'function' && !unique.includes(value)) {
+      unique.push(value);
+    }
+  });
+  return unique;
+};
+window.__ACE_initModules = function() {
+  window.__ACE_getModules().forEach(mod => {
+    try {
+      mod.render ? mod.render() : mod.init('moduleRoot');
+    } catch (e) {
+      try { mod.init(); } catch (e2) {}
+    }
+  });
+};
+
 // Message handler for parent communication
 window.addEventListener('message', function(e) {
   const msg = e.data;
@@ -78,11 +132,13 @@ window.addEventListener('message', function(e) {
     parent.postMessage({ type: 'computed-vars', moduleId: '${moduleId}', vars }, '*');
   }
   else if (msg.type === 'get-state') {
-    // Try to find the module object and serialize its state
     try {
-      const keys = Object.keys(window).filter(k => typeof window[k] === 'object' && window[k] !== null && window[k].init);
       const state = {};
-      keys.forEach(k => { try { state[k] = JSON.parse(JSON.stringify(window[k])); } catch(e) {} });
+      window.__ACE_getModules().forEach((mod, index) => {
+        try {
+          state['module_' + (index + 1)] = JSON.parse(JSON.stringify(mod));
+        } catch (e) {}
+      });
       parent.postMessage({ type: 'module-state', moduleId: '${moduleId}', state }, '*');
     } catch(e) {}
   }
@@ -91,9 +147,7 @@ window.addEventListener('message', function(e) {
       const script = document.createElement('script');
       script.textContent = msg.source;
       document.body.appendChild(script);
-      // Try to re-init
-      const keys = Object.keys(window).filter(k => typeof window[k] === 'object' && window[k] !== null && window[k].init);
-      keys.forEach(k => { try { window[k].render ? window[k].render() : window[k].init('moduleRoot'); } catch(e) {} });
+      window.__ACE_initModules();
       parent.postMessage({ type: 'hot-reload-done', moduleId: '${moduleId}' }, '*');
     } catch(e) {
       parent.postMessage({ type: 'hot-reload-error', moduleId: '${moduleId}', error: e.message }, '*');
@@ -106,17 +160,8 @@ parent.postMessage({ type: 'sandbox-ready', moduleId: '${moduleId}' }, '*');
 <\/script>
 <script id="moduleJS">${safeJS}</script>
 <script>
-// Auto-init: find module objects and call init
 try {
-  const keys = Object.keys(window).filter(k =>
-    typeof window[k] === 'object' && window[k] !== null &&
-    typeof window[k].init === 'function' && k !== 'window'
-  );
-  keys.forEach(k => {
-    try { window[k].init('moduleRoot'); } catch(e) {
-      try { window[k].init(); } catch(e2) {}
-    }
-  });
+  window.__ACE_initModules();
 } catch(e) {}
 <\/script>
 </body>

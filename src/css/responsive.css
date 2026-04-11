@@ -5,6 +5,20 @@
 @media (max-width: 1200px) {
   .grid-sidebar { grid-template-columns: 1fr; }
   .grid-3 { grid-template-columns: 1fr 1fr; }
+  .mockup-workspace { grid-template-columns: 1fr; }
+  .mockup-sidebar { position: static; }
+  .mockup-sidebar-scroll {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
+  }
+  .mockup-preview-panel { order: -1; }
+  .mockup-browser-head { flex-direction: column; }
+  .mockup-browser-actions { justify-content: flex-start; }
+
+  .mockup-nav-layout {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
 }
 
 @media (max-width: 900px) {
@@ -15,6 +29,19 @@
   .hdr-inner { flex-wrap: wrap; }
   .hdr-progress { order: 3; width: 100%; justify-content: center; }
   .side-nav { display: none; }
+
+  .mockup-nav-layout {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+  .mockup-nav-sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--border-soft);
+    max-height: 260px;
+  }
+  .mockup-nav-main {
+    min-height: clamp(400px, 60vh, 700px);
+  }
 }
 
 @media (max-width: 600px) {
@@ -25,5 +52,20 @@
   .hdr-title { font-size: var(--font-size-xl); }
   .sub-tabs { gap: 4px; }
   .sub-tab { padding: 5px 10px; font-size: var(--font-size-xs); }
+  .group-sub-tabs { padding: 4px 10px; }
   .modal { width: 95%; max-height: 90vh; }
+  .mockup-sidebar-grid { grid-template-columns: 1fr; }
+  .mockup-preview-header { flex-wrap: wrap; }
+  .mockup-preview-title {
+    width: 100%;
+    margin-left: 0;
+  }
+  .mockup-chip-grid { grid-template-columns: 1fr; }
+
+  .mockup-nav-sidebar {
+    max-height: 200px;
+  }
+  .mockup-nav-workflow {
+    grid-template-columns: 1fr;
+  }
 }
