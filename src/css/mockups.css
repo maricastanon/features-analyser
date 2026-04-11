@@ -666,11 +666,15 @@
 
 .mockup-nav-preview-wrap .mockup-preview-shell {
   flex: 1;
+  position: relative;
   min-height: clamp(420px, 64vh, 860px);
-  overflow: auto;
+  overflow: hidden;
 }
 
 .mockup-nav-preview-wrap .mockup-preview-shell iframe {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
   width: 100% !important;
   height: 100% !important;
   border: none !important;

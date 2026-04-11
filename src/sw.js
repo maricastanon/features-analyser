@@ -2,7 +2,7 @@
    Service Worker — Feature Brainstorm Hub
    Cache app shell relative to /src so the repo layout works as-is.
    ═══════════════════════════════════════════════════════════════ */
-const CACHE_VERSION = 'v4.3.2';
+const CACHE_VERSION = 'v4.3.3';
 const CACHE_SHELL = 'shell-' + CACHE_VERSION;
 const CACHE_VENDOR = 'vendor-' + CACHE_VERSION;
 const CACHE_FONTS = 'fonts-' + CACHE_VERSION;
