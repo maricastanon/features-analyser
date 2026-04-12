@@ -1,0 +1,80 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tool 3 — Resource Allocation</title><link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.res-card{display:flex;align-items:center;gap:12px;padding:12px;border-bottom:1px solid var(--bS);transition:.12s}.res-card:hover{background:var(--bgH)}
+.cap-meter{width:120px;height:10px;background:var(--bgA);border-radius:99px;overflow:hidden}.cap-fill{height:100%;border-radius:99px;transition:.4s}
+.alloc-block{padding:3px 8px;border-radius:var(--rs);font-size:.7rem;font-weight:500;margin:2px;display:inline-block;cursor:pointer;transition:.12s}
+.alloc-block:hover{filter:brightness(1.2);transform:scale(1.03)}</style>
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mock=1;
+function render(){document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'👥'}),h('div','',{html:'<div class="pm-title">Resource Allocation</div><div class="pm-sub">Capacity · Utilization · Availability</div>'}));
+  var tabs=h('div','pm-tabs');
+  [{id:1,l:'📊 Capacity'},{id:2,l:'📅 Timeline'},{id:3,l:'🎯 Utilization'}].forEach(function(m){
+    var t=h('button','pm-tab'+(mock===m.id?' on':''),{text:m.l});t.onclick=function(){mock=m.id;render()};tabs.appendChild(t)});
+  header.appendChild(tabs);document.body.appendChild(header);
+  var body=h('div','pm-body');
+  var tasks=D.tasks.filter(function(t){return t.project==='pj1'&&t.status!=='done'});
+
+  if(mock===1){
+    D.members.forEach(function(m,mi){
+      var mTasks=tasks.filter(function(t){return t.assignees.includes(m.id)});
+      var totalHours=mTasks.reduce(function(s,t){return s+t.effort*(1-t.progress/100)},0);
+      var utilPct=Math.round(totalHours/m.capacity*100/4); // 4 weeks remaining
+      var card=h('div','pm-card anim-su');card.style.animationDelay=mi*50+'ms';
+      var hd=h('div','',{style:{display:'flex',alignItems:'center',gap:'10px',marginBottom:'8px'}});
+      ap(hd,h('div','pm-av',{text:m.ini,style:{background:m.color,color:'#0a1a12'}}),
+        h('div','',{style:{flex:'1'},html:'<div style="font-weight:600;font-family:var(--f1)">'+m.name+'</div><div style="font-size:.72rem;color:var(--t3)">'+m.role+' · '+m.dept+'</div>'}),
+        h('div','',{style:{textAlign:'right'},html:'<div style="font-family:var(--f1);font-size:1.1rem;font-weight:700;color:'+(utilPct>100?'#ff3d5c':utilPct>80?'#ffb935':'#00e676')+'">'+utilPct+'%</div><div style="font-size:.68rem;color:var(--t3)">utilization</div>'}));
+      card.appendChild(hd);
+      var meter=h('div','cap-meter');meter.appendChild(h('div','cap-fill',{style:{width:Math.min(utilPct,100)+'%',background:utilPct>100?'#ff3d5c':utilPct>80?'#ffb935':'#00e676'}}));
+      card.appendChild(meter);
+      var taskList=h('div','',{style:{marginTop:'8px'}});
+      mTasks.forEach(function(t){
+        var block=h('span','alloc-block',{text:t.name+' ('+Math.round(t.effort*(1-t.progress/100))+'h)',
+          style:{background:G.statusColor(t.status)+'22',color:G.statusColor(t.status)}});
+        taskList.appendChild(block)});
+      card.appendChild(taskList);body.appendChild(card)});
+  } else if(mock===2){
+    body.innerHTML='<div class="pm-card"><div class="pm-card-h"><div class="pm-card-t">📅 Resource Timeline (weekly allocation)</div></div><div style="color:var(--t3);font-size:.82rem;padding:12px">Shows each team member\'s task allocation across weeks. Green=available, Yellow=busy, Red=overloaded.</div></div>';
+    // Simplified weekly grid
+    var weeks=[];for(var w=0;w<6;w++){var d=new Date();d.setDate(d.getDate()+w*7);weeks.push(d)}
+    D.members.forEach(function(m,mi){
+      var card=h('div','pm-card anim-su');card.style.animationDelay=mi*40+'ms';
+      ap(card,h('div','',{style:{display:'flex',alignItems:'center',gap:'8px',marginBottom:'8px'}}));
+      card.firstChild.appendChild(h('div','pm-av pm-av-sm',{text:m.ini,style:{background:m.color,color:'#0a1a12'}}));
+      card.firstChild.appendChild(h('strong','',{text:m.name,style:{fontSize:'.84rem'}}));
+      var row=h('div','',{style:{display:'flex',gap:'4px'}});
+      weeks.forEach(function(wk){
+        var wEnd=new Date(wk);wEnd.setDate(wEnd.getDate()+7);
+        var hrs=0;tasks.forEach(function(t){if(!t.assignees.includes(m.id))return;var ts=new Date(t.start||t.end),te=new Date(t.end||t.start);
+          if(ts<wEnd&&te>=wk){var td=Math.max(1,Math.ceil((te-ts)/864e5));hrs+=t.effort/td*5}});hrs=Math.round(hrs);
+        var bg=hrs>40?'rgba(255,61,92,.3)':hrs>30?'rgba(255,185,53,.2)':hrs>0?'rgba(0,230,118,.1)':'transparent';
+        row.appendChild(h('div','',{text:hrs+'h',style:{flex:'1',padding:'6px',borderRadius:'var(--rs)',background:bg,textAlign:'center',fontSize:'.72rem',fontWeight:'600',color:hrs>40?'#ff3d5c':hrs>30?'#ffb935':hrs>0?'#00e676':'var(--tG)'}}))});
+      card.appendChild(row);body.appendChild(card)});
+  } else {
+    // Utilization summary
+    var grid=h('div','pm-grid pm-grid-4',{style:{marginBottom:'14px'}});
+    var totalCap=D.members.reduce(function(s,m){return s+m.capacity},0)*4;
+    var totalEffort=tasks.reduce(function(s,t){return s+t.effort*(1-t.progress/100)},0);
+    [{n:D.members.length,l:'Team Size',c:'pk'},{n:Math.round(totalEffort)+'h',l:'Remaining Work',c:'bl'},{n:totalCap+'h',l:'Total Capacity (4wk)',c:'gn'},{n:Math.round(totalEffort/totalCap*100)+'%',l:'Team Utilization',c:'pp'}].forEach(function(s){
+      var c=h('div','pm-card',{style:{padding:'8px',textAlign:'center'}});
+      ap(c,h('div','',{text:String(s.n),style:{fontFamily:'var(--f1)',fontSize:'1.3rem',fontWeight:'800',color:'var(--'+s.c+')'}}),h('div','pm-stat-l',{text:s.l}));grid.appendChild(c)});
+    body.appendChild(grid);
+    D.members.forEach(function(m,mi){
+      var mTasks=tasks.filter(function(t){return t.assignees.includes(m.id)});
+      var hrs=mTasks.reduce(function(s,t){return s+t.effort*(1-t.progress/100)},0);
+      var util=Math.round(hrs/(m.capacity*4)*100);
+      var item=h('div','res-card anim-su');item.style.animationDelay=mi*30+'ms';
+      ap(item,h('div','pm-av',{text:m.ini,style:{background:m.color,color:'#0a1a12'}}),
+        h('div','',{style:{flex:'1'},html:'<div style="font-weight:600">'+m.name+'</div><div style="font-size:.72rem;color:var(--t3)">'+Math.round(hrs)+'h / '+(m.capacity*4)+'h capacity</div>'}),
+        h('div','cap-meter'));
+      item.lastChild.appendChild(h('div','cap-fill',{style:{width:Math.min(util,100)+'%',background:util>100?'#ff3d5c':util>80?'#ffb935':'#00e676'}}));
+      ap(item,h('div','',{text:util+'%',style:{fontFamily:'var(--f1)',fontWeight:'700',fontSize:'.9rem',color:util>100?'#ff3d5c':util>80?'#ffb935':'#00e676',width:'50px',textAlign:'right'}}));
+      body.appendChild(item)});
+  }
+  document.body.appendChild(body)}
+render()})();
+</script></body></html>

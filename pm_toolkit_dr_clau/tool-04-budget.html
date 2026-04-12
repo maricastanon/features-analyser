@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tool 4 — Budget Tracker</title><link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.budget-bar{display:flex;height:24px;border-radius:var(--rs);overflow:hidden;background:var(--bgA);margin:6px 0}
+.budget-fill{height:100%;transition:.4s}.budget-row{display:flex;align-items:center;gap:10px;padding:8px 12px;border-bottom:1px solid var(--bS)}
+.burn-chart{display:flex;align-items:flex-end;gap:3px;height:150px;padding:10px 0}</style>
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mock=1;
+function render(){document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'💰'}),h('div','',{html:'<div class="pm-title">Budget Tracker</div><div class="pm-sub">Spend · Forecast · Category Breakdown</div>'}));
+  var tabs=h('div','pm-tabs');
+  [{id:1,l:'📊 Overview'},{id:2,l:'📈 Burn Rate'},{id:3,l:'📋 Categories'}].forEach(function(m){
+    var t=h('button','pm-tab'+(mock===m.id?' on':''),{text:m.l});t.onclick=function(){mock=m.id;render()};tabs.appendChild(t)});
+  header.appendChild(tabs);document.body.appendChild(header);
+  var body=h('div','pm-body');
+  var pj=D.projects[0];var spent=pj.spent,budget=pj.budget,remaining=budget-spent,pct=Math.round(spent/budget*100);
+
+  // Stats
+  var stats=h('div','pm-grid pm-grid-4',{style:{marginBottom:'16px'}});
+  [{n:'$'+Math.round(budget/1000)+'K',l:'Total Budget',c:'pk'},{n:'$'+Math.round(spent/1000)+'K',l:'Spent',c:'bl'},
+   {n:'$'+Math.round(remaining/1000)+'K',l:'Remaining',c:'gn'},{n:pct+'%',l:'Budget Used',c:pct>80?'var(--pU)':'pp'}].forEach(function(s,i){
+    var c=h('div','pm-card anim-su',{style:{padding:'8px',textAlign:'center'}});c.style.animationDelay=i*50+'ms';
+    ap(c,h('div','',{text:s.n,style:{fontFamily:'var(--f1)',fontSize:'1.3rem',fontWeight:'800',color:'var(--'+s.c+')'}}),h('div','pm-stat-l',{text:s.l}));stats.appendChild(c)});
+  body.appendChild(stats);
+
+  if(mock===1){
+    // Overall budget bar
+    var card=h('div','pm-card');card.appendChild(h('div','pm-card-h')).appendChild(h('div','pm-card-t',{text:'Budget Health'}));
+    var bar=h('div','budget-bar');
+    bar.appendChild(h('div','budget-fill',{style:{width:pct+'%',background:pct>80?'linear-gradient(90deg,#ff6b35,#ff3d5c)':'linear-gradient(90deg,#00e676,#35b8ff)'}}));
+    card.appendChild(bar);
+    card.appendChild(h('div','',{style:{display:'flex',justifyContent:'space-between',fontSize:'.76rem',color:'var(--t3)'},html:'<span>$0</span><span>$'+Math.round(budget/1000)+'K</span>'}));
+    if(pct>70)card.appendChild(h('div','',{text:'⚠️ Budget is '+(pct>90?'critically':'significantly')+' consumed. Review spending.',style:{marginTop:'8px',padding:'6px 10px',background:'rgba(255,107,53,.1)',borderRadius:'var(--rs)',fontSize:'.78rem',color:'#ff6b35'}}));
+    body.appendChild(card);
+
+    // Forecast
+    var forecastCard=h('div','pm-card');forecastCard.appendChild(h('div','pm-card-h')).appendChild(h('div','pm-card-t',{text:'📈 Spend Forecast'}));
+    var totalPlanned=D.budgetMonthly.reduce(function(s,m){return s+m.planned},0);
+    var totalActual=D.budgetMonthly.reduce(function(s,m){return s+m.actual},0);
+    forecastCard.innerHTML+='<div style="font-size:.82rem;color:var(--t2);margin-bottom:8px">Projected total: <strong style="color:'+(totalActual>totalPlanned*0.9?'#ff6b35':'#00e676')+'">$'+Math.round(totalActual/1000)+'K</strong> of $'+Math.round(totalPlanned/1000)+'K planned</div>';
+    body.appendChild(forecastCard);
+  } else if(mock===2){
+    // Burn rate chart
+    var card=h('div','pm-card');card.appendChild(h('div','pm-card-h')).appendChild(h('div','pm-card-t',{text:'Monthly Burn Rate'}));
+    var chart=h('div','burn-chart');
+    var maxVal=Math.max.apply(null,D.budgetMonthly.map(function(m){return Math.max(m.planned,m.actual)}));
+    D.budgetMonthly.forEach(function(m){
+      var col=h('div','',{style:{flex:'1',display:'flex',flexDirection:'column',alignItems:'center',gap:'2px'}});
+      var planned=h('div','',{style:{width:'45%',height:(m.planned/maxVal*100)+'%',background:'var(--t3)33',borderRadius:'3px 3px 0 0',minHeight:'2px'}});
+      var actual=m.actual?h('div','',{style:{width:'45%',height:(m.actual/maxVal*100)+'%',background:m.actual>m.planned?'#ff6b35':'#00e676',borderRadius:'3px 3px 0 0',minHeight:'2px'}}):h('div','');
+      var bars=h('div','',{style:{display:'flex',gap:'2px',alignItems:'flex-end',height:'100%',width:'100%',justifyContent:'center'}});
+      ap(bars,planned,actual);
+      ap(col,bars,h('div','',{text:m.month,style:{fontSize:'.68rem',color:'var(--tG)',marginTop:'2px'}}));
+      chart.appendChild(col)});
+    card.appendChild(chart);
+    var legend=h('div','pm-legend',{style:{marginTop:'8px'}});
+    [{c:'var(--t3)33',l:'Planned'},{c:'#00e676',l:'Actual (under)'},{c:'#ff6b35',l:'Actual (over)'}].forEach(function(x){
+      var li=h('div','pm-legend-i');ap(li,h('div','pm-legend-dot',{style:{background:x.c}}),x.l);legend.appendChild(li)});
+    card.appendChild(legend);body.appendChild(card);
+  } else {
+    // Category breakdown
+    D.budgetItems.forEach(function(item,i){
+      var pct=Math.round(item.actual/item.planned*100);
+      var card=h('div','pm-card anim-su');card.style.animationDelay=i*40+'ms';
+      var hd=h('div','',{style:{display:'flex',justifyContent:'space-between',marginBottom:'6px'}});
+      ap(hd,h('strong','',{text:item.category,style:{fontFamily:'var(--f1)'}}),
+        h('span','',{text:'$'+Math.round(item.actual/1000)+'K / $'+Math.round(item.planned/1000)+'K',style:{fontSize:'.78rem',color:'var(--t3)'}}));
+      card.appendChild(hd);
+      var bar=h('div','budget-bar',{style:{height:'16px'}});
+      bar.appendChild(h('div','budget-fill',{style:{width:pct+'%',background:pct>90?'#ff6b35':pct>70?'#ffb935':'#00e676'}}));
+      card.appendChild(bar);
+      ap(card,h('div','',{text:pct+'% consumed',style:{fontSize:'.74rem',color:pct>90?'#ff6b35':'var(--t3)'}}));
+      body.appendChild(card)});
+  }
+  document.body.appendChild(body)}
+render()})();
+</script></body></html>

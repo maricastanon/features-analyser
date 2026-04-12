@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tool 2 — RACI Matrix</title><link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.raci-grid{overflow-x:auto}.raci-table{border-collapse:separate;border-spacing:2px;width:100%}.raci-table th{padding:6px 8px;font-size:.72rem;font-weight:600;color:var(--tG);text-align:center;position:sticky;top:0;background:var(--bg1);z-index:2}
+.raci-table td{padding:4px;text-align:center}.raci-table .act-cell{text-align:left;font-size:.8rem;font-weight:500;padding:8px 12px;min-width:180px;background:var(--bg2);border-radius:var(--rs)}
+.raci-tag{display:inline-flex;width:34px;height:34px;border-radius:50%;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;transition:.15s;cursor:pointer}
+.raci-tag:hover{transform:scale(1.15)}
+.raci-summary{display:flex;gap:10px;padding:8px 12px;border-bottom:1px solid var(--bS);align-items:center}
+.raci-gap{background:rgba(255,61,92,.1);border:1px solid rgba(255,61,92,.2);border-radius:var(--r);padding:10px 14px;margin-bottom:8px;font-size:.82rem}</style>
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){
+var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mock=1;
+function render(){
+  document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'📊'}),h('div','',{html:'<div class="pm-title">RACI Matrix</div><div class="pm-sub">Responsible · Accountable · Consulted · Informed</div>'}));
+  var tabs=h('div','pm-tabs');
+  [{id:1,l:'📊 Matrix'},{id:2,l:'👤 Workload'},{id:3,l:'⚠️ Gap Analysis'}].forEach(function(m){
+    var t=h('button','pm-tab'+(mock===m.id?' on':''),{text:m.l});t.onclick=function(){mock=m.id;render()};tabs.appendChild(t)});
+  header.appendChild(tabs);document.body.appendChild(header);
+  var body=h('div','pm-body');
+
+  // Legend
+  var legend=h('div','pm-legend',{style:{marginBottom:'14px'}});
+  [{c:'rgba(255,77,166,.2)',t:'#ff4da6',l:'R = Responsible'},{c:'rgba(255,61,92,.2)',t:'#ff3d5c',l:'A = Accountable'},
+   {c:'rgba(53,184,255,.2)',t:'#35b8ff',l:'C = Consulted'},{c:'rgba(109,153,128,.15)',t:'var(--t3)',l:'I = Informed'}].forEach(function(x){
+    var li=h('div','pm-legend-i');ap(li,h('div','pm-legend-dot',{style:{background:x.c,border:'1px solid '+x.t}}),x.l);legend.appendChild(li)});
+  body.appendChild(legend);
+
+  if(mock===1){
+    // MATRIX VIEW
+    var wrap=h('div','raci-grid');
+    var table=h('table','raci-table');
+    var thead=h('tr','');thead.appendChild(h('th','',{text:'Activity'}));
+    D.members.forEach(function(m){var th=h('th','');ap(th,h('div','pm-av pm-av-sm',{text:m.ini,style:{background:m.color,color:'#0a1a12',margin:'0 auto 2px'}}),h('div','',{text:m.name.split(' ')[0],style:{fontSize:'.66rem'}}));thead.appendChild(th)});
+    table.appendChild(thead);
+
+    D.raci.forEach(function(row,ri){
+      var tr=h('tr','anim-su');tr.style.animationDelay=ri*30+'ms';
+      tr.appendChild(h('td','act-cell',{text:row.activity}));
+      D.members.forEach(function(m){
+        var td=h('td','');
+        var role='';
+        if(row.R.includes(m.id))role='R';else if(row.A.includes(m.id))role='A';else if(row.C.includes(m.id))role='C';else if(row.I.includes(m.id))role='I';
+        if(role){td.appendChild(h('div','raci-tag raci-'+role,{text:role}))}
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
+    });
+    wrap.appendChild(table);body.appendChild(wrap);
+  } else if(mock===2){
+    // WORKLOAD VIEW
+    D.members.forEach(function(m,mi){
+      var card=h('div','pm-card anim-su');card.style.animationDelay=mi*50+'ms';
+      var hd=h('div','',{style:{display:'flex',alignItems:'center',gap:'10px',marginBottom:'10px'}});
+      ap(hd,h('div','pm-av',{text:m.ini,style:{background:m.color,color:'#0a1a12'}}),
+        h('div','',{html:'<div style="font-weight:600;font-size:.88rem;font-family:var(--f1)">'+m.name+'</div><div style="font-size:.74rem;color:var(--t3)">'+m.role+'</div>'}));
+      card.appendChild(hd);
+
+      var roles={R:0,A:0,C:0,I:0};
+      D.raci.forEach(function(r){if(r.R.includes(m.id))roles.R++;if(r.A.includes(m.id))roles.A++;if(r.C.includes(m.id))roles.C++;if(r.I.includes(m.id))roles.I++});
+      var tags=h('div','',{style:{display:'flex',gap:'8px'}});
+      [{r:'R',c:'#ff4da6',l:'Responsible'},{r:'A',c:'#ff3d5c',l:'Accountable'},{r:'C',c:'#35b8ff',l:'Consulted'},{r:'I',c:'var(--t3)',l:'Informed'}].forEach(function(x){
+        if(roles[x.r])tags.appendChild(h('div','pm-tag',{text:x.r+': '+roles[x.r],style:{background:x.c+'22',color:x.c}}))});
+      card.appendChild(tags);
+      if(roles.A>3)card.appendChild(h('div','',{text:'⚠️ High accountability load ('+roles.A+' activities)',style:{marginTop:'6px',fontSize:'.76rem',color:'var(--pM)'}}));
+      body.appendChild(card);
+    });
+  } else {
+    // GAP ANALYSIS
+    var issues=[];
+    D.raci.forEach(function(r){
+      if(!r.A.length)issues.push({activity:r.activity,type:'No Accountable',severity:'high'});
+      if(!r.R.length)issues.push({activity:r.activity,type:'No Responsible',severity:'high'});
+      if(r.A.length>1)issues.push({activity:r.activity,type:'Multiple Accountable ('+r.A.length+')',severity:'medium'});
+      if(!r.C.length&&!r.I.length)issues.push({activity:r.activity,type:'No stakeholders (C/I)',severity:'low'});
+    });
+    if(issues.length){
+      issues.forEach(function(issue,i){
+        var colors={high:'#ff3d5c',medium:'#ffb935',low:'#35b8ff'};
+        var gap=h('div','raci-gap anim-su',{style:{borderColor:colors[issue.severity]+'44'}});gap.style.animationDelay=i*40+'ms';
+        ap(gap,h('strong','',{text:issue.activity,style:{display:'block',marginBottom:'2px'}}),
+          h('span','',{text:issue.type+' · Severity: ',style:{color:'var(--t3)'}}),
+          h('span','',{text:issue.severity.toUpperCase(),style:{color:colors[issue.severity],fontWeight:'700'}}));
+        body.appendChild(gap);
+      });
+    } else {body.appendChild(h('div','pm-empty',{text:'✅ No RACI gaps found! All activities properly assigned.'}))}
+  }
+  document.body.appendChild(body);
+}
+render();
+})();
+</script></body></html>

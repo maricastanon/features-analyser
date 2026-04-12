@@ -1,0 +1,92 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tool 6 — Decision & Action Log</title><link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.dec-card{background:var(--bg2);border:1px solid var(--bS);border-radius:var(--rl);padding:14px;margin-bottom:10px;border-left:4px solid;transition:.12s;cursor:pointer}
+.dec-card:hover{background:var(--bgH);transform:translateX(2px)}
+.dec-tl{position:relative;padding-left:30px}.dec-tl::before{content:'';position:absolute;left:13px;top:0;bottom:0;width:2px;background:var(--bD)}
+.dec-tl-dot{position:absolute;left:8px;width:12px;height:12px;border-radius:50%;border:2px solid;background:var(--bg0);z-index:1}
+.act-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--bS);transition:.12s}
+.act-row:hover{background:var(--bgH)}.act-cb{width:18px;height:18px;border:2px solid var(--bSt);border-radius:4px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;font-size:.65rem;flex-shrink:0}
+.act-cb.done{background:var(--gn);border-color:var(--gn);color:var(--bg0)}</style>
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mock=1;
+function render(){document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'📝'}),h('div','',{html:'<div class="pm-title">Decision & Action Log</div><div class="pm-sub">Track decisions · Manage actions · Audit trail</div>'}));
+  var tabs=h('div','pm-tabs');
+  [{id:1,l:'📋 Card View'},{id:2,l:'📅 Timeline'},{id:3,l:'✅ Action Tracker'}].forEach(function(m){
+    var t=h('button','pm-tab'+(mock===m.id?' on':''),{text:m.l});t.onclick=function(){mock=m.id;render()};tabs.appendChild(t)});
+  header.appendChild(tabs);document.body.appendChild(header);
+  var body=h('div','pm-body');
+  var decisions=D.decisions.filter(function(d){return d.type==='decision'});
+  var actions=D.decisions.filter(function(d){return d.type==='action'});
+
+  // Stats
+  var stats=h('div','pm-grid pm-grid-4',{style:{marginBottom:'14px'}});
+  [{n:decisions.length,l:'Decisions',c:'pk'},{n:decisions.filter(function(d){return d.status==='approved'}).length,l:'Approved',c:'gn'},
+   {n:actions.length,l:'Actions',c:'bl'},{n:actions.filter(function(a){return a.status==='open'}).length,l:'Open Actions',c:'pM'}].forEach(function(s){
+    var c=h('div','pm-card',{style:{padding:'8px',textAlign:'center'}});
+    ap(c,h('div','',{text:String(s.n),style:{fontFamily:'var(--f1)',fontSize:'1.3rem',fontWeight:'800',color:'var(--'+s.c+')'}}),h('div','pm-stat-l',{text:s.l}));stats.appendChild(c)});
+  body.appendChild(stats);
+
+  if(mock===1){
+    // CARD VIEW
+    var allItems=[].concat(decisions,actions).sort(function(a,b){return new Date(b.date)-new Date(a.date)});
+    allItems.forEach(function(item,i){
+      var isDec=item.type==='decision';
+      var color=isDec?(item.status==='approved'?'#00e676':item.status==='pending'?'#ffb935':'var(--t3)'):(item.status==='open'?'#35b8ff':'#ffb935');
+      var card=h('div','dec-card anim-su',{style:{borderLeftColor:color}});card.style.animationDelay=i*40+'ms';
+      var hd=h('div','',{style:{display:'flex',alignItems:'center',gap:'8px',marginBottom:'6px'}});
+      ap(hd,h('span','',{text:isDec?'🏛️':'⚡',style:{fontSize:'1rem'}}),
+        h('strong','',{text:item.title,style:{fontFamily:'var(--f1)',flex:'1',fontSize:'.88rem'}}),
+        h('span','pm-badge',{text:(isDec?'Decision':'Action')+' · '+item.status,style:{background:color+'22',color:color}}));
+      card.appendChild(hd);
+      ap(card,h('div','',{text:item.description,style:{fontSize:'.8rem',color:'var(--t2)',marginBottom:'6px',lineHeight:'1.4'}}));
+      var meta=h('div','',{style:{display:'flex',gap:'10px',fontSize:'.74rem',color:'var(--t3)',flexWrap:'wrap'}});
+      ap(meta,h('span','',{text:'📅 '+item.date}));
+      var owner=D.members.find(function(m){return m.id===item.owner});
+      if(owner)ap(meta,h('span','',{text:'👤 '+owner.name}));
+      if(item.impact)ap(meta,h('span','',{text:'Impact: '+item.impact,style:{color:item.impact==='high'?'#ff6b35':item.impact==='medium'?'#ffb935':'var(--t3)'}}));
+      if(item.due)ap(meta,h('span','',{text:'Due: '+item.due,style:{color:new Date(item.due)<new Date()?'#ff3d5c':'var(--t3)'}}));
+      if(item.participants&&item.participants.length){
+        var parts=h('span','',{style:{display:'flex',alignItems:'center',gap:'3px'}});
+        item.participants.forEach(function(pid){var m=D.members.find(function(x){return x.id===pid});
+          if(m)parts.appendChild(h('span','pm-av pm-av-sm',{text:m.ini,style:{background:m.color,color:'#0a1a12',width:'18px',height:'18px',fontSize:'.55rem'}}))});
+        meta.appendChild(parts)}
+      card.appendChild(meta);body.appendChild(card)});
+  } else if(mock===2){
+    // TIMELINE
+    var allItems=[].concat(decisions,actions).sort(function(a,b){return new Date(a.date)-new Date(b.date)});
+    var tl=h('div','dec-tl');
+    allItems.forEach(function(item,i){
+      var isDec=item.type==='decision';
+      var color=isDec?'#ff4da6':'#35b8ff';
+      var node=h('div','',{style:{position:'relative',marginBottom:'16px',paddingLeft:'14px'}});node.classList.add('anim-su');node.style.animationDelay=i*50+'ms';
+      node.appendChild(h('div','dec-tl-dot',{style:{borderColor:color,top:'4px'}}));
+      ap(node,h('div','',{text:item.date,style:{fontSize:'.7rem',color:'var(--tG)',marginBottom:'2px'}}),
+        h('div','',{text:(isDec?'🏛️':'⚡')+' '+item.title,style:{fontWeight:'600',fontSize:'.86rem',fontFamily:'var(--f1)'}}),
+        h('div','',{text:item.description,style:{fontSize:'.78rem',color:'var(--t2)',marginTop:'2px'}}));
+      tl.appendChild(node)});
+    body.appendChild(tl);
+  } else {
+    // ACTION TRACKER
+    body.appendChild(h('h3','',{text:'✅ Action Items',style:{fontFamily:'var(--f1)',marginBottom:'12px'}}));
+    actions.sort(function(a,b){var sa={open:0,in_progress:1};return(sa[a.status]||2)-(sa[b.status]||2)}).forEach(function(act,i){
+      var isDone=act.status==='done';var isOverdue=act.due&&new Date(act.due)<new Date()&&!isDone;
+      var row=h('div','act-row anim-su');row.style.animationDelay=i*40+'ms';
+      var cb=h('div','act-cb'+(isDone?' done':''));
+      if(isDone)cb.textContent='✓';
+      cb.onclick=function(){act.status=isDone?'open':'done';render()};
+      var info=h('div','',{style:{flex:'1'}});
+      ap(info,h('div','',{text:act.title,style:{fontWeight:'600',fontSize:'.84rem',textDecoration:isDone?'line-through':'none',color:isDone?'var(--tG)':'var(--t1)'}}),
+        h('div','',{style:{fontSize:'.74rem',color:'var(--t3)'},text:act.description}));
+      var meta=h('div','',{style:{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:'2px'}});
+      if(act.due)ap(meta,h('span','',{text:'Due: '+act.due,style:{fontSize:'.72rem',color:isOverdue?'#ff3d5c':'var(--t3)',fontWeight:isOverdue?'600':'400'}}));
+      var owner=D.members.find(function(m){return m.id===act.owner});
+      if(owner)meta.appendChild(h('span','pm-av pm-av-sm',{text:owner.ini,style:{background:owner.color,color:'#0a1a12'}}));
+      ap(row,cb,info,meta);body.appendChild(row)});
+  }
+  document.body.appendChild(body)}
+render()})();
+</script></body></html>

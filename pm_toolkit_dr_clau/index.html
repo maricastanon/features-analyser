@@ -1,0 +1,72 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>🦁 PM Toolkit — Dr. Clau's Complete Project Management Suite</title>
+<link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.hub{max-width:900px;margin:0 auto;padding:24px 16px}
+.hub-hero{text-align:center;padding:40px 0 30px}
+.hub-logo{font-size:4rem;margin-bottom:12px;animation:pulse 2s ease-in-out infinite}
+.hub-title{font:900 2.2rem var(--f1);background:linear-gradient(135deg,#ff69b4,#4cff9f);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.hub-sub{font-size:.92rem;color:var(--t3);max-width:500px;margin:0 auto}
+.section-title{font:700 1.1rem var(--f1);color:var(--t2);margin:28px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--bS);display:flex;align-items:center;gap:8px}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.tool-card{background:var(--bg2);border:1px solid var(--bS);border-radius:14px;padding:16px;cursor:pointer;transition:all .2s var(--ease);text-decoration:none;color:inherit;display:block;border-left:4px solid}
+.tool-card:hover{background:var(--bgH);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3);border-color:var(--bSt)}
+.tool-icon{font-size:1.8rem;margin-bottom:8px}
+.tool-name{font:600 .95rem var(--f1);margin-bottom:4px}
+.tool-desc{font-size:.78rem;color:var(--t3);line-height:1.4}
+.tool-tags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.tool-tag{padding:2px 7px;border-radius:99px;font-size:.66rem;font-weight:600;background:rgba(255,255,255,.06)}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}</style>
+</head><body>
+<div class="hub">
+  <div class="hub-hero">
+    <div class="hub-logo">🦁</div>
+    <div class="hub-title">PM TOOLKIT</div>
+    <div class="hub-sub">Dr. Clau's Complete Project Management Suite<br>13 functional tools · 7 Gantt variations · 6 PM essentials</div>
+  </div>
+
+  <div class="section-title">📊 Gantt Chart Variations (7)</div>
+  <div class="tool-grid" id="gantt-grid"></div>
+
+  <div class="section-title">🛠️ Project Management Tools (6)</div>
+  <div class="tool-grid" id="tools-grid"></div>
+
+  <div style="text-align:center;padding:30px 0;color:var(--tG);font-size:.78rem">
+    Each tool loads from <code style="background:var(--bg3);padding:2px 6px;border-radius:4px">data/pm-data.js</code> · 
+    CSS from <code style="background:var(--bg3);padding:2px 6px;border-radius:4px">css/pm-toolkit.css</code><br>
+    Shared rendering engine: <code style="background:var(--bg3);padding:2px 6px;border-radius:4px">js/gantt-engine.js</code><br>
+    <br>🦁 The pharma thieves will NEVER catch up! 🔥
+  </div>
+</div>
+<script>
+var gantts=[
+  {file:'gantt-01-classic.html',icon:'📊',name:'Classic Gantt',desc:'Dependencies, milestones, gates, critical path, WBS. Full project timeline with phase grouping.',tags:['Dependencies','Gates','Milestones','Critical Path'],color:'#ff4da6'},
+  {file:'gantt-02-resource.html',icon:'🔥',name:'Resource Heatmap',desc:'Per-person weekly workload visualization. Spot overloaded team members instantly.',tags:['Heatmap','Workload','Capacity','Weekly'],color:'#ff6b35'},
+  {file:'gantt-03-sprint.html',icon:'🏃',name:'Sprint/Agile Gantt',desc:'Sprint lanes with velocity tracking, story points, burndown integration.',tags:['Sprints','Velocity','Agile','Story Points'],color:'#35b8ff'},
+  {file:'gantt-04-milestone.html',icon:'🎯',name:'Milestone & Gate Tracker',desc:'Focused view on delivery checkpoints. Go/No-Go approval workflow for gates.',tags:['Milestones','Gates','Approval','Criteria'],color:'#ffb935'},
+  {file:'gantt-05-portfolio.html',icon:'📁',name:'Portfolio Gantt',desc:'Multi-project overview with budget, progress, and resource allocation per project.',tags:['Multi-Project','Budget','Portfolio','Overview'],color:'#b46eff'},
+  {file:'gantt-06-swimlane.html',icon:'🏊',name:'Department Swimlanes',desc:'Tasks grouped by department. Cross-team visibility with team lead indicators.',tags:['Departments','Swimlanes','Cross-Team'],color:'#1de9b6'},
+  {file:'gantt-07-baseline.html',icon:'📐',name:'Baseline Comparison',desc:'Planned vs Actual schedule. Variance analysis, drift detection, delay tracking.',tags:['Baseline','Variance','Planned vs Actual','Drift'],color:'#e040fb'},
+];
+var tools=[
+  {file:'tool-01-risk-matrix.html',icon:'⚠️',name:'Risk Assessment Matrix',desc:'3 mocks: Heat Map grid, Card view with mitigation details, Risk timeline.',tags:['Heat Map','Risk Score','Mitigation','3 Mocks'],color:'#ff3d5c'},
+  {file:'tool-02-raci.html',icon:'📊',name:'RACI Matrix',desc:'3 mocks: Interactive matrix, Workload per person, Gap analysis (missing R/A).',tags:['RACI','Responsibility','Gap Analysis','3 Mocks'],color:'#b46eff'},
+  {file:'tool-03-resource.html',icon:'👥',name:'Resource Allocation',desc:'3 mocks: Capacity dashboard, Weekly timeline, Utilization summary.',tags:['Capacity','Utilization','Allocation','3 Mocks'],color:'#35b8ff'},
+  {file:'tool-04-budget.html',icon:'💰',name:'Budget Tracker',desc:'3 mocks: Budget overview with health bar, Monthly burn rate chart, Category breakdown.',tags:['Budget','Burn Rate','Forecast','3 Mocks'],color:'#00e676'},
+  {file:'tool-05-burndown.html',icon:'📉',name:'Sprint Burndown & Velocity',desc:'3 mocks: Burndown chart (SVG), Velocity trend, Sprint detail cards.',tags:['Burndown','Velocity','Sprint','3 Mocks'],color:'#ff4da6'},
+  {file:'tool-06-decisions.html',icon:'📝',name:'Decision & Action Log',desc:'3 mocks: Card view, Visual timeline, Action tracker with checkboxes.',tags:['Decisions','Actions','Audit Trail','3 Mocks'],color:'#ffb935'},
+];
+
+function renderGrid(items,containerId){
+  var grid=document.getElementById(containerId);
+  items.forEach(function(item,i){
+    var card=document.createElement('a');card.className='tool-card';card.href=item.file;
+    card.style.borderLeftColor=item.color;card.style.animationDelay=i*60+'ms';card.classList.add('anim-su');
+    card.innerHTML='<div class="tool-icon">'+item.icon+'</div><div class="tool-name">'+item.name+'</div><div class="tool-desc">'+item.desc+'</div>';
+    var tags=document.createElement('div');tags.className='tool-tags';
+    item.tags.forEach(function(t){var tag=document.createElement('span');tag.className='tool-tag';tag.textContent=t;tag.style.color=item.color;tags.appendChild(tag)});
+    card.appendChild(tags);grid.appendChild(card);
+  });
+}
+renderGrid(gantts,'gantt-grid');
+renderGrid(tools,'tools-grid');
+</script></body></html>

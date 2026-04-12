@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gantt 5 — Portfolio Multi-Project</title><link rel="stylesheet" href="css/pm-toolkit.css">
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){
+var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mode='leader',dayWidth=12;
+function render(){
+  document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'📁'}),h('div','',{html:'<div class="pm-title">Portfolio Gantt</div><div class="pm-sub">Multi-project overview · Budget · Resource conflicts</div>'}));
+  var tabs=h('div','pm-tabs');
+  ['leader','member'].forEach(function(m){var t=h('button','pm-tab'+(mode===m?' on':''),{text:m==='leader'?'👑 Leader':'👤 Member'});t.onclick=function(){mode=m;render()};tabs.appendChild(t)});
+  header.appendChild(tabs);document.body.appendChild(header);
+
+  var body=h('div','pm-body');
+
+  // Project summary cards
+  var grid=h('div','pm-grid pm-grid-2',{style:{marginBottom:'16px'}});
+  D.projects.forEach(function(pj,i){
+    var pjTasks=D.tasks.filter(function(t){return t.project===pj.id});
+    var done=pjTasks.filter(function(t){return t.status==='done'}).length;
+    var pct=pjTasks.length?Math.round(done/pjTasks.length*100):0;
+    var budgetPct=pj.budget?Math.round(pj.spent/pj.budget*100):0;
+
+    var card=h('div','pm-card anim-su',{style:{borderLeft:'4px solid '+pj.color}});card.style.animationDelay=i*60+'ms';
+    var hd=h('div','',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'8px'}});
+    ap(hd,h('strong','',{text:pj.name,style:{fontFamily:'var(--f1)',fontSize:'.9rem'}}),
+      h('span','pm-badge',{text:pj.status.toUpperCase(),style:{background:pj.status==='active'?'rgba(0,230,118,.15)':'rgba(109,153,128,.1)',color:pj.status==='active'?'#00e676':'var(--t3)'}}));
+    card.appendChild(hd);
+
+    var stats=h('div','',{style:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'8px',fontSize:'.78rem'}});
+    ap(stats,h('div','',{html:'<div style="color:var(--t3)">Progress</div><div style="font-weight:700;color:var(--gn)">'+pct+'%</div>'}),
+      h('div','',{html:'<div style="color:var(--t3)">Tasks</div><div style="font-weight:700">'+done+'/'+pjTasks.length+'</div>'}));
+    if(mode==='leader'){
+      ap(stats,h('div','',{html:'<div style="color:var(--t3)">Budget Used</div><div style="font-weight:700;color:'+(budgetPct>80?'#ff3d5c':'var(--pM)')+'">'+budgetPct+'%</div>'}),
+        h('div','',{html:'<div style="color:var(--t3)">PM</div><div style="font-weight:700">'+(D.members.find(function(x){return x.id===pj.pm})||{}).name+'</div>'}));
+    }
+    card.appendChild(stats);
+
+    var prog=h('div','pm-progress',{style:{marginTop:'8px'}});
+    prog.appendChild(h('div','pm-progress-fill',{style:{width:pct+'%',background:pj.color}}));
+    card.appendChild(prog);
+    grid.appendChild(card);
+  });
+  body.appendChild(grid);
+
+  // Gantt per project
+  var allTasks=mode==='member'?D.tasks.filter(function(t){return t.assignees.indexOf('m2')!==-1}):D.tasks;
+  var range=G.calcRange(allTasks,D.milestones,10);
+
+  D.projects.forEach(function(pj){
+    var pjTasks=allTasks.filter(function(t){return t.project===pj.id}).sort(function(a,b){return new Date(a.start||a.end)-new Date(b.start||b.end)});
+    if(!pjTasks.length)return;
+
+    var section=h('div','pm-card',{style:{marginBottom:'14px',overflow:'hidden'}});
+    section.appendChild(h('div','pm-card-h')).appendChild(h('div','pm-card-t',{text:pj.name,style:{color:pj.color}}));
+
+    var wrap=h('div','gantt-wrap',{style:{maxHeight:'250px'}});
+    var hdr=h('div','gantt-header');
+    hdr.appendChild(h('div','gantt-lbl-col',{text:'TASK',style:{padding:'5px 8px',fontSize:'.68rem',fontWeight:'700',color:'var(--tG)'}}));
+    hdr.appendChild(G.renderTimeHeader(range,dayWidth));wrap.appendChild(hdr);
+
+    var rows=h('div','gantt-rows',{style:{position:'relative'}});
+    rows.appendChild(G.renderWeekends(range,dayWidth));
+    var today=G.renderToday(range,dayWidth);if(today)rows.appendChild(today);
+
+    pjTasks.forEach(function(t,i){
+      var row=h('div','gantt-row');
+      var lbl=h('div','gantt-row-lbl',{style:{fontSize:'.74rem'}});
+      ap(lbl,h('span','',{style:{width:'5px',height:'5px',borderRadius:'50%',background:G.priColor(t.priority),flexShrink:'0'}}),h('span','truncate',{text:t.name}));
+      var track=h('div','gantt-row-track',{style:{width:range.days*dayWidth+'px'}});
+      track.appendChild(G.renderBar(t,range,dayWidth,{color:pj.color}));
+      ap(row,lbl,track);rows.appendChild(row);
+    });
+    // Project milestones
+    D.milestones.filter(function(m){return m.project===pj.id}).forEach(function(ms){
+      var msRow=h('div','gantt-row milestone-row');
+      msRow.appendChild(h('div','gantt-row-lbl',{text:(ms.icon||'◆')+' '+ms.name,style:{fontSize:'.72rem',color:'var(--pM)',fontStyle:'italic'}}));
+      var msTrack=h('div','gantt-row-track',{style:{width:range.days*dayWidth+'px'}});
+      msTrack.appendChild(ms.type==='gate'?G.renderGate(ms,range,dayWidth):G.renderMilestone(ms,range,dayWidth));
+      ap(msRow,msTrack);rows.appendChild(msRow);
+    });
+    wrap.appendChild(rows);section.appendChild(wrap);body.appendChild(section);
+  });
+
+  document.body.appendChild(body);
+}
+render();
+})();
+</script></body></html>

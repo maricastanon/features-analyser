@@ -1,0 +1,93 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tool 1 — Risk Matrix</title><link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.risk-grid{display:grid;grid-template-columns:40px repeat(5,1fr);grid-template-rows:repeat(5,1fr) 40px;gap:2px;aspect-ratio:1.1;max-width:600px;margin:0 auto}
+.risk-axis{display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:var(--tG);writing-mode:vertical-lr;text-orientation:mixed}
+.risk-axis-x{writing-mode:horizontal-tb;grid-column:span 5}
+.risk-bubble{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.6rem;font-weight:700;cursor:pointer;transition:.2s;border:2px solid rgba(255,255,255,.3)}
+.risk-bubble:hover{transform:scale(1.15);z-index:10;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.risk-card{background:var(--bg2);border:1px solid var(--bS);border-radius:var(--rl);padding:12px;margin-bottom:8px;border-left:4px solid;transition:.12s;cursor:pointer}
+.risk-card:hover{background:var(--bgH);transform:translateX(2px)}
+.risk-tl-item{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bS);align-items:center}</style>
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){
+var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mock=1;
+function riskColor(l,i){var s=l*i;return s>=15?'#ff3d5c':s>=10?'#ff6b35':s>=5?'#ffb935':'#00e676'}
+function render(){
+  document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'⚠️'}),h('div','',{html:'<div class="pm-title">Risk Assessment Matrix</div><div class="pm-sub">Heat Map · Card View · Timeline</div>'}));
+  var tabs=h('div','pm-tabs');
+  [{id:1,l:'🔥 Heat Map'},{id:2,l:'📋 Card View'},{id:3,l:'📅 Timeline'}].forEach(function(m){
+    var t=h('button','pm-tab'+(mock===m.id?' on':''),{text:m.l});t.onclick=function(){mock=m.id;render()};tabs.appendChild(t)});
+  header.appendChild(tabs);document.body.appendChild(header);
+  var body=h('div','pm-body');
+
+  // Stats
+  var stats=h('div','pm-grid pm-grid-4',{style:{marginBottom:'16px'}});
+  var risks=D.risks;
+  [{n:risks.length,l:'Total Risks',c:'pk'},{n:risks.filter(function(r){return r.likelihood*r.impact>=15}).length,l:'Critical',c:'var(--pU)'},
+   {n:risks.filter(function(r){return r.status==='open'}).length,l:'Open',c:'var(--pM)'},{n:risks.filter(function(r){return r.status==='mitigated'}).length,l:'Mitigated',c:'gn'}].forEach(function(s){
+    var card=h('div','pm-card anim-su',{style:{padding:'8px',textAlign:'center'}});
+    ap(card,h('div','',{text:String(s.n),style:{fontFamily:'var(--f1)',fontSize:'1.4rem',fontWeight:'800',color:'var(--'+s.c+')'}}),h('div','pm-stat-l',{text:s.l}));
+    stats.appendChild(card)});
+  body.appendChild(stats);
+
+  if(mock===1){
+    // HEAT MAP
+    var grid=h('div','risk-grid');
+    grid.appendChild(h('div','risk-axis',{text:'LIKELIHOOD →'}));
+    for(var row=5;row>=1;row--){
+      for(var col=1;col<=5;col++){
+        var score=row*col;var bg=score>=15?'rgba(255,61,92,.3)':score>=10?'rgba(255,107,53,.25)':score>=5?'rgba(255,185,53,.15)':'rgba(0,230,118,.1)';
+        var cell=h('div','risk-cell',{style:{background:bg}});
+        var cellRisks=risks.filter(function(r){return r.likelihood===col&&r.impact===row});
+        if(cellRisks.length){
+          cell.innerHTML=cellRisks.map(function(r){return'<div style="font-size:.65rem;line-height:1.2" title="'+r.name+'">'+r.name.substring(0,15)+'</div>'}).join('');
+        }else{cell.textContent=score}
+        grid.appendChild(cell);
+      }
+    }
+    grid.appendChild(h('div',''));
+    var axisX=h('div','risk-axis-x',{text:'IMPACT →',style:{gridColumn:'2/7',textAlign:'center',writingMode:'horizontal-tb'}});
+    grid.appendChild(axisX);
+    body.appendChild(grid);
+  } else if(mock===2){
+    // CARD VIEW
+    risks.sort(function(a,b){return(b.likelihood*b.impact)-(a.likelihood*a.impact)}).forEach(function(r,i){
+      var score=r.likelihood*r.impact;var color=riskColor(r.likelihood,r.impact);
+      var card=h('div','risk-card anim-su',{style:{borderLeftColor:color}});card.style.animationDelay=i*40+'ms';
+      var hd=h('div','',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'6px'}});
+      ap(hd,h('strong','',{text:r.name,style:{fontFamily:'var(--f1)',fontSize:'.88rem'}}),
+        h('span','pm-badge',{text:'Score: '+score,style:{background:color+'22',color:color}}));
+      card.appendChild(hd);
+      var meta=h('div','',{style:{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:'6px',fontSize:'.76rem',marginBottom:'6px'}});
+      ap(meta,h('div','',{html:'<div style="color:var(--t3)">Likelihood</div><div style="font-weight:600">'+r.likelihood+'/5</div>'}),
+        h('div','',{html:'<div style="color:var(--t3)">Impact</div><div style="font-weight:600">'+r.impact+'/5</div>'}),
+        h('div','',{html:'<div style="color:var(--t3)">Category</div><div style="font-weight:600">'+r.category+'</div>'}));
+      card.appendChild(meta);
+      ap(card,h('div','',{text:'Mitigation: '+r.mitigation,style:{fontSize:'.76rem',color:'var(--t2)',fontStyle:'italic'}}));
+      var owner=D.members.find(function(m){return m.id===r.owner});
+      if(owner){var ow=h('div','',{style:{display:'flex',alignItems:'center',gap:'5px',marginTop:'6px',fontSize:'.76rem'}});
+        ap(ow,h('div','pm-av pm-av-sm',{text:owner.ini,style:{background:owner.color,color:'#0a1a12'}}),h('span','',{text:owner.name+' (Owner)'}));card.appendChild(ow)}
+      var statusBadge=h('span','pm-badge',{text:r.status.toUpperCase(),style:{background:r.status==='mitigated'?'rgba(0,230,118,.15)':'rgba(255,185,53,.15)',color:r.status==='mitigated'?'#00e676':'#ffb935',marginTop:'6px'}});
+      card.appendChild(statusBadge);
+      body.appendChild(card);
+    });
+  } else {
+    // TIMELINE
+    risks.forEach(function(r,i){
+      var score=r.likelihood*r.impact;var color=riskColor(r.likelihood,r.impact);
+      var item=h('div','risk-tl-item anim-su');item.style.animationDelay=i*30+'ms';
+      ap(item,h('div','',{style:{width:'40px',height:'40px',borderRadius:'50%',background:color+'22',border:'2px solid '+color,display:'flex',alignItems:'center',justifyContent:'center',fontSize:'.78rem',fontWeight:'700',color:color,flexShrink:'0'},text:String(score)}),
+        h('div','',{style:{flex:'1'},html:'<div style="font-weight:600;font-size:.84rem">'+r.name+'</div><div style="font-size:.72rem;color:var(--t3)">'+r.category+' · Owner: '+(D.members.find(function(m){return m.id===r.owner})||{}).name+'</div>'}),
+        h('span','pm-badge',{text:r.status,style:{background:r.status==='mitigated'?'rgba(0,230,118,.15)':'rgba(255,185,53,.15)',color:r.status==='mitigated'?'#00e676':'#ffb935'}}));
+      body.appendChild(item);
+    });
+  }
+  document.body.appendChild(body);
+}
+render();
+})();
+</script></body></html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gantt 4 — Milestone & Gate Tracker</title><link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.ms-timeline{position:relative;padding:20px 0 20px 200px;min-height:400px;overflow-x:auto}
+.ms-line{position:absolute;left:200px;right:20px;top:50%;height:3px;background:var(--bD);border-radius:99px}
+.ms-node{position:absolute;display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:.2s;z-index:2}
+.ms-node:hover{transform:scale(1.1);z-index:5}
+.ms-icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;border:3px solid;margin-bottom:6px;background:var(--bg2);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.ms-icon.diamond{border-radius:6px;transform:rotate(45deg)}.ms-icon.diamond>span{transform:rotate(-45deg)}
+.ms-name{font-size:.72rem;font-weight:600;text-align:center;max-width:100px;line-height:1.2}
+.ms-date{font-size:.64rem;color:var(--tG);margin-top:2px}
+.ms-detail{background:var(--bg2);border:1px solid var(--bD);border-radius:var(--rl);padding:16px;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:100;width:360px;max-height:80vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.6)}
+.ms-detail-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:99}</style>
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){
+var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mode='leader',selMs=null;
+function render(){
+  document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'🎯'}),h('div','',{html:'<div class="pm-title">Milestone & Gate Tracker</div><div class="pm-sub">Delivery checkpoints · Go/No-Go gates · Approval workflow</div>'}));
+  var tabs=h('div','pm-tabs');
+  ['leader','member'].forEach(function(m){var t=h('button','pm-tab'+(mode===m?' on':''),{text:m==='leader'?'👑 Leader':'👤 Member'});t.onclick=function(){mode=m;render()};tabs.appendChild(t)});
+  header.appendChild(tabs);document.body.appendChild(header);
+
+  var body=h('div','pm-body');
+  var ms=D.milestones.filter(function(m){return m.project==='pj1'}).sort(function(a,b){return new Date(a.date)-new Date(b.date)});
+
+  // Stats
+  var stats=h('div','pm-grid pm-grid-4',{style:{marginBottom:'16px'}});
+  var total=ms.length,done=ms.filter(function(m){return m.status==='done'}).length;
+  var pending=ms.filter(function(m){return m.status==='pending'}).length;
+  var gates=ms.filter(function(m){return m.type==='gate'}).length;
+  [{n:total,l:'Total Checkpoints',c:'pk'},{n:done,l:'Passed',c:'gn'},{n:pending,l:'Pending Approval',c:'pM'},{n:gates,l:'Gates Remaining',c:'pp'}].forEach(function(s){
+    var card=h('div','pm-card anim-su',{style:{padding:'10px',textAlign:'center'}});
+    ap(card,h('div','',{text:String(s.n),style:{fontFamily:'var(--f1)',fontSize:'1.6rem',fontWeight:'800',color:'var(--'+s.c+')'}}),h('div','pm-stat-l',{text:s.l}));
+    stats.appendChild(card);
+  });
+  body.appendChild(stats);
+
+  // Cards view
+  ms.forEach(function(m,i){
+    var card=h('div','pm-card anim-su',{style:{display:'flex',alignItems:'center',gap:'14px',cursor:'pointer',borderLeft:'4px solid '+(m.status==='done'?'#00e676':m.status==='pending'?'#ffb935':'var(--t3)')}});
+    card.style.animationDelay=i*40+'ms';
+    card.onclick=function(){selMs=m;showDetail()};
+
+    var icon=h('div','',{text:m.icon||'◆',style:{fontSize:'1.5rem',flexShrink:'0',width:'40px',textAlign:'center'}});
+    var info=h('div','',{style:{flex:'1'}});
+    ap(info,h('div','',{text:m.name,style:{fontFamily:'var(--f1)',fontWeight:'600',fontSize:'.9rem'}}));
+    var meta=h('div','',{style:{display:'flex',gap:'10px',marginTop:'4px',fontSize:'.76rem',color:'var(--t3)'}});
+    ap(meta,h('span','',{text:'📅 '+m.date}),h('span','',{text:m.type==='gate'?'🔒 Gate':'◆ Milestone'}));
+    if(m.approver){var appr=D.members.find(function(x){return x.id===m.approver});
+      if(appr)meta.appendChild(h('span','',{text:'👤 '+appr.name}))}
+    info.appendChild(meta);
+
+    if(mode==='leader'&&m.type==='gate'&&m.criteria){
+      info.appendChild(h('div','',{text:'Criteria: '+m.criteria,style:{fontSize:'.74rem',color:'var(--t3)',marginTop:'4px',fontStyle:'italic'}}));
+    }
+
+    var statusBadge=h('div','pm-badge',{text:m.status.toUpperCase(),
+      style:{background:(m.status==='done'?'rgba(0,230,118,.15)':m.status==='pending'?'rgba(255,185,53,.15)':'rgba(109,153,128,.1)'),
+        color:m.status==='done'?'#00e676':m.status==='pending'?'#ffb935':'var(--t3)'}});
+
+    ap(card,icon,info,statusBadge);
+    body.appendChild(card);
+  });
+
+  document.body.appendChild(body);
+}
+
+function showDetail(){
+  if(!selMs)return;
+  var m=selMs;var bg=h('div','ms-detail-bg');bg.onclick=function(){bg.remove()};
+  var det=h('div','ms-detail');
+  det.innerHTML='<div style="font-size:2rem;text-align:center;margin-bottom:8px">'+m.icon+'</div>'+
+    '<h3 style="font-family:var(--f1);text-align:center;margin-bottom:12px">'+m.name+'</h3>'+
+    '<div style="display:grid;grid-template-columns:90px 1fr;gap:6px;font-size:.82rem">'+
+    '<span style="color:var(--t3)">Type</span><span>'+(m.type==='gate'?'🔒 Gate':'◆ Milestone')+'</span>'+
+    '<span style="color:var(--t3)">Date</span><span>'+m.date+'</span>'+
+    '<span style="color:var(--t3)">Status</span><span style="color:'+(m.status==='done'?'#00e676':'#ffb935')+'">'+m.status+'</span>'+
+    (m.approver?'<span style="color:var(--t3)">Approver</span><span>'+(D.members.find(function(x){return x.id===m.approver})||{}).name+'</span>':'')+
+    (m.criteria?'<span style="color:var(--t3)">Criteria</span><span>'+m.criteria+'</span>':'')+
+    '</div>';
+  if(mode==='leader'&&m.status==='pending'){
+    var btnRow=h('div','',{style:{display:'flex',gap:'8px',marginTop:'14px',justifyContent:'center'}});
+    var appBtn=h('button','pm-btn pm-btn-p',{text:'✅ Approve Gate'});appBtn.onclick=function(){m.status='done';bg.remove();render()};
+    var rejBtn=h('button','pm-btn pm-btn-s',{text:'❌ Reject',style:{color:'#ff3d5c'}});rejBtn.onclick=function(){bg.remove()};
+    ap(btnRow,appBtn,rejBtn);det.appendChild(btnRow);
+  }
+  bg.appendChild(det);document.body.appendChild(bg);
+}
+render();
+})();
+</script></body></html>

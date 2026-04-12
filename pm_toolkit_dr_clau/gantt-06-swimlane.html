@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gantt 6 — Department Swimlanes</title><link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.swim-lane{margin-bottom:16px;border:1px solid var(--bS);border-radius:var(--rl);overflow:hidden}
+.swim-head{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg3);border-bottom:1px solid var(--bS)}
+.swim-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}</style>
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){
+var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mode='leader',dayWidth=14;
+function render(){
+  document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'🏊'}),h('div','',{html:'<div class="pm-title">Department Swimlanes</div><div class="pm-sub">Cross-department visibility · Workload by team</div>'}));
+  var tabs=h('div','pm-tabs');
+  ['leader','member'].forEach(function(m){var t=h('button','pm-tab'+(mode===m?' on':''),{text:m==='leader'?'👑 Leader':'👤 Member'});t.onclick=function(){mode=m;render()};tabs.appendChild(t)});
+  header.appendChild(tabs);document.body.appendChild(header);
+  var body=h('div','pm-body');
+  var tasks=D.tasks.filter(function(t){return t.project==='pj1'});
+  if(mode==='member')tasks=tasks.filter(function(t){return t.assignees.indexOf('m2')!==-1});
+  var range=G.calcRange(tasks,null,10);
+
+  D.departments.forEach(function(dept){
+    var deptTasks=tasks.filter(function(t){return t.dept===dept.id}).sort(function(a,b){return new Date(a.start||a.end)-new Date(b.start||b.end)});
+    if(!deptTasks.length)return;
+    var lane=h('div','swim-lane anim-su');
+    var head=h('div','swim-head');
+    var headMember=D.members.find(function(m){return m.id===dept.head});
+    ap(head,h('div','swim-dot',{style:{background:dept.color}}),h('strong','',{text:dept.name,style:{fontFamily:'var(--f1)',flex:'1'}}),
+      h('span','',{text:deptTasks.length+' tasks',style:{fontSize:'.74rem',color:'var(--t3)'}}));
+    if(mode==='leader'&&headMember)ap(head,h('div','pm-av pm-av-sm',{text:headMember.ini,style:{background:headMember.color,color:'#0a1a12'}}),h('span','',{text:headMember.name,style:{fontSize:'.76rem',color:'var(--t2)'}}));
+    lane.appendChild(head);
+
+    var wrap=h('div','gantt-wrap',{style:{maxHeight:'250px'}});
+    var hdr=h('div','gantt-header');hdr.appendChild(h('div','gantt-lbl-col',{text:'TASK',style:{padding:'5px 8px',fontSize:'.68rem',fontWeight:'700',color:'var(--tG)'}}));
+    hdr.appendChild(G.renderTimeHeader(range,dayWidth));wrap.appendChild(hdr);
+    var rows=h('div','gantt-rows',{style:{position:'relative'}});
+    rows.appendChild(G.renderWeekends(range,dayWidth));
+    var today=G.renderToday(range,dayWidth);if(today)rows.appendChild(today);
+
+    deptTasks.forEach(function(t){
+      var row=h('div','gantt-row');
+      var lbl=h('div','gantt-row-lbl',{style:{fontSize:'.74rem'}});
+      ap(lbl,h('span','',{text:t.name,style:{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',flex:'1'}}));
+      t.assignees.slice(0,1).forEach(function(mid){var m=D.members.find(function(x){return x.id===mid});if(m)lbl.appendChild(h('div','pm-av pm-av-sm',{text:m.ini,style:{background:m.color,color:'#0a1a12'}}))});
+      var track=h('div','gantt-row-track',{style:{width:range.days*dayWidth+'px'}});
+      var color=t.status==='done'?'#00e676':t.status==='inprogress'?dept.color:'var(--t3)';
+      track.appendChild(G.renderBar(t,range,dayWidth,{color:color}));
+      ap(row,lbl,track);rows.appendChild(row);
+    });
+    wrap.appendChild(rows);lane.appendChild(wrap);body.appendChild(lane);
+  });
+  document.body.appendChild(body);
+}
+render();
+})();
+</script></body></html>

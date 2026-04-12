@@ -1,0 +1,215 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gantt 1 — Classic with Dependencies & Gates</title>
+<link rel="stylesheet" href="css/pm-toolkit.css">
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){
+var G=GanttEngine, D=PMData, h=G.h, ap=G.ap;
+var mode='leader'; // leader or member
+var dayWidth=16, selectedTask=null;
+
+function render(){
+  document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header, h('div','pm-logo',{text:'📊'}), h('div','',{html:'<div class="pm-title">Classic Gantt</div><div class="pm-sub">Dependencies · Milestones · Gates · Critical Path</div>'}));
+  var tabs=h('div','pm-tabs');
+  ['leader','member'].forEach(function(m){
+    var t=h('button','pm-tab'+(mode===m?' on':''),{text:m==='leader'?'👑 Team Leader':'👤 Team Member'});
+    t.onclick=function(){mode=m;render()};tabs.appendChild(t);
+  });
+  header.appendChild(tabs);
+  document.body.appendChild(header);
+
+  var body=h('div','pm-body');
+  var project = mode==='leader' ? null : 'pj1'; // member sees only their project
+  var tasks = D.tasks.filter(function(t){return project?t.project===project:t.project==='pj1'});
+  var milestones = D.milestones.filter(function(m){return m.project==='pj1'});
+
+  if(mode==='member'){
+    // Member: filter to own tasks
+    tasks = tasks.filter(function(t){return t.assignees.indexOf('m2')!==-1}); // Mari's view
+    body.appendChild(h('div','',{style:{marginBottom:'14px',padding:'8px 14px',background:'var(--gnG)',borderRadius:'var(--rl)',fontSize:'.82rem',color:'var(--gn)'},
+      text:'👤 Showing your assigned tasks (Mari S.) · Click any bar for details'}));
+  } else {
+    // Leader: summary stats
+    var stats=h('div','pm-grid pm-grid-4',{style:{marginBottom:'14px'}});
+    var total=tasks.length, done=tasks.filter(function(t){return t.status==='done'}).length;
+    var active=tasks.filter(function(t){return t.status==='inprogress'}).length;
+    var atRisk=tasks.filter(function(t){return t.risk==='high'&&t.status!=='done'}).length;
+    [{n:total,l:'Total Tasks',c:'pk'},{n:done,l:'Completed',c:'gn'},{n:active,l:'In Progress',c:'bl'},{n:atRisk,l:'At Risk',c:'pp'}].forEach(function(s){
+      var card=h('div','pm-card anim-su',{style:{padding:'10px'}});
+      ap(card,h('div','pm-stat-n dc-num '+s.c,{text:String(s.n),style:{fontSize:'1.6rem'}}),h('div','pm-stat-l',{text:s.l}));
+      stats.appendChild(card);
+    });
+    body.appendChild(stats);
+  }
+
+  // Legend
+  var legend=h('div','pm-legend');
+  [{c:'#00e676',l:'Done'},{c:'#35b8ff',l:'In Progress'},{c:'var(--t3)',l:'To Do'},{c:'#ff3d5c',l:'Blocked/At Risk'}].forEach(function(x){
+    var li=h('div','pm-legend-i');ap(li,h('div','pm-legend-dot',{style:{background:x.c,borderRadius:'3px'}}),x.l);legend.appendChild(li);
+  });
+  ap(legend,h('div','pm-legend-i',{html:'<div style="width:14px;height:14px;background:#ffb935;transform:rotate(45deg);border-radius:2px;margin:0 2px"></div> Milestone'}));
+  ap(legend,h('div','pm-legend-i',{html:'<div style="width:16px;height:16px;border-radius:50%;border:2px solid #ffb935;display:flex;align-items:center;justify-content:center;font-size:.6rem;margin:0 2px">🔒</div> Gate'}));
+  body.appendChild(legend);
+
+  // Zoom controls
+  var zoomBar=h('div','',{style:{display:'flex',gap:'4px',marginBottom:'10px'}});
+  [8,12,16,22,30].forEach(function(w){
+    var btn=h('button','pm-btn pm-btn-s'+(dayWidth===w?' on':''),{text:w<=10?'S':w<=14?'M':w<=20?'L':w<=25?'XL':'XXL',
+      style:dayWidth===w?{background:'var(--pkG)',color:'var(--pk2)',borderColor:'var(--pk)'}:{}});
+    btn.onclick=function(){dayWidth=w;render()};zoomBar.appendChild(btn);
+  });
+  body.appendChild(zoomBar);
+
+  // Build Gantt
+  var range = G.calcRange(tasks, milestones, 10);
+  var wrap=h('div','gantt-wrap');
+
+  // Header row
+  var headerRow=h('div','gantt-header');
+  headerRow.appendChild(h('div','gantt-lbl-col',{style:{padding:'6px 10px',fontSize:'.72rem',fontWeight:'700',color:'var(--tG)'},text:'TASK'}));
+  headerRow.appendChild(G.renderTimeHeader(range, dayWidth));
+  wrap.appendChild(headerRow);
+
+  var rowsWrap=h('div','gantt-rows',{style:{position:'relative'}});
+
+  // Weekend bands
+  rowsWrap.appendChild(G.renderWeekends(range, dayWidth));
+
+  // Today line
+  var todayLine=G.renderToday(range, dayWidth);
+  if(todayLine) rowsWrap.appendChild(todayLine);
+
+  // Group by phase
+  var phases={};
+  tasks.forEach(function(t){ if(!phases[t.phase])phases[t.phase]=[]; phases[t.phase].push(t); });
+
+  Object.keys(phases).forEach(function(phase){
+    // Phase header
+    var phaseRow=h('div','gantt-row',{style:{background:'var(--bg3)'}});
+    phaseRow.appendChild(h('div','gantt-row-lbl',{style:{fontWeight:'700',fontSize:'.78rem',color:'var(--pk2)'},text:'📁 '+phase}));
+    phaseRow.appendChild(h('div','gantt-row-track'));
+    rowsWrap.appendChild(phaseRow);
+
+    phases[phase].sort(function(a,b){return new Date(a.start||a.end)-new Date(b.start||b.end)}).forEach(function(task,i){
+      var row=h('div','gantt-row anim-su');
+      row.style.animationDelay=i*20+'ms';
+
+      // Label
+      var lbl=h('div','gantt-row-lbl');
+      var priDot=h('div','',{style:{width:'6px',height:'6px',borderRadius:'50%',background:G.priColor(task.priority),flexShrink:'0'}});
+      var nameSpan=h('span','',{text:task.name,style:{overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',flex:'1',minWidth:'0'}});
+      if(task.status==='done')nameSpan.style.textDecoration='line-through';nameSpan.style.color=task.status==='done'?'var(--tG)':'var(--t2)';
+      ap(lbl,priDot,nameSpan);
+
+      if(mode==='leader'){
+        // Show assignee avatars
+        task.assignees.slice(0,2).forEach(function(mid){
+          var m=D.members.find(function(x){return x.id===mid});
+          if(m)lbl.appendChild(h('div','pm-av-sm pm-av',{text:m.ini,style:{background:m.color,color:'#0a1a12',marginLeft:'2px'}}));
+        });
+      }
+
+      var track=h('div','gantt-row-track',{style:{width:range.days*dayWidth+'px'}});
+
+      // Baseline (planned) bar - leader only
+      if(mode==='leader'&&task.planned_start&&task.planned_end){
+        var plStart=G.dayOffset(task.planned_start,range.min);
+        var plEnd=G.dayOffset(task.planned_end,range.min);
+        var plDur=Math.max(1,plEnd-plStart)+1;
+        track.appendChild(h('div','gantt-baseline',{style:{left:plStart*dayWidth+'px',width:plDur*dayWidth+'px',background:'var(--t3)'}}));
+      }
+
+      // Task bar
+      var color=task.status==='done'?'#00e676':task.status==='inprogress'?'#35b8ff':task.risk==='high'?'#ff6b35':'var(--t3)';
+      if(task.status==='blocked')color='#ff3d5c';
+      var bar=G.renderBar(task,range,dayWidth,{color:color});
+
+      // Rich tooltip
+      var tipHtml='<strong>'+task.name+'</strong><br>'+
+        'Status: '+task.status+' · Priority: '+task.priority+'<br>'+
+        (task.start||'?')+' → '+(task.end||'?')+' · Progress: '+(task.progress||0)+'%<br>'+
+        'Effort: '+task.effort+'h · WBS: '+task.wbs+'<br>'+
+        'Risk: <span style="color:'+(task.risk==='high'?'#ff3d5c':task.risk==='medium'?'#ffb935':'#00e676')+'">'+task.risk+'</span>';
+      if(task.deps.length){
+        var depNames=task.deps.map(function(did){var dt=D.tasks.find(function(x){return x.id===did});return dt?dt.name:'?'});
+        tipHtml+='<br>Dependencies: '+depNames.join(', ');
+      }
+      G.addDetailPopup(bar,tipHtml);
+
+      bar.onclick=function(){selectedTask=task;renderDetailPanel()};
+      track.appendChild(bar);
+
+      ap(row,lbl,track);
+      rowsWrap.appendChild(row);
+    });
+
+    // Milestones & Gates for this phase
+    milestones.forEach(function(ms){
+      var msDate=new Date(ms.date);
+      var phaseTasks=phases[phase];
+      var phaseStart=Math.min.apply(null,phaseTasks.map(function(t){return new Date(t.start||t.end)}));
+      var phaseEnd=Math.max.apply(null,phaseTasks.map(function(t){return new Date(t.end||t.start)}));
+      if(msDate>=new Date(phaseStart)&&msDate<=new Date(phaseEnd+864e5*5)){
+        var msRow=h('div','gantt-row '+(ms.type==='gate'?'gate-row':'milestone-row'));
+        var msLbl=h('div','gantt-row-lbl',{style:{fontSize:'.76rem',fontStyle:'italic',color:ms.type==='gate'?'var(--pk2)':'var(--pM)'}});
+        msLbl.textContent=(ms.icon||'◆')+' '+ms.name;
+        var msTrack=h('div','gantt-row-track',{style:{width:range.days*dayWidth+'px'}});
+        if(ms.type==='gate'){
+          var gate=G.renderGate(ms,range,dayWidth);
+          G.addDetailPopup(gate,'<strong>🔒 GATE: '+ms.name+'</strong><br>Date: '+ms.date+'<br>Status: <strong>'+ms.status+'</strong><br>Approver: '+(ms.approver||'—')+'<br>Criteria: '+(ms.criteria||'—'));
+          msTrack.appendChild(gate);
+        }else{
+          msTrack.appendChild(G.renderMilestone(ms,range,dayWidth));
+        }
+        ap(msRow,msLbl,msTrack);
+        rowsWrap.appendChild(msRow);
+      }
+    });
+  });
+
+  wrap.appendChild(rowsWrap);
+  body.appendChild(wrap);
+  document.body.appendChild(body);
+}
+
+function renderDetailPanel(){
+  if(!selectedTask)return;
+  var t=selectedTask;
+  var existing=document.getElementById('detail-panel');
+  if(existing)existing.remove();
+
+  var panel=h('div','pm-card',{id:'detail-panel',style:{position:'fixed',top:'10px',right:'10px',width:'340px',zIndex:'100',maxHeight:'90vh',overflowY:'auto',boxShadow:'0 8px 30px rgba(0,0,0,.5)'}});
+  var closeBtn=h('button','pm-btn pm-btn-s',{text:'✕',style:{position:'absolute',top:'10px',right:'10px',padding:'3px 8px'}});
+  closeBtn.onclick=function(){panel.remove();selectedTask=null};
+  panel.appendChild(closeBtn);
+
+  panel.innerHTML+='<h3 style="font-family:var(--f1);margin-bottom:10px;padding-right:30px">'+t.name+'</h3>'+
+    '<div style="display:grid;grid-template-columns:90px 1fr;gap:4px;font-size:.8rem">'+
+    '<span style="color:var(--t3)">Status</span><span style="color:'+G.statusColor(t.status)+'">'+t.status+'</span>'+
+    '<span style="color:var(--t3)">Priority</span><span style="color:'+G.priColor(t.priority)+'">'+t.priority+'</span>'+
+    '<span style="color:var(--t3)">Progress</span><span>'+t.progress+'%</span>'+
+    '<span style="color:var(--t3)">Start</span><span>'+(t.start||'—')+'</span>'+
+    '<span style="color:var(--t3)">End</span><span>'+(t.end||'—')+'</span>'+
+    '<span style="color:var(--t3)">Effort</span><span>'+t.effort+'h</span>'+
+    '<span style="color:var(--t3)">WBS</span><span>'+t.wbs+'</span>'+
+    '<span style="color:var(--t3)">Risk</span><span style="color:'+(t.risk==='high'?'#ff3d5c':'#ffb935')+'">'+t.risk+'</span>'+
+    '<span style="color:var(--t3)">Phase</span><span>'+t.phase+'</span>'+
+    '</div>'+
+    '<div style="margin-top:10px"><strong style="font-size:.78rem;color:var(--t3)">Assignees:</strong></div>';
+
+  t.assignees.forEach(function(mid){
+    var m=D.members.find(function(x){return x.id===mid});
+    if(m)panel.innerHTML+='<div style="display:flex;align-items:center;gap:6px;margin-top:4px;font-size:.8rem">'+
+      '<div class="pm-av" style="background:'+m.color+';color:#0a1a12;width:22px;height:22px;font-size:.6rem">'+m.ini+'</div>'+m.name+' ('+m.role+')</div>';
+  });
+
+  panel.appendChild(closeBtn);
+  document.body.appendChild(panel);
+}
+
+render();
+})();
+</script></body></html>

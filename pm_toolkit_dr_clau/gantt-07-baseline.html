@@ -1,0 +1,111 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gantt 7 — Baseline Comparison (Planned vs Actual)</title><link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.var-tag{padding:2px 7px;border-radius:99px;font-size:.68rem;font-weight:600;display:inline-flex;align-items:center;gap:3px}
+.var-ahead{background:rgba(0,230,118,.15);color:#00e676}.var-behind{background:rgba(255,61,92,.15);color:#ff3d5c}.var-track{background:rgba(53,184,255,.1);color:#35b8ff}
+.bl-row{display:flex;gap:10px;padding:8px 12px;border-bottom:1px solid var(--bS);align-items:center;transition:.12s}
+.bl-row:hover{background:var(--bgH)}</style>
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){
+var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mode='leader',dayWidth=14,showBaseline=true;
+function render(){
+  document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'📐'}),h('div','',{html:'<div class="pm-title">Baseline Comparison</div><div class="pm-sub">Planned vs Actual · Schedule variance · Drift analysis</div>'}));
+  var tabs=h('div','pm-tabs');
+  ['leader','member'].forEach(function(m){var t=h('button','pm-tab'+(mode===m?' on':''),{text:m==='leader'?'👑 Leader':'👤 Member'});t.onclick=function(){mode=m;render()};tabs.appendChild(t)});
+  var blToggle=h('button','pm-tab'+(showBaseline?' on':''),{text:'📐 Show Baseline'});
+  blToggle.onclick=function(){showBaseline=!showBaseline;render()};tabs.appendChild(blToggle);
+  header.appendChild(tabs);document.body.appendChild(header);
+
+  var body=h('div','pm-body');
+  var tasks=D.tasks.filter(function(t){return t.project==='pj1'});
+  if(mode==='member')tasks=tasks.filter(function(t){return t.assignees.indexOf('m2')!==-1});
+
+  // Variance analysis (leader)
+  if(mode==='leader'){
+    var varCards=h('div','pm-grid pm-grid-3',{style:{marginBottom:'16px'}});
+    var behind=0,ahead=0,onTrack=0;
+    tasks.forEach(function(t){
+      if(!t.planned_end||!t.end)return;
+      var diff=Math.ceil((new Date(t.end)-new Date(t.planned_end))/864e5);
+      if(diff>1)behind++;else if(diff<-1)ahead++;else onTrack++;
+    });
+    [{n:behind,l:'Behind Schedule',c:'#ff3d5c',i:'⚠️'},{n:onTrack,l:'On Track',c:'#35b8ff',i:'✅'},{n:ahead,l:'Ahead of Schedule',c:'#00e676',i:'🚀'}].forEach(function(s,i){
+      var card=h('div','pm-card anim-su',{style:{padding:'10px',textAlign:'center'}});card.style.animationDelay=i*60+'ms';
+      ap(card,h('div','',{text:s.i+' '+s.n,style:{fontFamily:'var(--f1)',fontSize:'1.5rem',fontWeight:'800',color:s.c}}),h('div','pm-stat-l',{text:s.l}));
+      varCards.appendChild(card);
+    });
+    body.appendChild(varCards);
+  }
+
+  // Legend
+  var legend=h('div','pm-legend');
+  [{c:'#35b8ff',l:'Actual (current)'},{c:'var(--t3)',l:'Baseline (planned)',s:'dashed'}].forEach(function(x){
+    var li=h('div','pm-legend-i');ap(li,h('div','pm-legend-dot',{style:{background:x.s?'transparent':x.c,border:x.s?'2px dashed '+x.c:'none'}}),x.l);legend.appendChild(li)});
+  body.appendChild(legend);
+
+  // Gantt
+  var range=G.calcRange(tasks,null,10);
+  var wrap=h('div','gantt-wrap');
+  var hdr=h('div','gantt-header');hdr.appendChild(h('div','gantt-lbl-col',{text:'TASK',style:{padding:'5px 8px',fontSize:'.68rem',fontWeight:'700',color:'var(--tG)'}}));
+  hdr.appendChild(G.renderTimeHeader(range,dayWidth));wrap.appendChild(hdr);
+  var rows=h('div','gantt-rows',{style:{position:'relative'}});
+  rows.appendChild(G.renderWeekends(range,dayWidth));
+  var today=G.renderToday(range,dayWidth);if(today)rows.appendChild(today);
+
+  tasks.sort(function(a,b){return new Date(a.start||a.end)-new Date(b.start||b.end)}).forEach(function(t,i){
+    var row=h('div','gantt-row anim-su');row.style.animationDelay=i*20+'ms';
+    var lbl=h('div','gantt-row-lbl',{style:{fontSize:'.74rem'}});
+    ap(lbl,h('span','truncate',{text:t.name,style:{flex:'1'}}));
+
+    // Variance tag
+    if(t.planned_end&&t.end){
+      var diff=Math.ceil((new Date(t.end)-new Date(t.planned_end))/864e5);
+      var cls=diff>1?'var-behind':diff<-1?'var-ahead':'var-track';
+      var txt=diff>1?'+'+diff+'d late':diff<-1?Math.abs(diff)+'d early':'On track';
+      lbl.appendChild(h('span','var-tag '+cls,{text:txt}));
+    }
+
+    var track=h('div','gantt-row-track',{style:{width:range.days*dayWidth+'px'}});
+
+    // Baseline bar
+    if(showBaseline&&t.planned_start&&t.planned_end){
+      var plS=G.dayOffset(t.planned_start,range.min),plE=G.dayOffset(t.planned_end,range.min);
+      var plBar=h('div','',{style:{position:'absolute',left:plS*dayWidth+'px',width:(Math.max(1,plE-plS)+1)*dayWidth+'px',
+        height:'8px',top:'14px',borderRadius:'4px',border:'1.5px dashed var(--t3)',background:'var(--t3)11',zIndex:'1'}});
+      track.appendChild(plBar);
+    }
+
+    // Actual bar
+    var color=t.status==='done'?'#00e676':t.status==='inprogress'?'#35b8ff':'var(--t3)';
+    track.appendChild(G.renderBar(t,range,dayWidth,{color:color}));
+    ap(row,lbl,track);rows.appendChild(row);
+  });
+  wrap.appendChild(rows);body.appendChild(wrap);
+
+  // Variance table (leader)
+  if(mode==='leader'){
+    var table=h('div','pm-card',{style:{marginTop:'16px'}});
+    table.appendChild(h('div','pm-card-h')).appendChild(h('div','pm-card-t',{text:'📊 Schedule Variance Detail'}));
+    var hd=h('div','bl-row',{style:{fontWeight:'700',fontSize:'.72rem',color:'var(--tG)',borderBottom:'1px solid var(--bD)'}});
+    ['Task','Planned End','Actual End','Variance','Status'].forEach(function(c){hd.appendChild(h('div','',{text:c,style:{flex:c==='Task'?'2':'1'}}))});
+    table.appendChild(hd);
+    tasks.filter(function(t){return t.planned_end}).forEach(function(t){
+      var diff=Math.ceil((new Date(t.end)-new Date(t.planned_end))/864e5);
+      var row=h('div','bl-row');
+      ap(row,h('div','',{text:t.name,style:{flex:'2',fontSize:'.8rem',fontWeight:'500'}}),
+        h('div','',{text:t.planned_end,style:{flex:'1',fontSize:'.78rem',color:'var(--t3)'}}),
+        h('div','',{text:t.end,style:{flex:'1',fontSize:'.78rem'}}),
+        h('div','',{text:(diff>0?'+':'')+diff+'d',style:{flex:'1',fontSize:'.78rem',fontWeight:'600',color:diff>1?'#ff3d5c':diff<-1?'#00e676':'#35b8ff'}}),
+        h('div','',{text:t.status,style:{flex:'1',fontSize:'.78rem',color:G.statusColor(t.status)}}));
+      table.appendChild(row);
+    });
+    body.appendChild(table);
+  }
+  document.body.appendChild(body);
+}
+render();
+})();
+</script></body></html>

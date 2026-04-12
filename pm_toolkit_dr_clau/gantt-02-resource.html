@@ -1,0 +1,104 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Gantt 2 — Resource Workload Heatmap</title>
+<link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.res-row{display:flex;border-bottom:1px solid var(--bS);min-height:44px;align-items:stretch}
+.res-lbl{min-width:180px;max-width:180px;flex-shrink:0;padding:6px 10px;display:flex;align-items:center;gap:8px;border-right:1px solid var(--bD);position:sticky;left:0;background:var(--bg1);z-index:3}
+.res-cells{display:flex;flex:1}.res-cell{width:40px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.66rem;font-weight:600;border-right:1px solid var(--bS);transition:.12s;cursor:pointer}
+.res-cell:hover{filter:brightness(1.2);transform:scale(1.05);z-index:2}
+.heat-0{background:transparent;color:var(--tG)}.heat-1{background:rgba(0,230,118,.1);color:#4cff9f}
+.heat-2{background:rgba(0,230,118,.25);color:#00e676}.heat-3{background:rgba(255,185,53,.2);color:#ffb935}
+.heat-4{background:rgba(255,107,53,.3);color:#ff6b35}.heat-5{background:rgba(255,61,92,.35);color:#ff3d5c}
+.cap-bar{height:4px;border-radius:99px;margin-top:2px}.cap-track{height:4px;background:var(--bgA);border-radius:99px;width:100px;overflow:hidden}</style>
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){
+var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mode='leader';
+function render(){
+  document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'🔥'}),h('div','',{html:'<div class="pm-title">Resource Workload Heatmap</div><div class="pm-sub">Who\'s overloaded? Who has capacity?</div>'}));
+  var tabs=h('div','pm-tabs');
+  ['leader','member'].forEach(function(m){var t=h('button','pm-tab'+(mode===m?' on':''),{text:m==='leader'?'👑 Leader':'👤 Member'});t.onclick=function(){mode=m;render()};tabs.appendChild(t)});
+  header.appendChild(tabs);document.body.appendChild(header);
+
+  var body=h('div','pm-body');
+  var tasks=D.tasks.filter(function(t){return t.project==='pj1'});
+  var members=mode==='member'?D.members.filter(function(m){return m.id==='m2'}):D.members;
+
+  // Generate weekly columns
+  var range=G.calcRange(tasks,null,5);
+  var weeks=[];var cur=new Date(range.min);
+  while(cur<range.max){weeks.push(new Date(cur));cur=new Date(cur);cur.setDate(cur.getDate()+7)}
+
+  // Legend
+  var legend=h('div','pm-legend');
+  [{c:'transparent',l:'0h (Free)'},{c:'rgba(0,230,118,.1)',l:'1-8h'},{c:'rgba(0,230,118,.25)',l:'9-16h'},
+   {c:'rgba(255,185,53,.2)',l:'17-24h'},{c:'rgba(255,107,53,.3)',l:'25-32h'},{c:'rgba(255,61,92,.35)',l:'33h+ (Overloaded!)'}].forEach(function(x){
+    var li=h('div','pm-legend-i');ap(li,h('div','pm-legend-dot',{style:{background:x.c,border:'1px solid var(--bD)'}}),x.l);legend.appendChild(li)});
+  body.appendChild(legend);
+
+  var wrap=h('div','',{style:{overflowX:'auto'}});
+  // Header
+  var hdrRow=h('div','res-row',{style:{background:'var(--bg1)',position:'sticky',top:'0',zIndex:'5'}});
+  hdrRow.appendChild(h('div','res-lbl',{text:'TEAM MEMBER',style:{fontWeight:'700',fontSize:'.7rem',color:'var(--tG)'}}));
+  var hdrCells=h('div','res-cells');
+  weeks.forEach(function(w){hdrCells.appendChild(h('div','res-cell',{text:w.toLocaleDateString('en-US',{month:'short',day:'numeric'}),style:{fontWeight:'600',color:'var(--tG)',borderBottom:'1px solid var(--bD)'}}))});
+  hdrRow.appendChild(hdrCells);wrap.appendChild(hdrRow);
+
+  // Per-member rows
+  members.forEach(function(member){
+    var row=h('div','res-row anim-su');
+    var lbl=h('div','res-lbl');
+    ap(lbl,h('div','pm-av',{text:member.ini,style:{background:member.color,color:'#0a1a12'}}));
+    var info=h('div','');
+    ap(info,h('div','',{text:member.name,style:{fontWeight:'600',fontSize:'.82rem'}}),h('div','',{text:member.role,style:{fontSize:'.68rem',color:'var(--t3)'}}));
+    lbl.appendChild(info);
+
+    var cells=h('div','res-cells');
+    weeks.forEach(function(weekStart){
+      var weekEnd=new Date(weekStart);weekEnd.setDate(weekEnd.getDate()+7);
+      var hours=0;
+      tasks.forEach(function(t){
+        if(!t.assignees.includes(member.id))return;
+        var ts=new Date(t.start||t.end),te=new Date(t.end||t.start);
+        if(ts<weekEnd&&te>=weekStart){
+          var taskDays=Math.max(1,Math.ceil((te-ts)/864e5));
+          var hoursPerDay=t.effort/taskDays;
+          var overlapStart=Math.max(ts,weekStart),overlapEnd=Math.min(te,weekEnd);
+          var overlapDays=Math.max(1,Math.ceil((overlapEnd-overlapStart)/864e5));
+          hours+=hoursPerDay*overlapDays;
+        }
+      });
+      hours=Math.round(hours);
+      var heat=hours===0?0:hours<=8?1:hours<=16?2:hours<=24?3:hours<=32?4:5;
+      var cell=h('div','res-cell heat-'+heat,{text:hours>0?hours+'h':''});
+      cell.title=member.name+': '+hours+'h this week';
+      cells.appendChild(cell);
+    });
+
+    ap(row,lbl,cells);wrap.appendChild(row);
+  });
+
+  // Totals row (leader only)
+  if(mode==='leader'){
+    var totRow=h('div','res-row',{style:{background:'var(--bg3)',fontWeight:'700'}});
+    totRow.appendChild(h('div','res-lbl',{text:'TOTAL HOURS',style:{fontWeight:'700',fontSize:'.78rem',color:'var(--pk2)'}}));
+    var totCells=h('div','res-cells');
+    weeks.forEach(function(weekStart){
+      var weekEnd=new Date(weekStart);weekEnd.setDate(weekEnd.getDate()+7);
+      var total=0;
+      tasks.forEach(function(t){var ts=new Date(t.start||t.end),te=new Date(t.end||t.start);
+        if(ts<weekEnd&&te>=weekStart){var td=Math.max(1,Math.ceil((te-ts)/864e5));var hpd=t.effort/td;
+        var os=Math.max(ts,weekStart),oe=Math.min(te,weekEnd);total+=hpd*Math.max(1,Math.ceil((oe-os)/864e5))}});
+      total=Math.round(total);
+      totCells.appendChild(h('div','res-cell',{text:total+'h',style:{color:total>D.members.length*40?'#ff3d5c':'var(--gn)',fontWeight:'700'}}));
+    });
+    totRow.appendChild(totCells);wrap.appendChild(totRow);
+  }
+
+  body.appendChild(wrap);document.body.appendChild(body);
+}
+render();
+})();
+</script></body></html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Tool 5 — Sprint Burndown</title><link rel="stylesheet" href="css/pm-toolkit.css">
+<style>.burn-canvas{position:relative;height:250px;border:1px solid var(--bS);border-radius:var(--rl);background:var(--bg2);overflow:hidden;margin-bottom:14px}
+.burn-line{position:absolute;bottom:0;left:0}.burn-dot{position:absolute;width:10px;height:10px;border-radius:50%;transform:translate(-50%,-50%);cursor:pointer;transition:.12s;z-index:3}
+.burn-dot:hover{transform:translate(-50%,-50%) scale(1.4);z-index:5;box-shadow:0 0 10px}
+.vel-card{text-align:center;padding:8px}.vel-num{font:800 1.4rem var(--f1);line-height:1}.vel-lbl{font-size:.72rem;color:var(--t3)}</style>
+</head><body>
+<script src="data/pm-data.js"></script><script src="js/gantt-engine.js"></script>
+<script>
+(function(){var G=GanttEngine,D=PMData,h=G.h,ap=G.ap,mock=1;
+function render(){document.body.innerHTML='';
+  var header=h('div','pm-header');
+  ap(header,h('div','pm-logo',{text:'📉'}),h('div','',{html:'<div class="pm-title">Sprint Burndown & Velocity</div><div class="pm-sub">Track sprint progress · Predict completion · Analyze velocity</div>'}));
+  var tabs=h('div','pm-tabs');
+  [{id:1,l:'📉 Burndown'},{id:2,l:'⚡ Velocity'},{id:3,l:'📋 Sprint Detail'}].forEach(function(m){
+    var t=h('button','pm-tab'+(mock===m.id?' on':''),{text:m.l});t.onclick=function(){mock=m.id;render()};tabs.appendChild(t)});
+  header.appendChild(tabs);document.body.appendChild(header);
+  var body=h('div','pm-body');
+  var activeSprint=D.sprints.find(function(s){return s.status==='active'});
+
+  if(mock===1){
+    // BURNDOWN CHART
+    body.appendChild(h('h3','',{text:'Sprint 3 — '+activeSprint.name.split('—')[1],style:{fontFamily:'var(--f1)',marginBottom:'12px'}}));
+    var canvas=h('div','burn-canvas');
+    var data=D.burndown;var maxPts=data[0].remaining;var W=100,H=250,padL=5,padB=20;
+
+    // Ideal line (SVG)
+    var svg='<svg style="position:absolute;top:0;left:0;width:100%;height:100%" viewBox="0 0 100 100" preserveAspectRatio="none">';
+    // Grid lines
+    for(var g=0;g<=4;g++){var gy=g*25;svg+='<line x1="0" y1="'+gy+'" x2="100" y2="'+gy+'" stroke="rgba(255,255,255,.05)" stroke-width="0.3"/>';}
+    // Ideal line
+    svg+='<polyline points="'+data.map(function(d,i){return(i/(data.length-1)*94+3)+','+(100-d.ideal/maxPts*85-8)}).join(' ')+'" fill="none" stroke="var(--t3)" stroke-width="0.5" stroke-dasharray="2,1"/>';
+    // Actual line
+    var actualPts=data.filter(function(d){return d.remaining!==null});
+    if(actualPts.length>1){
+      svg+='<polyline points="'+actualPts.map(function(d,i){return(i/(data.length-1)*94+3)+','+(100-d.remaining/maxPts*85-8)}).join(' ')+'" fill="none" stroke="var(--pk)" stroke-width="0.8"/>';
+    }
+    svg+='</svg>';
+    canvas.innerHTML=svg;
+
+    // Dots
+    actualPts.forEach(function(d,i){
+      var x=(i/(data.length-1)*94+3);var y=(100-d.remaining/maxPts*85-8);
+      var dot=h('div','burn-dot',{style:{left:x+'%',top:y+'%',background:'var(--pk)',boxShadow:'0 0 8px var(--pkGS)'},title:'Day '+d.day+': '+d.remaining+' pts remaining'});
+      canvas.appendChild(dot);
+    });
+
+    // Labels
+    canvas.appendChild(h('div','',{text:maxPts+' pts',style:{position:'absolute',top:'4px',left:'6px',fontSize:'.66rem',color:'var(--tG)'}}));
+    canvas.appendChild(h('div','',{text:'0 pts',style:{position:'absolute',bottom:'4px',left:'6px',fontSize:'.66rem',color:'var(--tG)'}}));
+    canvas.appendChild(h('div','',{text:'Day 0',style:{position:'absolute',bottom:'4px',left:'3%',fontSize:'.66rem',color:'var(--tG)'}}));
+    canvas.appendChild(h('div','',{text:'Day 14',style:{position:'absolute',bottom:'4px',right:'3%',fontSize:'.66rem',color:'var(--tG)'}}));
+
+    body.appendChild(canvas);
+
+    // Legend
+    var legend=h('div','pm-legend');
+    [{c:'var(--pk)',l:'Actual Progress'},{c:'var(--t3)',l:'Ideal Burndown (dashed)'}].forEach(function(x){
+      var li=h('div','pm-legend-i');ap(li,h('div','pm-legend-dot',{style:{background:x.c}}),x.l);legend.appendChild(li)});
+    body.appendChild(legend);
+
+    // Stats
+    var lastActual=actualPts[actualPts.length-1];
+    var lastIdeal=data.find(function(d){return d.day===lastActual.day});
+    var diff=lastActual.remaining-(lastIdeal?lastIdeal.ideal:0);
+    var statsGrid=h('div','pm-grid pm-grid-3',{style:{marginTop:'14px'}});
+    [{n:lastActual.remaining,l:'Points Remaining',c:'pk'},{n:maxPts-lastActual.remaining,l:'Points Done',c:'gn'},
+     {n:(diff>0?'+':'')+Math.round(diff),l:diff>0?'Behind Ideal':'Ahead of Ideal',c:diff>0?'var(--pU)':'gn'}].forEach(function(s){
+      var c=h('div','pm-card',{style:{padding:'8px',textAlign:'center'}});
+      ap(c,h('div','vel-num',{text:String(s.n),style:{color:'var(--'+s.c+')'}}),h('div','vel-lbl',{text:s.l}));statsGrid.appendChild(c)});
+    body.appendChild(statsGrid);
+
+  } else if(mock===2){
+    // VELOCITY CHART
+    var card=h('div','pm-card');card.appendChild(h('div','pm-card-h')).appendChild(h('div','pm-card-t',{text:'⚡ Sprint Velocity Trend'}));
+    var chart=h('div','',{style:{display:'flex',alignItems:'flex-end',gap:'6px',height:'150px',padding:'10px 0'}});
+    var maxV=Math.max.apply(null,D.sprints.map(function(s){return Math.max(s.velocity||0,s.planned)}));
+    D.sprints.forEach(function(sp){
+      var col=h('div','',{style:{flex:'1',display:'flex',flexDirection:'column',alignItems:'center'}});
+      var bars=h('div','',{style:{display:'flex',gap:'2px',alignItems:'flex-end',height:'100%',width:'100%',justifyContent:'center'}});
+      var planned=h('div','',{style:{width:'40%',height:(sp.planned/maxV*100)+'%',background:'var(--t3)33',borderRadius:'3px 3px 0 0',minHeight:'2px'}});
+      planned.title='Planned: '+sp.planned;
+      var actual=sp.velocity?h('div','',{style:{width:'40%',height:(sp.velocity/maxV*100)+'%',background:sp.velocity>=sp.planned?'#00e676':'#ff6b35',borderRadius:'3px 3px 0 0',minHeight:'2px'}}):h('div','',{style:{width:'40%',background:'var(--bD)',borderRadius:'3px',height:'2px'}});
+      if(sp.velocity)actual.title='Actual: '+sp.velocity;
+      ap(bars,planned,actual);
+      ap(col,bars,h('div','',{text:'S'+(D.sprints.indexOf(sp)+1),style:{fontSize:'.7rem',color:sp.status==='active'?'var(--pk)':'var(--tG)',fontWeight:sp.status==='active'?'700':'400',marginTop:'4px'}}));
+      chart.appendChild(col)});
+    card.appendChild(chart);
+    var legend=h('div','pm-legend',{style:{marginTop:'6px'}});
+    [{c:'var(--t3)33',l:'Planned'},{c:'#00e676',l:'Actual (met)'},{c:'#ff6b35',l:'Actual (missed)'}].forEach(function(x){
+      var li=h('div','pm-legend-i');ap(li,h('div','pm-legend-dot',{style:{background:x.c}}),x.l);legend.appendChild(li)});
+    card.appendChild(legend);body.appendChild(card);
+
+    // Avg velocity
+    var completed=D.sprints.filter(function(s){return s.velocity});
+    var avgVel=completed.length?Math.round(completed.reduce(function(s,sp){return s+sp.velocity},0)/completed.length):0;
+    var statsGrid=h('div','pm-grid pm-grid-3',{style:{marginTop:'14px'}});
+    [{n:avgVel,l:'Avg Velocity',c:'gn'},{n:completed.length,l:'Sprints Done',c:'bl'},{n:D.sprints.filter(function(s){return s.status==='planned'}).length,l:'Sprints Left',c:'pp'}].forEach(function(s){
+      var c=h('div','pm-card',{style:{padding:'8px',textAlign:'center'}});ap(c,h('div','vel-num',{text:String(s.n),style:{color:'var(--'+s.c+')'}}),h('div','vel-lbl',{text:s.l}));statsGrid.appendChild(c)});
+    body.appendChild(statsGrid);
+  } else {
+    // Sprint detail cards
+    D.sprints.forEach(function(sp,i){
+      var spTasks=D.tasks.filter(function(t){return t.sprint===sp.id});
+      var done=spTasks.filter(function(t){return t.status==='done'}).length;
+      var card=h('div','pm-card anim-su',{style:{borderLeft:'4px solid '+(sp.status==='done'?'#00e676':sp.status==='active'?'#35b8ff':'var(--t3)')}});card.style.animationDelay=i*50+'ms';
+      var hd=h('div','',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'8px'}});
+      ap(hd,h('strong','',{text:sp.name,style:{fontFamily:'var(--f1)'}}),
+        h('span','pm-badge',{text:sp.status.toUpperCase(),style:{background:(sp.status==='done'?'rgba(0,230,118,.15)':sp.status==='active'?'rgba(53,184,255,.15)':'rgba(109,153,128,.1)'),color:sp.status==='done'?'#00e676':sp.status==='active'?'#35b8ff':'var(--t3)'}}));
+      card.appendChild(hd);
+      ap(card,h('div','',{style:{fontSize:'.78rem',color:'var(--t3)',marginBottom:'6px'},text:sp.start+' → '+sp.end+' · Tasks: '+done+'/'+spTasks.length+(sp.velocity?' · Velocity: '+sp.velocity+' pts':' · Planned: '+sp.planned+' pts')}));
+      if(spTasks.length){var prog=h('div','pm-progress',{style:{marginBottom:'6px'}});
+        prog.appendChild(h('div','pm-progress-fill',{style:{width:(spTasks.length?done/spTasks.length*100:0)+'%',background:sp.status==='done'?'#00e676':'#35b8ff'}}));card.appendChild(prog)}
+      spTasks.slice(0,5).forEach(function(t){
+        ap(card,h('div','',{style:{display:'flex',alignItems:'center',gap:'6px',padding:'3px 0',fontSize:'.78rem',borderTop:'1px solid var(--bS)'},
+          html:'<span style="width:5px;height:5px;border-radius:50%;background:'+G.statusColor(t.status)+'"></span>'+t.name}))});
+      body.appendChild(card)});
+  }
+  document.body.appendChild(body)}
+render()})();
+</script></body></html>
