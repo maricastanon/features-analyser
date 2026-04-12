@@ -3,20 +3,21 @@
   color: var(--text-primary);
   padding: 20px;
   font-family: 'Segoe UI', system-ui, sans-serif;
-  overflow-x: auto;
+  overflow: hidden;
 }
 
 .dd-board {
   display: flex;
+  flex-wrap: wrap;
   gap: 16px;
-  min-height: 400px;
+  min-height: 200px;
   align-items: flex-start;
 }
 
 .dd-bucket {
-  min-width: 260px;
+  min-width: 220px;
   max-width: 300px;
-  flex: 1;
+  flex: 1 1 220px;
   background: var(--bg-card);
   border: 1px solid var(--border-soft);
   border-radius: 10px;
